@@ -1,11 +1,15 @@
 {
-  "name": "rust_in_browser",
+  "name": "rust-tests",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Arslan <rslnkrmt2552@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server --mode development --port 9013 --open"
+    "dev": "webpack-dev-server --mode development --port 9013",
+    "build": "webpack --mode production"
+  },
+  "dependencies": {
+    "ct-wasm-gl": "./pkg"
   },
   "devDependencies": {
     "@swc/core": "^1.2.106",
@@ -16,6 +20,7 @@
     "style-loader": "^3.3.1",
     "swc-loader": "^0.1.15",
     "text-encoding": "^0.7.0",
+    "typescript": "^4.4.4",
     "webpack": "^5.61.0",
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.4.0"
