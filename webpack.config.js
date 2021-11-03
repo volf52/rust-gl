@@ -8,7 +8,9 @@ module.exports = (env, args) => {
     entry: "./frontend/bootstrap.js",
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: isProduction ? "[name].[contenthash].js" : "[name].[hash].js",
+      filename: isProduction
+        ? "[name].[contenthash].js"
+        : "[name].[fullhash].js",
     },
     module: {
       rules: [

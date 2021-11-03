@@ -1,3 +1,4 @@
-import { greet } from "ct-wasm-gl";
+import * as GL from "rust-gl";
 
-greet();
+GL.yo();
+GL.start();
