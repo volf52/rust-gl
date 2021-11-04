@@ -36,6 +36,7 @@ features = [
   "Element",
   "HtmlCanvasElement",
   "WebGlBuffer",
+  "WebGlUniformLocation",
   'WebGlVertexArrayObject',
   'WebGl2RenderingContext',
   'WebGlProgram',
