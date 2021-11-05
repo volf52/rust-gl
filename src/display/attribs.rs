@@ -1,7 +1,7 @@
+use super::square::Square;
 use crate::gl_program::GlProgram;
-use crate::gl_utils::{bind_f32_buffer_data, bind_u8_buffer_data, create_array_buffer};
 use crate::shaders::ShaderConstant;
-use crate::square::Square;
+use crate::utils::gl_utils::{bind_f32_buffer_data, bind_u8_buffer_data, create_array_buffer};
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlBuffer};
 

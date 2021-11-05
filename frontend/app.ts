@@ -1,4 +1,4 @@
-import { GlProgram, Square, BufferInfo } from "rust-gl";
+import { GlProgram, Square, BufferInfo, hey } from "rust-gl";
 import { getGlContext } from "./utils";
 
 const CANVAS_ID = "canvas";
@@ -9,6 +9,8 @@ const main = () => {
     console.error("Failed to acquire Gl Context");
     return;
   }
+
+  hey();
 
   const prog = GlProgram.new(gl, gl.canvas.width, gl.canvas.height);
 

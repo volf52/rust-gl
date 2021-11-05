@@ -1,4 +1,4 @@
-use crate::shape::Shape;
+use super::shape::Shape;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]

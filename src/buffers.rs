@@ -1,6 +1,5 @@
-use crate::attribs::Attribs;
+use crate::display::{attribs::Attribs, square::Square};
 use crate::gl_program::GlProgram;
-use crate::square::Square;
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 

@@ -1,8 +1,7 @@
-use crate::buffers::BufferInfo;
-use crate::square::Square;
+use crate::{buffers::BufferInfo, display::square::Square};
 use std::collections::HashMap;
 
-use crate::shaders::{compile_shaders, ShaderConstant, ATTRIBUTES, UNIFORMS};
+use crate::shaders::{square_shader::SquareShader, ShaderConstant, ATTRIBUTES, UNIFORMS};
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlProgram, WebGlShader, WebGlUniformLocation};
 
@@ -21,7 +20,7 @@ impl GlProgram {
         let ctx = ctx.clone();
         ctx.viewport(0, 0, width, height);
 
-        let (vert_shader, frag_shader) = compile_shaders(&ctx);
+        let (vert_shader, frag_shader) = SquareShader::new(&ctx);
 
         let prog = link_program(&ctx, &vert_shader, &frag_shader).unwrap();
 
