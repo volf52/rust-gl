@@ -1,39 +1,22 @@
-import { GlProgram, start, ShaderConstant, Square, BufferInfo } from "rust-gl";
+import { GlProgram, Square, BufferInfo } from "rust-gl";
 import { getGlContext } from "./utils";
 
 const CANVAS_ID = "canvas";
 
 const main = () => {
-  const context = getGlContext(CANVAS_ID);
-  if (context === null) {
+  const gl = getGlContext(CANVAS_ID);
+  if (gl === null) {
     console.error("Failed to acquire Gl Context");
     return;
   }
 
-  const prog = GlProgram.new(context);
-  console.log(
-    prog.get_attrib_loc(ShaderConstant[ShaderConstant.ATextureCoord]),
-  );
+  const prog = GlProgram.new(gl, gl.canvas.width, gl.canvas.height);
 
-  console.log(
-    prog.get_attrib_loc(ShaderConstant[ShaderConstant.UProjectionMatrix]),
-  );
+  const sq = Square.new(0.5);
 
-  const a = prog.get_uniform_loc(
-    ShaderConstant[ShaderConstant.UProjectionMatrix],
-  );
-  const b = prog.get_uniform_loc(
-    ShaderConstant[ShaderConstant.UProjectionMatrix],
-  );
-  const c = prog.get_uniform_loc(ShaderConstant[ShaderConstant.USampler]);
+  const squareInfo = BufferInfo.create_buffer_info(gl, sq);
 
-  console.log(a === b);
-  console.log(a === c);
-
-  const sq = Square.new(3);
-  console.log(sq.color());
-
-  const squareInfo = BufferInfo.create_buffer_info(prog.context(), sq);
+  prog.draw(sq, squareInfo);
 
   // start(context);
 };

@@ -5,15 +5,16 @@ use web_sys::{WebGl2RenderingContext, WebGlShader};
 #[wasm_bindgen]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ShaderConstant {
-    AVertexPosition,
-    ATextureCoord,
+    APosition,
+    AColor,
     UProjectionMatrix,
-    VTextureCoord,
+    VColor,
     USampler,
 }
 
-pub const ATTRIBUTES: [ShaderConstant; 2] = [AVertexPosition, ATextureCoord];
-pub const UNIFORMS: [ShaderConstant; 2] = [UProjectionMatrix, USampler];
+pub const ATTRIBUTES: [ShaderConstant; 2] = [APosition, AColor];
+// pub const UNIFORMS: [ShaderConstant; 2] = [UProjectionMatrix, USampler];
+pub const UNIFORMS: [ShaderConstant; 0] = [];
 
 impl Display for ShaderConstant {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -23,22 +24,19 @@ impl Display for ShaderConstant {
 
 pub fn compile_shaders(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShader) {
     let vertex_shader_src = format!(
-        "attribute vec2 {aVertexPosition};
-        attribute vec2 {aTextureCoord};
+        "attribute vec2 {a_postition};
+        attribute vec3 {a_color};
 
-        uniform mat3 {projectionMatrix};
-
-        varying vec2 {vTextureCoord};
+        varying vec3 {v_color};
 
         void main(void) {{
-            gl_Position = vec4(({projectionMatrix} * vec3({aVertexPosition}, 1.0)).xy, 0.0, 1.0);
-            {vTextureCoord} = {aTextureCoord};
+            gl_Position = vec4({a_postition}, 0.0, 1.0);
+            {v_color} = {a_color};
         }}
         ",
-        aVertexPosition = ShaderConstant::AVertexPosition.to_string(),
-        aTextureCoord = ShaderConstant::ATextureCoord.to_string(),
-        projectionMatrix = ShaderConstant::UProjectionMatrix.to_string(),
-        vTextureCoord = ShaderConstant::VTextureCoord.to_string(),
+        a_postition = ShaderConstant::APosition.to_string(),
+        a_color = ShaderConstant::AColor.to_string(),
+        v_color = ShaderConstant::VColor.to_string(),
     );
 
     let vert_shader = compile_shader(
@@ -50,15 +48,14 @@ pub fn compile_shaders(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShade
 
     let frag_shader_src = format!(
         "precision mediump float;
-        varying vec2 {vTextureCoord};
-        uniform sampler2D {uSampler};
+        varying vec3 {v_color};
 
         void main(void) {{
-            gl_FragColor *= texture2D({uSampler}, {vTextureCoord});
+            // gl_FragColor = vec4({v_color}, 1.0);
+            gl_FragColor = vec4(1.0, 0.0, 0.4, 1.0);
         }}
         ",
-        vTextureCoord = ShaderConstant::VTextureCoord.to_string(),
-        uSampler = ShaderConstant::USampler.to_string(),
+        v_color = ShaderConstant::VColor.to_string(),
     );
 
     let frag_shader = compile_shader(

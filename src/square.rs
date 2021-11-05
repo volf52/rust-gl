@@ -4,45 +4,40 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct Square {
-    position: Vec<f32>,
-    texcoord: Vec<f32>,
-    normal: Vec<f32>,
-    color: Vec<u8>,
-    indices: Vec<u8>,
+    pub vert_count: i32,
+    position: [f32; 12],
+    color: [f32; 3],
 }
 
 impl Shape for Square {}
 
 #[wasm_bindgen]
 impl Square {
-    pub fn new(_size: i32) -> Self {
-        // TODO: Update data using size
+    pub fn new(size: f32) -> Self {
+        let left = -size;
+        let right = size;
+        let top = size;
+        let bottom = -size;
+
+        let position = [
+            left, bottom, right, bottom, left, top, // Triangle 1
+            left, top, right, bottom, right, top, // Triangle 2
+        ];
+        let color = [1.0, 0.4, 0.4];
+        let vert_count = 6;
+
         Square {
-            position: Vec::new(),
-            texcoord: Vec::new(),
-            normal: Vec::new(),
-            color: Vec::new(),
-            indices: Vec::new(),
+            position,
+            color,
+            vert_count,
         }
     }
 
     pub fn position(&self) -> Vec<f32> {
-        self.position.clone()
+        self.position.to_vec()
     }
 
-    pub fn texcoord(&self) -> Vec<f32> {
-        self.texcoord.clone()
-    }
-
-    pub fn normal(&self) -> Vec<f32> {
-        self.normal.clone()
-    }
-
-    pub fn color(&self) -> Vec<u8> {
-        self.color.clone()
-    }
-
-    pub fn indices(&self) -> Vec<u8> {
-        self.indices.clone()
+    pub fn color(&self) -> Vec<f32> {
+        self.color.to_vec()
     }
 }

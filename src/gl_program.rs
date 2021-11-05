@@ -1,3 +1,5 @@
+use crate::buffers::BufferInfo;
+use crate::square::Square;
 use std::collections::HashMap;
 
 use crate::shaders::{compile_shaders, ShaderConstant, ATTRIBUTES, UNIFORMS};
@@ -15,8 +17,9 @@ pub struct GlProgram {
 
 #[wasm_bindgen]
 impl GlProgram {
-    pub fn new(ctx: &WebGl2RenderingContext) -> Self {
+    pub fn new(ctx: &WebGl2RenderingContext, width: i32, height: i32) -> Self {
         let ctx = ctx.clone();
+        ctx.viewport(0, 0, width, height);
 
         let (vert_shader, frag_shader) = compile_shaders(&ctx);
 
@@ -38,15 +41,18 @@ impl GlProgram {
         gl_prog
     }
 
-    // TODO: Update draw to use buffer_info/shape
-    pub fn draw(&self, vert_count: i32) {
-        self.ctx.clear_color(0.0, 0.0, 0.0, 1.0);
+    pub fn draw(&self, s: &Square, buffer_info: &BufferInfo) {
+        self.ctx.clear_color(0.8, 0.9, 1.0, 1.0);
         self.ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
+        self.ctx.enable(WebGl2RenderingContext::DEPTH_TEST);
+
+        buffer_info.set_attributes_and_buffers(self);
+        // buffer_info set uniforms
 
         self.ctx
-            .draw_arrays(WebGl2RenderingContext::TRIANGLES, 0, vert_count);
+            .draw_arrays(WebGl2RenderingContext::TRIANGLES, 0, s.vert_count);
     }
 
     pub fn context(&self) -> WebGl2RenderingContext {
