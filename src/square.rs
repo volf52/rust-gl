@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::*;
 pub struct Square {
     pub vert_count: i32,
     position: [f32; 12],
-    color: [f32; 3],
+    color: [f32; 18],
 }
 
 impl Shape for Square {}
@@ -23,7 +23,10 @@ impl Square {
             left, bottom, right, bottom, left, top, // Triangle 1
             left, top, right, bottom, right, top, // Triangle 2
         ];
-        let color = [1.0, 0.4, 0.4];
+        let color = [
+            1.0, 0.4, 0.4, 1.0, 0.4, 0.4, 1.0, 0.4, 0.4, 1.0, 0.4, 0.4, 1.0, 0.4, 0.4, 1.0, 0.4,
+            0.4,
+        ];
         let vert_count = 6;
 
         Square {

@@ -39,12 +39,6 @@ impl Attrib {
 impl Attrib {
     pub fn set_attribute(&self, ctx: &WebGl2RenderingContext, loc: u32) {
         ctx.bind_buffer(WebGl2RenderingContext::ARRAY_BUFFER, Some(&self.buffer));
-
-        // let vao = ctx
-        //     .create_vertex_array()
-        //     .ok_or("Could not create vertex arr obj")
-        //     .unwrap();
-        // ctx.bind_vertex_array(Some(&vao));
         ctx.enable_vertex_attrib_array(loc);
         ctx.vertex_attrib_pointer_with_i32(
             loc,
@@ -54,7 +48,6 @@ impl Attrib {
             0,
             0,
         );
-        // ctx.bind_vertex_array(Some(&vao));
     }
 }
 
@@ -84,10 +77,10 @@ impl Attribs {
             None => (),
         }
 
-        // let color_loc = program.get_attrib_loc(ShaderConstant::AVertexPosition.to_string());
-        // match color_loc {
-        //     Some(x) => self.color.set_attribute(&ctx, x as u32),
-        //     None => (),
-        // }
+        let color_loc = program.get_attrib_loc(ShaderConstant::AColor.to_string());
+        match color_loc {
+            Some(x) => self.color.set_attribute(&ctx, x as u32),
+            None => (),
+        }
     }
 }

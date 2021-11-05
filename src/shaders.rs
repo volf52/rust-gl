@@ -51,8 +51,8 @@ pub fn compile_shaders(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShade
         varying vec3 {v_color};
 
         void main(void) {{
-            // gl_FragColor = vec4({v_color}, 1.0);
-            gl_FragColor = vec4(1.0, 0.0, 0.4, 1.0);
+            gl_FragColor = vec4({v_color}, 1.0);
+            // gl_FragColor = vec4(1.0, 0.0, 0.4, 1.0);
         }}
         ",
         v_color = ShaderConstant::VColor.to_string(),
