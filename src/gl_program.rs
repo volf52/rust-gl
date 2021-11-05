@@ -49,16 +49,18 @@ impl GlProgram {
             self.ctx.drawing_buffer_height(),
         );
         self.ctx.clear_color(0.8, 0.9, 1.0, 1.0);
+        self.ctx.clear_depth(1.0);
+        self.ctx.enable(WebGl2RenderingContext::DEPTH_TEST);
+        self.ctx.depth_func(WebGl2RenderingContext::LEQUAL);
         self.ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
-        self.ctx.enable(WebGl2RenderingContext::DEPTH_TEST);
 
         buffer_info.set_attributes_and_buffers(self);
         // buffer_info set uniforms
 
         self.ctx
-            .draw_arrays(WebGl2RenderingContext::TRIANGLES, 0, s.vert_count);
+            .draw_arrays(WebGl2RenderingContext::TRIANGLE_STRIP, 0, s.vert_count);
     }
 
     pub fn context(&self) -> WebGl2RenderingContext {
