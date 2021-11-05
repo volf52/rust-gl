@@ -42,6 +42,12 @@ impl GlProgram {
     }
 
     pub fn draw(&self, s: &Square, buffer_info: &BufferInfo) {
+        self.ctx.viewport(
+            0,
+            0,
+            self.ctx.drawing_buffer_width(),
+            self.ctx.drawing_buffer_height(),
+        );
         self.ctx.clear_color(0.8, 0.9, 1.0, 1.0);
         self.ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
