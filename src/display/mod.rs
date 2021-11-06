@@ -1,3 +1,5 @@
-pub mod attribs;
-pub mod shape;
-pub mod square;
+mod attribs;
+mod shader_program;
+mod buffers;
+pub mod display_object;
+

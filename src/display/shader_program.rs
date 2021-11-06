@@ -1,33 +1,24 @@
-use crate::{buffers::BufferInfo, display::square::Square};
-use std::collections::HashMap;
 
-use crate::shaders::{square_shader::SquareShader, ShaderConstant, ATTRIBUTES, UNIFORMS};
-use wasm_bindgen::prelude::*;
+use std::collections::HashMap;
+use crate::shaders::{ATTRIBUTES, ShaderConstant, square_shader::SquareShader, UNIFORMS};
 use web_sys::{WebGl2RenderingContext, WebGlProgram, WebGlShader, WebGlUniformLocation};
 
-#[wasm_bindgen]
 #[derive(Clone, Debug)]
-pub struct GlProgram {
+pub struct ShaderProgram {
     ctx: WebGl2RenderingContext,
     prog: WebGlProgram,
     a_locations: HashMap<String, i32>,
     u_locations: HashMap<String, WebGlUniformLocation>,
 }
 
-#[wasm_bindgen]
-impl GlProgram {
-    pub fn new(ctx: &WebGl2RenderingContext, width: i32, height: i32) -> Self {
+impl ShaderProgram {
+    pub fn new(ctx: &WebGl2RenderingContext) -> Self {
         let ctx = ctx.clone();
-        ctx.viewport(0, 0, width, height);
-
         let (vert_shader, frag_shader) = SquareShader::new(&ctx);
-
         let prog = link_program(&ctx, &vert_shader, &frag_shader).unwrap();
-
         let a_locations = HashMap::new();
         let u_locations = HashMap::new();
-
-        let mut gl_prog = GlProgram {
+        let mut gl_prog = ShaderProgram {
             ctx,
             prog,
             a_locations,
@@ -39,29 +30,6 @@ impl GlProgram {
 
         gl_prog
     }
-
-    pub fn draw(&self, s: &Square, buffer_info: &BufferInfo) {
-        self.ctx.viewport(
-            0,
-            0,
-            self.ctx.drawing_buffer_width(),
-            self.ctx.drawing_buffer_height(),
-        );
-        self.ctx.clear_color(0.8, 0.9, 1.0, 1.0);
-        self.ctx.clear_depth(1.0);
-        self.ctx.enable(WebGl2RenderingContext::DEPTH_TEST);
-        self.ctx.depth_func(WebGl2RenderingContext::LEQUAL);
-        self.ctx.clear(
-            WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
-        );
-
-        buffer_info.set_attributes_and_buffers(self);
-        // buffer_info set uniforms
-
-        self.ctx
-            .draw_arrays(WebGl2RenderingContext::TRIANGLE_STRIP, 0, s.vert_count);
-    }
-
     pub fn context(&self) -> WebGl2RenderingContext {
         self.ctx.clone()
     }
@@ -85,7 +53,7 @@ impl GlProgram {
     }
 }
 
-impl GlProgram {
+impl ShaderProgram {
     fn insert_a_locations(&mut self) {
         for c in ATTRIBUTES {
             let loc = self.get_attrib_location(&c);
