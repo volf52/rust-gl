@@ -1,6 +1,5 @@
 use crate::display::display_object::DisplayObject;
 use crate::graphics::shape::Shape;
-use std::rc::Rc;
 use web_sys::WebGl2RenderingContext;
 
 pub struct Application {

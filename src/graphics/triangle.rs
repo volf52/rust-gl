@@ -13,10 +13,10 @@ pub struct Triangle {
 #[wasm_bindgen]
 impl Triangle {
     pub fn new(size: f32) -> Self {
-        let left = -size;
-        let right = size;
-        let top = size;
-        let bottom = -size;
+        let right = size / 2.0;
+        let left = -right;
+        let top = size / 2.0;
+        let bottom = -top;
 
         let position = [left, top, right, top, left, bottom];
         let color = [

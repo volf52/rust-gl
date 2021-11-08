@@ -4,19 +4,19 @@ use web_sys::WebGl2RenderingContext;
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
-pub struct Square {
+pub struct Rectangle {
     vert_count: i32,
     position: [f32; 8],
     color: [f32; 12],
 }
 
 #[wasm_bindgen]
-impl Square {
-    pub fn new(size: f32) -> Self {
-        let left = -size;
-        let right = size;
-        let top = size;
-        let bottom = -size;
+impl Rectangle {
+    pub fn new(width: f32, height: f32) -> Self {
+        let right = width / 2.0;
+        let left = -right;
+        let top = height / 2.0;
+        let bottom = -top;
 
         let position = [left, top, right, top, left, bottom, right, bottom];
         let color = [
@@ -27,7 +27,7 @@ impl Square {
         ];
         let vert_count = 4;
 
-        Square {
+        Rectangle {
             position,
             color,
             vert_count,
@@ -35,7 +35,7 @@ impl Square {
     }
 }
 
-impl Shape for Square {
+impl Shape for Rectangle {
     fn vertex_count(&self) -> i32 {
         return self.vert_count;
     }
@@ -53,4 +53,13 @@ impl Shape for Square {
     }
 }
 
-// TODO: Add rect as base
+#[wasm_bindgen]
+#[derive(Debug, Clone)]
+pub struct Square {}
+
+#[wasm_bindgen]
+impl Square {
+    pub fn new(size: f32) -> Rectangle {
+        Rectangle::new(size, size)
+    }
+}
