@@ -1,15 +1,14 @@
-use super::shape::Shape;
+
 use wasm_bindgen::prelude::*;
+use crate::graphics::shape::Shape;
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct Square {
-    pub vert_count: i32,
+    vert_count: i32,
     position: [f32; 8],
     color: [f32; 12],
 }
-
-impl Shape for Square {}
 
 #[wasm_bindgen]
 impl Square {
@@ -34,12 +33,19 @@ impl Square {
             vert_count,
         }
     }
+}
 
-    pub fn position(&self) -> Vec<f32> {
+impl Shape for Square {
+    fn vertex_count(&self) -> i32 {
+        return self.vert_count;
+    }
+
+    fn position(&self) -> Vec<f32> {
         self.position.to_vec()
     }
 
-    pub fn color(&self) -> Vec<f32> {
+    fn color(&self) -> Vec<f32> {
         self.color.to_vec()
     }
+
 }

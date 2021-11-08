@@ -1,11 +1,9 @@
-use super::square::Square;
-use crate::gl_program::GlProgram;
 use crate::shaders::ShaderConstant;
 use crate::utils::gl_utils::{bind_f32_buffer_data, bind_u8_buffer_data, create_array_buffer};
-use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlBuffer};
+use crate::display::shader_program::ShaderProgram;
+use crate::graphics::shape::Shape;
 
-#[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct Attrib {
     num_components: i32,
@@ -51,7 +49,6 @@ impl Attrib {
     }
 }
 
-#[wasm_bindgen]
 #[derive(Debug, Clone)]
 pub struct Attribs {
     position: Attrib,
@@ -59,7 +56,7 @@ pub struct Attribs {
 }
 
 impl Attribs {
-    pub fn new(ctx: &WebGl2RenderingContext, s: &Square) -> Self {
+    pub fn new(ctx: &WebGl2RenderingContext, s: &dyn Shape) -> Self {
         let position = Attrib::from_f32(ctx, &s.position(), 2);
         let color = Attrib::from_f32(ctx, &s.color(), 3);
 
@@ -68,7 +65,7 @@ impl Attribs {
         Attribs { position, color }
     }
 
-    pub fn set_attributes(&self, program: &GlProgram) {
+    pub fn set_attributes(&self, program: &ShaderProgram) {
         let ctx = program.context();
 
         let pos_loc = program.get_attrib_loc(ShaderConstant::APosition.to_string());

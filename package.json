@@ -9,7 +9,7 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
-    "rust-gl": "0.0.1"
+    "rust-gl": "link:./pkg"
   },
   "devDependencies": {
     "@swc/core": "^1.2.106",
