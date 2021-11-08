@@ -1,6 +1,5 @@
-
+use crate::shaders::{square_shader::SquareShader, ShaderConstant, ATTRIBUTES, UNIFORMS};
 use std::collections::HashMap;
-use crate::shaders::{ATTRIBUTES, ShaderConstant, square_shader::SquareShader, UNIFORMS};
 use web_sys::{WebGl2RenderingContext, WebGlProgram, WebGlShader, WebGlUniformLocation};
 
 #[derive(Clone, Debug)]

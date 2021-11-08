@@ -1,8 +1,8 @@
+use crate::display::shader_program::ShaderProgram;
+use crate::graphics::shape::Shape;
 use crate::shaders::ShaderConstant;
 use crate::utils::gl_utils::{bind_f32_buffer_data, bind_u8_buffer_data, create_array_buffer};
 use web_sys::{WebGl2RenderingContext, WebGlBuffer};
-use crate::display::shader_program::ShaderProgram;
-use crate::graphics::shape::Shape;
 
 #[derive(Debug, Clone)]
 pub struct Attrib {

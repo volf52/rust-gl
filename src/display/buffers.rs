@@ -1,7 +1,7 @@
-use web_sys::WebGl2RenderingContext;
 use crate::display::attribs::Attribs;
 use crate::display::shader_program::ShaderProgram;
 use crate::graphics::shape::Shape;
+use web_sys::WebGl2RenderingContext;
 
 pub struct BufferInfo {
     attribs: Attribs,

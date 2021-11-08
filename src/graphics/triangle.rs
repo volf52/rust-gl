@@ -4,30 +4,29 @@ use web_sys::WebGl2RenderingContext;
 
 #[wasm_bindgen]
 #[derive(Debug, Clone)]
-pub struct Square {
+pub struct Triangle {
     vert_count: i32,
-    position: [f32; 8],
-    color: [f32; 12],
+    position: [f32; 6],
+    color: [f32; 9],
 }
 
 #[wasm_bindgen]
-impl Square {
+impl Triangle {
     pub fn new(size: f32) -> Self {
         let left = -size;
         let right = size;
         let top = size;
         let bottom = -size;
 
-        let position = [left, top, right, top, left, bottom, right, bottom];
+        let position = [left, top, right, top, left, bottom];
         let color = [
-            1.0, 0.4, 0.4, // vertex 1
-            1.0, 0.0, 0.0, // vertex 2
-            0.0, 1.0, 0.0, // vertex 3
-            0.0, 0.0, 1.0, // vertex 4
+            0.0, 0.0, 0.0, // vertex 1
+            0.0, 0.0, 0.0, // vertex 2
+            1.0, 0.0, 0.0, // vertex 3
         ];
-        let vert_count = 4;
+        let vert_count = 3;
 
-        Square {
+        Triangle {
             position,
             color,
             vert_count,
@@ -35,7 +34,7 @@ impl Square {
     }
 }
 
-impl Shape for Square {
+impl Shape for Triangle {
     fn vertex_count(&self) -> i32 {
         return self.vert_count;
     }
@@ -49,8 +48,6 @@ impl Shape for Square {
     }
 
     fn mode(&self) -> u32 {
-        WebGl2RenderingContext::TRIANGLE_STRIP
+        WebGl2RenderingContext::TRIANGLES
     }
 }
-
-// TODO: Add rect as base

@@ -1,16 +1,17 @@
-import('rust-gl');
-import { getGlContext } from "./utils";
+import { test_error, main as RGL } from "rust-gl";
+// import { getGlContext } from "./utils";
 
 const CANVAS_ID = "canvas";
 
-const main = () => {
-  const gl = getGlContext(CANVAS_ID);
-  if (gl === null) {
-    console.error("Failed to acquire Gl Context");
-    return;
-  }
+// const main = () => {
+// const gl = getGlContext(CANVAS_ID);
+// if (gl === null) {
+//   console.error("Failed to acquire Gl Context");
+//   return;
+// }
 
-  // start(context);
-};
+// start(context);
+// };
 
-main();
+test_error();
+RGL();
