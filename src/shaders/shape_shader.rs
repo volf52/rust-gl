@@ -4,15 +4,15 @@ use super::shader_utils::{self, Shader};
 use super::ShaderConstant;
 use web_sys::{WebGl2RenderingContext, WebGlShader};
 
-pub struct SquareShader {}
+pub struct ShapeShader {}
 
-impl SquareShader {
+impl ShapeShader {
     pub fn new(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShader) {
-        return SquareShader::compile(ctx);
+        return ShapeShader::compile(ctx);
     }
 }
 
-impl Shader for SquareShader {
+impl Shader for ShapeShader {
     fn compile(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShader) {
         let vs_src = format!(
             shader_utils::DEFAULT_VS!(),

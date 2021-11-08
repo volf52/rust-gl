@@ -1,4 +1,4 @@
-use crate::shaders::{square_shader::SquareShader, ShaderConstant, ATTRIBUTES, UNIFORMS};
+use crate::shaders::{shape_shader::ShapeShader, ShaderConstant, ATTRIBUTES, UNIFORMS};
 use std::collections::HashMap;
 use web_sys::{WebGl2RenderingContext, WebGlProgram, WebGlShader, WebGlUniformLocation};
 
@@ -13,7 +13,7 @@ pub struct ShaderProgram {
 impl ShaderProgram {
     pub fn new(ctx: &WebGl2RenderingContext) -> Self {
         let ctx = ctx.clone();
-        let (vert_shader, frag_shader) = SquareShader::new(&ctx);
+        let (vert_shader, frag_shader) = ShapeShader::new(&ctx);
         let prog = link_program(&ctx, &vert_shader, &frag_shader).unwrap();
         let a_locations = HashMap::new();
         let u_locations = HashMap::new();
