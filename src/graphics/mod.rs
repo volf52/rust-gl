@@ -1,3 +1,2 @@
-pub mod quad;
+pub mod geom;
 pub mod shape;
-pub mod triangle;

@@ -4,7 +4,7 @@ use web_sys::WebGl2RenderingContext;
 
 pub struct Application {
     ctx: WebGl2RenderingContext,
-    shapes: Vec<Box<dyn Shape>>,
+    shapes: Vec<Shape>,
 }
 
 impl Application {
@@ -27,13 +27,13 @@ impl Application {
         );
         Application { ctx, shapes }
     }
-    pub fn add_shape(&mut self, shape: Box<dyn Shape>) {
+    pub fn add_shape(&mut self, shape: Shape) {
         self.shapes.push(shape);
     }
     pub fn render_all(&self) {
         // TODO: calculate base projection mat
-        for shape in self.shapes.iter().cloned() {
-            let display_object = DisplayObject::new(&self.ctx, shape);
+        for shape in self.shapes.iter() {
+            let display_object = DisplayObject::new(&self.ctx, &shape);
             // TODO: pass base projection mat
             display_object.draw();
         }

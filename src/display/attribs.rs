@@ -56,7 +56,7 @@ pub struct Attribs {
 }
 
 impl Attribs {
-    pub fn new(ctx: &WebGl2RenderingContext, s: &dyn Shape) -> Self {
+    pub fn new(ctx: &WebGl2RenderingContext, s: &Shape) -> Self {
         let position = Attrib::from_f32(ctx, &s.position(), 2);
         let color = Attrib::from_f32(ctx, &s.color(), 3);
 
