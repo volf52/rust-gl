@@ -1,50 +1,21 @@
 use crate::display::shader_program::ShaderProgram;
-use crate::graphics::shape::Shape;
+use crate::graphics::geom::Geom;
 use web_sys::WebGl2RenderingContext;
 
 use super::attribs::Attribs;
 
-// #[derive(Debug, Clone)]
-// pub struct DisplayObject<'a, T: Shape + Clone> {
-//     ctx: &'a WebGl2RenderingContext,
-//     shape: &'a T,
-// }
-
-// impl<'a, T> DisplayObject<'a, T>
-// where
-//     T: Shape + Clone,
-// {
-//     pub fn new(ctx: &'a WebGl2RenderingContext, shape: &'a T) -> Self {
-//         DisplayObject { ctx, shape }
-//     }
-//     pub fn draw(&self) {
-//         let gl_program = ShaderProgram::new(&self.ctx);
-//         let buffer_info: BufferInfo = BufferInfo::new(&self.ctx, self.shape);
-//         buffer_info.set_attributes_and_buffers(&gl_program);
-//         self.ctx.draw_arrays(
-//             WebGl2RenderingContext::TRIANGLE_STRIP,
-//             0,
-//             self.shape.vertex_count(),
-//         );
-//     }
-// }
-
-pub struct DisplayObject {
+pub struct DisplayObject<'a> {
     ctx: WebGl2RenderingContext,
-    shape: Box<dyn Shape>,
+    geom: &'a Geom,
     attribs: Attribs,
 }
 
-impl DisplayObject {
-    pub fn new(ctx: &WebGl2RenderingContext, shape: Box<dyn Shape>) -> DisplayObject {
+impl DisplayObject<'_> {
+    pub fn new<'a>(ctx: &WebGl2RenderingContext, geom: &'a Geom) -> DisplayObject<'a> {
         let ctx = ctx.clone();
-        let attribs = Attribs::new(&ctx, &*shape);
+        let attribs = Attribs::new(&ctx, geom);
 
-        DisplayObject {
-            ctx,
-            shape,
-            attribs,
-        }
+        DisplayObject { ctx, geom, attribs }
     }
     pub fn draw(&self) {
         let gl_program = ShaderProgram::new(&self.ctx);
@@ -53,9 +24,7 @@ impl DisplayObject {
         self.attribs.set_attributes(&gl_program);
         // TODO: Set uniforms
 
-        let mode = self.shape.mode();
-        let vert_count = self.shape.vertex_count();
-
-        self.ctx.draw_arrays(mode, 0, vert_count);
+        self.ctx
+            .draw_arrays(self.geom.mode, 0, self.geom.vertex_count);
     }
 }

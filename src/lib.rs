@@ -5,10 +5,7 @@ mod shaders;
 mod utils;
 
 use crate::core::application::Application;
-use crate::graphics::{
-    quad::{Rectangle, Square},
-    triangle::Triangle,
-};
+use crate::graphics::geom::Geom;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -52,15 +49,15 @@ pub fn main() -> Result<(), JsValue> {
         .unwrap()
         .dyn_into::<WebGl2RenderingContext>()?;
 
-    let square = Square::new(0.5);
-    let rectangle = Rectangle::new(0.9, 0.6);
-    let triangle = Triangle::new(0.6);
+    let square = Geom::new_square(0.5);
+    let rectangle = Geom::new_rectangle(0.9, 0.6);
+    let triangle = Geom::new_triangle(0.6);
 
     let mut application = Application::new(&context);
 
-    application.add_shape(Box::new(rectangle));
-    application.add_shape(Box::new(triangle));
-    application.add_shape(Box::new(square));
+    application.add_shape(rectangle);
+    application.add_shape(triangle);
+    application.add_shape(square);
 
     application.render_all();
 
