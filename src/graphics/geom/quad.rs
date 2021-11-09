@@ -1,9 +1,9 @@
-use super::Shape;
+use super::Geom;
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
 #[wasm_bindgen]
-impl Shape {
+impl Geom {
     pub fn new_rectangle(width: f32, height: f32) -> Self {
         let right = width / 2.0;
         let left = -right;
@@ -19,7 +19,7 @@ impl Shape {
         ]
         .to_vec();
 
-        Shape {
+        Geom {
             vertices,
             color,
             vertex_count: 4,
@@ -28,6 +28,6 @@ impl Shape {
     }
 
     pub fn new_square(size: f32) -> Self {
-        Shape::new_rectangle(size, size)
+        Geom::new_rectangle(size, size)
     }
 }

@@ -5,7 +5,7 @@ mod shaders;
 mod utils;
 
 use crate::core::application::Application;
-use crate::graphics::shape::Shape;
+use crate::graphics::geom::Geom;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -49,9 +49,9 @@ pub fn main() -> Result<(), JsValue> {
         .unwrap()
         .dyn_into::<WebGl2RenderingContext>()?;
 
-    let square = Shape::new_square(0.5);
-    let rectangle = Shape::new_rectangle(0.9, 0.6);
-    let triangle = Shape::new_triangle(0.6);
+    let square = Geom::new_square(0.5);
+    let rectangle = Geom::new_rectangle(0.9, 0.6);
+    let triangle = Geom::new_triangle(0.6);
 
     let mut application = Application::new(&context);
 

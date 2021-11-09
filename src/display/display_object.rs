@@ -1,25 +1,21 @@
 use crate::display::shader_program::ShaderProgram;
-use crate::graphics::shape::Shape;
+use crate::graphics::geom::Geom;
 use web_sys::WebGl2RenderingContext;
 
 use super::attribs::Attribs;
 
 pub struct DisplayObject<'a> {
     ctx: WebGl2RenderingContext,
-    shape: &'a Shape,
+    geom: &'a Geom,
     attribs: Attribs,
 }
 
 impl DisplayObject<'_> {
-    pub fn new<'a>(ctx: &WebGl2RenderingContext, shape: &'a Shape) -> DisplayObject<'a> {
+    pub fn new<'a>(ctx: &WebGl2RenderingContext, geom: &'a Geom) -> DisplayObject<'a> {
         let ctx = ctx.clone();
-        let attribs = Attribs::new(&ctx, shape);
+        let attribs = Attribs::new(&ctx, geom);
 
-        DisplayObject {
-            ctx,
-            shape,
-            attribs,
-        }
+        DisplayObject { ctx, geom, attribs }
     }
     pub fn draw(&self) {
         let gl_program = ShaderProgram::new(&self.ctx);
@@ -29,6 +25,6 @@ impl DisplayObject<'_> {
         // TODO: Set uniforms
 
         self.ctx
-            .draw_arrays(self.shape.mode, 0, self.shape.vertex_count);
+            .draw_arrays(self.geom.mode, 0, self.geom.vertex_count);
     }
 }

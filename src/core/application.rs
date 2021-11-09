@@ -1,10 +1,10 @@
 use crate::display::display_object::DisplayObject;
-use crate::graphics::shape::Shape;
+use crate::graphics::geom::Geom;
 use web_sys::WebGl2RenderingContext;
 
 pub struct Application {
     ctx: WebGl2RenderingContext,
-    shapes: Vec<Shape>,
+    shapes: Vec<Geom>,
 }
 
 impl Application {
@@ -27,8 +27,8 @@ impl Application {
         );
         Application { ctx, shapes }
     }
-    pub fn add_shape(&mut self, shape: Shape) {
-        self.shapes.push(shape);
+    pub fn add_shape(&mut self, g: Geom) {
+        self.shapes.push(g);
     }
     pub fn render_all(&self) {
         // TODO: calculate base projection mat

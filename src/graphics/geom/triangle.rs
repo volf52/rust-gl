@@ -1,11 +1,11 @@
-use super::Shape;
+use super::Geom;
 
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
 #[wasm_bindgen]
-impl Shape {
-    pub fn new_triangle(size: f32) -> Shape {
+impl Geom {
+    pub fn new_triangle(size: f32) -> Self {
         let right = size / 2.0;
         let left = -right;
         let top = size / 2.0;
@@ -19,7 +19,7 @@ impl Shape {
         ]
         .to_vec();
 
-        Shape {
+        Geom {
             vertices,
             color,
             vertex_count: 3,
