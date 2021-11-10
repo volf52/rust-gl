@@ -26,8 +26,4 @@ impl Geom {
             mode: WebGl2RenderingContext::TRIANGLE_STRIP,
         }
     }
-
-    pub fn new_square(size: f32) -> Self {
-        Geom::new_rectangle(size, size)
-    }
 }

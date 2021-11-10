@@ -1,22 +1,32 @@
+use super::attribs::Attribs;
 use crate::display::shader_program::ShaderProgram;
 use crate::graphics::geom::Geom;
+use crate::math::Matrix;
 use crate::shaders::ShaderConstant;
 use web_sys::WebGl2RenderingContext;
-use gl_matrix::mat3;
-use super::attribs::Attribs;
 
 pub struct DisplayObject<'a> {
     ctx: WebGl2RenderingContext,
     geom: &'a Geom,
     attribs: Attribs,
+    proj_mat: Matrix,
 }
 
 impl DisplayObject<'_> {
-    pub fn new<'a>(ctx: &WebGl2RenderingContext, geom: &'a Geom) -> DisplayObject<'a> {
+    pub fn new<'a>(
+        ctx: &WebGl2RenderingContext,
+        geom: &'a Geom,
+        proj_mat: Matrix,
+    ) -> DisplayObject<'a> {
         let ctx = ctx.clone();
         let attribs = Attribs::new(&ctx, geom);
 
-        DisplayObject { ctx, geom, attribs }
+        DisplayObject {
+            ctx,
+            geom,
+            attribs,
+            proj_mat,
+        }
     }
     pub fn draw(&self) {
         let gl_program = ShaderProgram::new(&self.ctx);
@@ -31,12 +41,8 @@ impl DisplayObject<'_> {
 
     pub fn set_u_matrix(&self, program: &ShaderProgram) {
         let matrix_loc = program.get_uniform_loc(ShaderConstant::UProjectionMatrix.to_string());
-        let proj_mat = mat3::create();
 
-        self.ctx.uniform_matrix3fv_with_f32_array(
-                matrix_loc,
-                false,
-                &proj_mat
-            )
+        self.ctx
+            .uniform_matrix3fv_with_f32_array(matrix_loc, false, &self.proj_mat.to_array())
     }
 }

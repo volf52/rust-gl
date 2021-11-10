@@ -38,14 +38,14 @@ pub struct Matrix {
 }
 
 impl Matrix {
-    pub fn new(width: f32, height: f32) -> Matrix {
+    pub fn new() -> Matrix {
         Matrix {
-            a: 2.0/width,
+            a: 1.0,
             b: 0.0,
             c: 0.0,
-            d: -2.0/height,
-            tx: -1.0,
-            ty: 1.0,
+            d: 1.0,
+            tx: 0.0,
+            ty: 0.0,
         }
     }
     pub fn from_array(arr: [f32; 6]) -> Matrix {
@@ -60,49 +60,69 @@ impl Matrix {
     }
 
     pub fn to_array(&self) -> [f32; 9] {
-        [self.a,self.b, 0.0 ,self.c,self.d, 0.0, self.tx, self.ty, 1.0]
+        [
+            self.a, self.b, 0.0, self.c, self.d, 0.0, self.tx, self.ty, 1.0,
+        ]
     }
-}
 
-/**
- * Applies a scale transformation to the matrix.
- *
- * @param {number} x - The amount to scale horizontally
- * @param {number} y - The amount to scale vertically
- * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
- */
+    /**
+     * Applies a scale transformation to the matrix.
+     *
+     * @param {number} x - The amount to scale horizontally
+     * @param {number} y - The amount to scale vertically
+     * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+     */
 
-pub fn scale(mat: Matrix, x: f32, y: f32) -> Matrix {
-    Matrix {
-        a: mat.a * x,
-        b: mat.b * y,
-        c: mat.c * x,
-        d: mat.d * y,
-        tx: mat.tx * x,
-        ty: mat.ty * y,
+    pub fn scale(mat: &Matrix, x: f32, y: f32) -> Matrix {
+        Matrix {
+            a: mat.a * x,
+            b: mat.b * y,
+            c: mat.c * x,
+            d: mat.d * y,
+            tx: mat.tx * x,
+            ty: mat.ty * y,
+        }
     }
-}
 
-/**
- * Applies a rotation transformation to the matrix.
- *
- * @param {number} angle - The angle in radians.
- * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
- */
-pub fn rotate(mat: Matrix, angle: f32) -> Matrix {
-    let sin = angle.sin();
-    let cos = angle.cos();
+    /**
+     * Applies a rotation transformation to the matrix.
+     *
+     * @param {number} angle - The angle in radians.
+     * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+     */
+    pub fn rotate(mat: &Matrix, angle: f32) -> Matrix {
+        let sin = angle.sin();
+        let cos = angle.cos();
 
-    let a1 = mat.a;
-    let c1 = mat.c;
-    let tx1 = mat.tx;
+        let a1 = mat.a;
+        let c1 = mat.c;
+        let tx1 = mat.tx;
 
-    Matrix {
-        a: (a1 * cos) - (mat.b * sin),
-        b: (a1 * sin) + (mat.b * cos),
-        c: (c1 * cos) - (mat.d * sin),
-        d: (c1 * sin) + (mat.d * cos),
-        tx: (tx1 * cos) - (mat.ty * sin),
-        ty: (tx1 * sin) + (mat.ty * cos),
+        Matrix {
+            a: (a1 * cos) - (mat.b * sin),
+            b: (a1 * sin) + (mat.b * cos),
+            c: (c1 * cos) - (mat.d * sin),
+            d: (c1 * sin) + (mat.d * cos),
+            tx: (tx1 * cos) - (mat.ty * sin),
+            ty: (tx1 * sin) + (mat.ty * cos),
+        }
+    }
+      /**
+     * Translates the matrix on the x and y.
+     *
+     * @param x - How much to translate x by
+     * @param y - How much to translate y by
+     * @return This matrix. Good for chaining method calls.
+     */
+    pub fn translate(mat: &Matrix, x: f32, y: f32) -> Matrix
+    {
+        Matrix {
+            a: mat.a,
+            b: mat.b,
+            c: mat.c,
+            d: mat.d,
+            tx: mat.tx + x,
+            ty: mat.ty + y,
+        }
     }
 }

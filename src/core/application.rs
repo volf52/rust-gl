@@ -1,5 +1,6 @@
 use crate::display::display_object::DisplayObject;
 use crate::graphics::shape::Shape;
+use crate::math::Matrix;
 use web_sys::WebGl2RenderingContext;
 use wasm_bindgen::prelude::*;
 
@@ -40,7 +41,8 @@ impl Application {
         // TODO: calculate base projection mat
         let geoms = self.shapes.iter().map(|f| f.new());
         geoms.for_each(|f| {
-            DisplayObject::new(&self.ctx, &f).draw();
+            let mat = Matrix::rotate(&Matrix::new(), 0.4);
+            DisplayObject::new(&self.ctx, &f, mat).draw();
         })
     }
 }
