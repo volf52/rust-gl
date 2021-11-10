@@ -1,5 +1,4 @@
 mod geom;
-mod circle;
 pub mod quad;
 pub mod triangle;
 
