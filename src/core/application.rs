@@ -1,15 +1,21 @@
 use crate::display::display_object::DisplayObject;
-use crate::graphics::geom::Geom;
+use crate::graphics::shape::Shape;
 use web_sys::WebGl2RenderingContext;
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 pub struct Application {
     ctx: WebGl2RenderingContext,
-    shapes: Vec<Geom>,
+    shapes: Vec<Shape>,
+    dims: CanvasDimensions
 }
 
+pub struct CanvasDimensions {
+    pub width: f32,
+    pub height: f32
+}
 impl Application {
-    pub fn new(ctx: &WebGl2RenderingContext) -> Self {
-        let shapes = Vec::new();
+    pub fn new(ctx: &WebGl2RenderingContext, shapes: Vec<Shape>, dims: CanvasDimensions) -> Self {
         let ctx = ctx.clone();
         //initialize context need to happens once
         ctx.viewport(
@@ -25,17 +31,16 @@ impl Application {
         ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
-        Application { ctx, shapes }
+        Application { ctx, shapes, dims }
     }
-    pub fn add_shape(&mut self, g: Geom) {
+    pub fn add_shape(&mut self, g: Shape) {
         self.shapes.push(g);
     }
     pub fn render_all(&self) {
         // TODO: calculate base projection mat
-        for shape in self.shapes.iter() {
-            let display_object = DisplayObject::new(&self.ctx, &shape);
-            // TODO: pass base projection mat
-            display_object.draw();
-        }
+        let geoms = self.shapes.iter().map(|f| f.new());
+        geoms.for_each(|f| {
+            DisplayObject::new(&self.ctx, &f).draw();
+        })
     }
 }

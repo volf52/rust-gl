@@ -1,12 +1,20 @@
-use dyn_clonable::*;
+use crate::Geom;
 
-#[clonable]
-pub trait Shape: Clone {
-    fn vertex_count(&self) -> i32;
-    fn position(&self) -> Vec<f32>;
-    fn color(&self) -> Vec<f32>;
-    fn mode(&self) -> u32;
-    // return transformation mat
-    // calculate transformation mat
-    // set scale, rotation, translation, skew
+
+pub enum Shape {
+    Rectangle { width: f32, height: f32 },
+    Square {size: f32},
+    Triangle { size: f32 },
+}
+
+impl Shape {
+    pub fn new(&self) -> Geom {
+        match self {
+            Shape::Rectangle { width, height } => {
+                Geom::new_rectangle(width.clone(), height.clone())
+            }
+            Shape::Triangle { size } => Geom::new_triangle(size.clone()),
+            Shape::Square { size } => Geom::new_rectangle(size.clone(), size.clone())
+        }
+    }
 }

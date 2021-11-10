@@ -1,11 +1,14 @@
 mod core;
 mod display;
 mod graphics;
+mod math;
 mod shaders;
 mod utils;
 
+use crate::core::application::CanvasDimensions;
 use crate::core::application::Application;
 use crate::graphics::geom::Geom;
+use graphics::shape::Shape;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -42,6 +45,7 @@ pub fn test_error() {
 pub fn main() -> Result<(), JsValue> {
     let document = web_sys::window().unwrap().document().unwrap();
     let canvas = document.get_element_by_id("canvas").unwrap();
+
     let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
 
     let context = canvas
@@ -49,15 +53,19 @@ pub fn main() -> Result<(), JsValue> {
         .unwrap()
         .dyn_into::<WebGl2RenderingContext>()?;
 
-    let square = Geom::new_square(0.5);
-    let rectangle = Geom::new_rectangle(0.9, 0.6);
-    let triangle = Geom::new_triangle(0.6);
+    let dims = CanvasDimensions {
+        width: canvas.client_width() as f32,
+        height: canvas.client_height() as f32,
+    };
 
-    let mut application = Application::new(&context);
+    let rectangle = Shape::Rectangle {
+        width: 0.9,
+        height: 0.6,
+    };
+    let triangle = Shape::Triangle { size: 0.6 };
+    let square = Shape::Square { size: 0.5 };
 
-    application.add_shape(rectangle);
-    application.add_shape(triangle);
-    application.add_shape(square);
+    let application = Application::new(&context, vec![rectangle, triangle, square], dims);
 
     application.render_all();
 

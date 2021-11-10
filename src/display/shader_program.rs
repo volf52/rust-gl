@@ -44,9 +44,9 @@ impl ShaderProgram {
         }
     }
 
-    pub fn get_uniform_loc(&self, s: String) -> Option<WebGlUniformLocation> {
+    pub fn get_uniform_loc(&self, s: String) -> Option<&WebGlUniformLocation> {
         match self.u_locations.get(&s) {
-            Some(x) => Some(x.clone()),
+            Some(x) => Some(x),
             None => None,
         }
     }
