@@ -10,4 +10,5 @@ pub struct Geom {
     color: Vec<f32>,
     pub mode: u32,
     pub vertex_count: i32,
+    pub rotation: f32,
 }

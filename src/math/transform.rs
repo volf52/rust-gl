@@ -1,23 +1,23 @@
-use super::Matrix;
 use super::ipoint::Point;
+use super::Matrix;
 
 struct Transform {
     /** The world transformation matrix. */
     world_transform: Matrix,
     /** The local transformation matrix. */
     local_transform: Matrix,
-    
+
     /** The coordinate of the object relative to the local coordinates of the parent. */
     position: Point,
 
     /** The scale factor of the object. */
-    scale:  Point,
+    scale: Point,
 
     /** The pivot point of the displayObject that it rotates around. */
-    pivot:  Point,
+    pivot: Point,
 
     /** The skew amount, on the x and y axis. */
-    skew:  Point,
+    skew: Point,
 
     parent_id: i32,
 
@@ -60,4 +60,3 @@ struct Transform {
      */
     current_local_id: i32,
 }
-

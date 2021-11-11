@@ -5,10 +5,9 @@ mod math;
 mod shaders;
 mod utils;
 
-use crate::core::application::CanvasDimensions;
-use crate::core::application::Application;
-use crate::graphics::geom::Geom;
-use graphics::shape::Shape;
+use crate::core::application::{Application, CanvasDimensions};
+use crate::graphics::{quad::Rectangle, shape::Shape, triangle::Triangle};
+use std::cell::RefCell;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -59,16 +58,22 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let rectangle = Shape::Rectangle {
-        width: 0.9,
-        height: 0.6,
-    };
-    let triangle = Shape::Triangle { size: 0.6 };
-    let square = Shape::Square { size: 0.5 };
+    let rectangle = RefCell::new(Rectangle::new(0.9, 0.6));
+    let triangle = RefCell::new(Triangle::new(0.6));
+    // let square = Shape::Square { size: 0.5 };
 
-    let application = Application::new(&context, vec![rectangle, triangle, square], dims);
+    let mut app = Application::new(&context, dims);
 
-    application.render_all();
+    app.add_shape(&rectangle);
+    app.add_shape(&triangle);
+
+    // app.render_all();
+    // TODO: simulate timeout
+
+    rectangle.borrow_mut().rotate(0.4);
+    triangle.borrow_mut().rotate(0.1);
+
+    app.render_all();
 
     Ok(())
 }

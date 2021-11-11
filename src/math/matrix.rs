@@ -107,15 +107,14 @@ impl Matrix {
             ty: (tx1 * sin) + (mat.ty * cos),
         }
     }
-      /**
+    /**
      * Translates the matrix on the x and y.
      *
      * @param x - How much to translate x by
      * @param y - How much to translate y by
      * @return This matrix. Good for chaining method calls.
      */
-    pub fn translate(mat: &Matrix, x: f32, y: f32) -> Matrix
-    {
+    pub fn translate(mat: &Matrix, x: f32, y: f32) -> Matrix {
         Matrix {
             a: mat.a,
             b: mat.b,

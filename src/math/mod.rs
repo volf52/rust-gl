@@ -1,7 +1,7 @@
-mod matrix;
 mod ipoint;
-mod transform;
+mod matrix;
 mod shapes;
-pub use matrix::*;
+mod transform;
 pub use ipoint::*;
+pub use matrix::*;
 pub use transform::*;
