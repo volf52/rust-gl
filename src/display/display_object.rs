@@ -45,4 +45,5 @@ impl DisplayObject<'_> {
         self.ctx
             .uniform_matrix3fv_with_f32_array(matrix_loc, false, &self.proj_mat.to_array())
     }
+
 }

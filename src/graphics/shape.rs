@@ -1,6 +1,5 @@
 use crate::Geom;
 
-
 pub enum Shape {
     Rectangle { width: f32, height: f32 },
     Square { size: f32},

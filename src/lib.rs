@@ -5,10 +5,10 @@ mod math;
 mod shaders;
 mod utils;
 
-use crate::core::application::CanvasDimensions;
-use crate::core::application::Application;
+use crate::core::application::{Application,CanvasDimensions};
 use crate::graphics::geom::Geom;
 use graphics::shape::Shape;
+use math::Matrix;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -58,17 +58,12 @@ pub fn main() -> Result<(), JsValue> {
         width: canvas.client_width() as f32,
         height: canvas.client_height() as f32,
     };
+    
+    let triangle = Shape::Triangle { size: 300.0 };
 
-    let rectangle = Shape::Rectangle {
-        width: 0.9,
-        height: 0.6,
-    };
-    let triangle = Shape::Triangle { size: 0.6 };
-    let square = Shape::Square { size: 0.5 };
+    let application = Application::new(&context, dims);
 
-    let application = Application::new(&context, vec![rectangle, triangle, square], dims);
-
-    application.render_all();
+    application.draw_shape(&triangle, application.projection());
 
     Ok(())
 }

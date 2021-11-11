@@ -7,7 +7,6 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 pub struct Application {
     ctx: WebGl2RenderingContext,
-    shapes: Vec<Shape>,
     dims: CanvasDimensions
 }
 
@@ -15,8 +14,9 @@ pub struct CanvasDimensions {
     pub width: f32,
     pub height: f32
 }
+
 impl Application {
-    pub fn new(ctx: &WebGl2RenderingContext, shapes: Vec<Shape>, dims: CanvasDimensions) -> Self {
+    pub fn new(ctx: &WebGl2RenderingContext, dims: CanvasDimensions) -> Self {
         let ctx = ctx.clone();
         //initialize context need to happens once
         ctx.viewport(
@@ -32,17 +32,14 @@ impl Application {
         ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
-        Application { ctx, shapes, dims }
+        Application { ctx, dims }
     }
-    pub fn add_shape(&mut self, g: Shape) {
-        self.shapes.push(g);
+
+    pub fn draw_shape(&self, shape: &Shape, proj_mat: Matrix) {
+        DisplayObject::new(&self.ctx, &shape.new(), proj_mat).draw();
     }
-    pub fn render_all(&self) {
-        // TODO: calculate base projection mat
-        let geoms = self.shapes.iter().map(|f| f.new());
-        geoms.for_each(|f| {
-            let mat = Matrix::rotate(&Matrix::new(), 0.4);
-            DisplayObject::new(&self.ctx, &f, mat).draw();
-        })
+
+    pub fn projection(&self) -> Matrix {
+        return Matrix::projection(&self.dims.width, &self.dims.height);
     }
 }

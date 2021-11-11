@@ -48,6 +48,28 @@ impl Matrix {
             ty: 0.0,
         }
     }
+    /**
+     * Returns a projection matrix.
+     *
+     * @param {number} width - Width of the canvas.
+     * @param {number} y - Height of the canvas.
+     * @return {Matrix} This matrix.
+     */
+    pub fn projection(width: &f32, height: &f32) -> Matrix {
+        return Matrix {
+            a: 2.0 / width,
+            b: 0.0,
+            c: 0.0,
+            d: -2.0 / height,
+            tx: -1.0,
+            ty: 1.0,
+        };
+    }
+
+    pub fn transpose(mat: &Matrix) -> [f32; 9] {
+        [mat.a, mat.c, mat.tx, mat.b, mat.d, mat.ty, 0.0, 0.0, 1.0]
+    }
+
     pub fn from_array(arr: [f32; 6]) -> Matrix {
         Matrix {
             a: arr[0],
@@ -70,7 +92,7 @@ impl Matrix {
      *
      * @param {number} x - The amount to scale horizontally
      * @param {number} y - The amount to scale vertically
-     * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
+     * @return {Matrix} This matrix. Good for chaining method calls.
      */
 
     pub fn scale(mat: &Matrix, x: f32, y: f32) -> Matrix {
@@ -107,22 +129,47 @@ impl Matrix {
             ty: (tx1 * sin) + (mat.ty * cos),
         }
     }
-      /**
+    /**
      * Translates the matrix on the x and y.
      *
      * @param x - How much to translate x by
      * @param y - How much to translate y by
      * @return This matrix. Good for chaining method calls.
      */
-    pub fn translate(mat: &Matrix, x: f32, y: f32) -> Matrix
-    {
-        Matrix {
+    pub fn translate(mat: &Matrix, x: f32, y: f32) -> Matrix {
+        let mat_temp = Matrix {
             a: mat.a,
             b: mat.b,
             c: mat.c,
             d: mat.d,
             tx: mat.tx + x,
             ty: mat.ty + y,
+        };
+        Matrix::multiply(&mat, &mat_temp)
+    }
+
+    pub fn multiply(mat1: &Matrix, mat2: &Matrix) -> Matrix {
+        let a = mat1.to_array();
+        let b = Matrix::transpose(mat2);
+
+        Matrix {
+            a: Matrix::dot_product(&a[0..2], &b[0..2]).unwrap(),
+            b: Matrix::dot_product(&a[0..2], &b[3..5]).unwrap(),
+            c: Matrix::dot_product(&a[3..5], &b[0..2]).unwrap(),
+            d: Matrix::dot_product(&a[3..5], &b[3..5]).unwrap(),
+            tx: Matrix::dot_product(&a[0..2], &b[6..8]).unwrap(),
+            ty: Matrix::dot_product(&a[3..5], &b[6..8]).unwrap(),
         }
+    }
+
+    fn dot_product(a: &[f32], b: &[f32]) -> Option<f32> {
+        if a.len() != b.len() {
+            return None;
+        }
+        Some(
+            a.iter()
+                .zip(b.iter())
+                .fold(0.0, |sum, (el_a, el_b)| sum + el_a * el_b),
+        )
     }
 }
