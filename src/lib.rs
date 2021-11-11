@@ -8,6 +8,7 @@ mod utils;
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::{quad::Rectangle, shape::Shape, triangle::Triangle};
 use std::cell::RefCell;
+use std::rc::Rc;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -58,22 +59,25 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let rectangle = RefCell::new(Rectangle::new(0.9, 0.6));
-    let triangle = RefCell::new(Triangle::new(0.6));
+    let rectangle = Rc::new(RefCell::new(Rectangle::new(0.9, 0.6)));
     // let square = Shape::Square { size: 0.5 };
 
     let mut app = Application::new(&context, dims);
 
-    app.add_shape(&rectangle);
-    app.add_shape(&triangle);
+    app.add_shape(rectangle.clone());
+
+    {
+        let triangle = Rc::new(RefCell::new(Triangle::new(0.6)));
+        app.add_shape(triangle.clone());
+        triangle.borrow_mut().rotate(0.1);
+    }
+
+    app.render_all();
 
     // app.render_all();
     // TODO: simulate timeout
 
     rectangle.borrow_mut().rotate(0.4);
-    triangle.borrow_mut().rotate(0.1);
-
-    app.render_all();
 
     Ok(())
 }
