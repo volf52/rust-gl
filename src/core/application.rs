@@ -1,12 +1,14 @@
-use crate::display::display_object::DisplayObject;
-use crate::graphics::shape::Shape;
-use crate::utils::console_log;
-use std::rc::Rc;
-use wasm_bindgen::prelude::*;
-
-use crate::math::Matrix;
 use std::cell::RefCell;
+use std::ops::Deref;
+use std::rc::Rc;
+
+use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
+
+use crate::display::display_object::DisplayObject;
+use crate::graphics::{Geom, Shape};
+use crate::math::Matrix;
+use crate::utils::console_log;
 
 #[wasm_bindgen]
 extern "C" {
@@ -21,7 +23,7 @@ extern "C" {
 
 pub struct Application {
     ctx: WebGl2RenderingContext,
-    shapes: Vec<Rc<RefCell<dyn Shape>>>,
+    shapes: Vec<Rc<RefCell<Geom>>>,
     dims: CanvasDimensions,
 }
 
@@ -53,20 +55,19 @@ impl Application {
             dims,
         }
     }
-    pub fn add_shape(&mut self, g: Rc<RefCell<dyn Shape>>) {
-        self.shapes.push(g);
+
+    pub fn add_shape(&mut self, g: &dyn Shape) {
+        self.shapes.push(g.get_geom());
     }
+
     pub fn render_all(&mut self) {
         self.ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
         // self.gc();
 
-        let mat = &Matrix::new();
-        self.shapes.iter().for_each(|rc_shape| {
-            let count = Rc::strong_count(rc_shape);
-            let geom = rc_shape.borrow().get_geom();
-            DisplayObject::new(&self.ctx, &geom, mat).draw();
+        self.shapes.iter().for_each(|shape_geom| {
+            DisplayObject::new(&self.ctx, shape_geom.clone()).draw();
         });
     }
 

@@ -1,32 +1,25 @@
-use super::super::shape::Shape;
-use super::Geom;
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::math::Matrix;
+
+use crate::graphics::{Geom, Shape};
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
-#[wasm_bindgen]
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone)]
 pub struct Rectangle {
     width: f32,
     height: f32,
-    pub rotation: f32,
+
+    geom: Rc<RefCell<Geom>>,
 }
 
-#[wasm_bindgen]
 impl Rectangle {
     pub fn new(width: f32, height: f32) -> Self {
-        Rectangle {
-            width,
-            height,
-            rotation: 0.0,
-        }
-    }
-}
-
-impl Shape for Rectangle {
-    fn get_geom(&self) -> Geom {
-        let right = self.width / 2.0;
+        let right = width / 2.0;
         let left = -right;
-        let top = self.height / 2.0;
+        let top = height / 2.0;
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom, right, bottom].to_vec();
@@ -38,16 +31,30 @@ impl Shape for Rectangle {
         ]
         .to_vec();
 
-        Geom {
-            rotation: self.rotation,
+        let geom = Geom {
+            u_mat: Matrix::new(),
             vertices,
             color,
             vertex_count: 4,
             mode: WebGl2RenderingContext::TRIANGLE_STRIP,
-        }
+        };
+
+        let rect = Rectangle {
+            width,
+            height,
+            geom: Rc::new(RefCell::new(geom)),
+        };
+
+        rect
+    }
+}
+
+impl Shape for Rectangle {
+    fn get_geom(&self) -> Rc<RefCell<Geom>> {
+        self.geom.clone()
     }
 
-    fn rotate(&mut self, angle: f32) {
-        self.rotation = angle;
+    fn rotate(&self, angle: f32) {
+        self.geom.borrow_mut().rotate(angle);
     }
 }

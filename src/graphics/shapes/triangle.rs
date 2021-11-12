@@ -1,28 +1,20 @@
-use super::super::shape::Shape;
-use super::Geom;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
-#[wasm_bindgen]
+use crate::graphics::{Geom, Shape};
+use crate::math::Matrix;
+
 pub struct Triangle {
-    pub size: f32,
-    pub rotation: f32,
+    size: f32,
+    geom: Rc<RefCell<Geom>>,
 }
 
-#[wasm_bindgen]
 impl Triangle {
     pub fn new(size: f32) -> Self {
-        Triangle {
-            size,
-            rotation: 0.0,
-        }
-    }
-}
-
-impl Shape for Triangle {
-    fn get_geom(&self) -> Geom {
-        let right = self.size / 2.0;
+        let right = size / 2.0;
         let left = -right;
         let top = right;
         let bottom = -top;
@@ -35,16 +27,24 @@ impl Shape for Triangle {
         ]
         .to_vec();
 
-        Geom {
-            rotation: self.rotation,
+        let geom = Rc::new(RefCell::new(Geom {
+            u_mat: Matrix::new(),
             vertices,
             color,
             vertex_count: 3,
             mode: WebGl2RenderingContext::TRIANGLES,
-        }
+        }));
+
+        Triangle { size, geom }
+    }
+}
+
+impl Shape for Triangle {
+    fn get_geom(&self) -> Rc<RefCell<Geom>> {
+        self.geom.clone()
     }
 
-    fn rotate(&mut self, angle: f32) {
-        self.rotation = angle;
+    fn rotate(&self, angle: f32) {
+        self.geom.borrow_mut().rotate(angle);
     }
 }

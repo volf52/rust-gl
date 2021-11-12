@@ -1,18 +1,21 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use web_sys::WebGl2RenderingContext;
+
+use utils::{console_error, console_log};
+
+use crate::core::application::{Application, CanvasDimensions};
+use crate::graphics::shapes::{Rectangle, Shape, Triangle};
+
 mod core;
 mod display;
 mod graphics;
 mod math;
 mod shaders;
 mod utils;
-
-use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::{quad::Rectangle, shape::Shape, triangle::Triangle};
-use std::cell::RefCell;
-use std::rc::Rc;
-use utils::{console_error, console_log};
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-use web_sys::WebGl2RenderingContext;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -59,25 +62,20 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let rectangle = Rc::new(RefCell::new(Rectangle::new(0.9, 0.6)));
-    // let square = Shape::Square { size: 0.5 };
+    let rectangle = Rectangle::new(0.9, 0.6);
+    let triangle = Triangle::new(0.4);
 
     let mut app = Application::new(&context, dims);
 
-    app.add_shape(rectangle.clone());
+    app.add_shape(&rectangle);
+    app.add_shape(&triangle);
 
-    {
-        let triangle = Rc::new(RefCell::new(Triangle::new(0.6)));
-        app.add_shape(triangle.clone());
-        triangle.borrow_mut().rotate(0.1);
-    }
+    rectangle.rotate(0.7);
+    triangle.rotate(0.3);
 
-    app.render_all();
-
-    // app.render_all();
     // TODO: simulate timeout
 
-    rectangle.borrow_mut().rotate(0.4);
+    app.render_all();
 
     Ok(())
 }

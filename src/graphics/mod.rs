@@ -1,4 +1,5 @@
 pub mod geom;
-pub mod shape;
+pub mod shapes;
 
 pub use geom::*;
+pub use shapes::Shape;
