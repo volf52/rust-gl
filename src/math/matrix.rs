@@ -15,6 +15,7 @@
  * @param {number} [tx=0] - x translation
  * @param {number} [ty=0] - y translation
  */
+
 #[derive(Debug, Clone)]
 pub struct Matrix {
     /// Position (0, 0) in a 3x3 affine transformation matrix.
@@ -61,13 +62,19 @@ impl Matrix {
             b: 0.0,
             c: 0.0,
             d: -2.0 / height,
-            tx: -1.0,
-            ty: 1.0,
+            tx: 0.0,
+            ty: 0.0,
         };
     }
 
-    pub fn transpose(mat: &Matrix) -> [f32; 9] {
-        [mat.a, mat.c, mat.tx, mat.b, mat.d, mat.ty, 0.0, 0.0, 1.0]
+    pub fn project(&self, width: &f32, height: &f32) -> Matrix {
+        self.scale(2.0 / width, - 2.0 / height)
+    }
+
+    pub fn transpose(&self) -> [f32; 9] {
+        [
+            self.a, self.c, self.tx, self.b, self.d, self.ty, 0.0, 0.0, 1.0,
+        ]
     }
 
     pub fn from_array(arr: [f32; 6]) -> Matrix {
@@ -95,14 +102,14 @@ impl Matrix {
      * @return {Matrix} This matrix. Good for chaining method calls.
      */
 
-    pub fn scale(mat: &Matrix, x: f32, y: f32) -> Matrix {
+    pub fn scale(&self, x: f32, y: f32) -> Matrix {
         Matrix {
-            a: mat.a * x,
-            b: mat.b * y,
-            c: mat.c * x,
-            d: mat.d * y,
-            tx: mat.tx * x,
-            ty: mat.ty * y,
+            a: self.a * x,
+            b: self.b * y,
+            c: self.c * x,
+            d: self.d * y,
+            tx: self.tx * x,
+            ty: self.ty * y,
         }
     }
 
@@ -136,29 +143,39 @@ impl Matrix {
      * @param y - How much to translate y by
      * @return This matrix. Good for chaining method calls.
      */
-    pub fn translate(mat: &Matrix, x: f32, y: f32) -> Matrix {
-        let mat_temp = Matrix {
-            a: mat.a,
-            b: mat.b,
-            c: mat.c,
-            d: mat.d,
-            tx: mat.tx + x,
-            ty: mat.ty + y,
-        };
-        Matrix::multiply(&mat, &mat_temp)
+    pub fn translate(&self, x: f32, y: f32) -> Matrix {
+        Matrix {
+            a: self.a,
+            b: self.b,
+            c: self.c,
+            d: self.d,
+            tx: self.tx + x,
+            ty: self.ty + y,
+        }
+    }
+
+    pub fn translation(x: f32, y: f32) -> Matrix {
+        Matrix {
+            a: 1.0,
+            b: 0.0,
+            c: 0.0,
+            d: 1.0,
+            tx: x,
+            ty: y,
+        }
     }
 
     pub fn multiply(mat1: &Matrix, mat2: &Matrix) -> Matrix {
         let a = mat1.to_array();
-        let b = Matrix::transpose(mat2);
+        let b = mat2.transpose();
 
         Matrix {
-            a: Matrix::dot_product(&a[0..2], &b[0..2]).unwrap(),
-            b: Matrix::dot_product(&a[0..2], &b[3..5]).unwrap(),
-            c: Matrix::dot_product(&a[3..5], &b[0..2]).unwrap(),
-            d: Matrix::dot_product(&a[3..5], &b[3..5]).unwrap(),
-            tx: Matrix::dot_product(&a[0..2], &b[6..8]).unwrap(),
-            ty: Matrix::dot_product(&a[3..5], &b[6..8]).unwrap(),
+            a: Matrix::dot_product(&a[0..3], &b[0..3]).unwrap(),
+            b: Matrix::dot_product(&a[0..3], &b[3..6]).unwrap(),
+            c: Matrix::dot_product(&a[3..6], &b[0..3]).unwrap(),
+            d: Matrix::dot_product(&a[3..6], &b[3..6]).unwrap(),
+            tx: Matrix::dot_product(&a[6..9], &b[0..3]).unwrap(),
+            ty: Matrix::dot_product(&a[6..9], &b[3..6]).unwrap(),
         }
     }
 

@@ -33,8 +33,8 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn hey() {
-    console_log!("testing console log");
+pub fn hey(mat : Vec<f32>) {
+    console_log!("{:#?}", mat);
 }
 
 #[wasm_bindgen]
@@ -58,12 +58,12 @@ pub fn main() -> Result<(), JsValue> {
         width: canvas.client_width() as f32,
         height: canvas.client_height() as f32,
     };
-    
-    let triangle = Shape::Triangle { size: 300.0 };
 
     let application = Application::new(&context, dims);
+    let triangle = Shape::Triangle { size: 200.0 };
+    let transform = Matrix::new().translate(100.0, 100.0);
 
-    application.draw_shape(&triangle, application.projection());
+    application.draw_shape(&triangle, transform);
 
     Ok(())
 }

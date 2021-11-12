@@ -1,18 +1,18 @@
 use crate::display::display_object::DisplayObject;
 use crate::graphics::shape::Shape;
 use crate::math::Matrix;
-use web_sys::WebGl2RenderingContext;
 use wasm_bindgen::prelude::*;
+use web_sys::WebGl2RenderingContext;
 
 #[wasm_bindgen]
 pub struct Application {
     ctx: WebGl2RenderingContext,
-    dims: CanvasDimensions
+    dims: CanvasDimensions,
 }
 
 pub struct CanvasDimensions {
     pub width: f32,
-    pub height: f32
+    pub height: f32,
 }
 
 impl Application {
@@ -36,10 +36,15 @@ impl Application {
     }
 
     pub fn draw_shape(&self, shape: &Shape, proj_mat: Matrix) {
-        DisplayObject::new(&self.ctx, &shape.new(), proj_mat).draw();
+        DisplayObject::new(
+            &self.ctx,
+            &shape.new(),
+            proj_mat.project(&self.dims.width, &self.dims.height),
+        )
+        .draw();
     }
 
-    pub fn projection(&self) -> Matrix {
-        return Matrix::projection(&self.dims.width, &self.dims.height);
+    pub fn projection(&self, mat: &Matrix) -> Matrix {
+        mat.project(&self.dims.width, &self.dims.height)
     }
 }
