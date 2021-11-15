@@ -61,7 +61,6 @@ pub fn main() -> Result<(), JsValue> {
 
     let red = vec![1.0, 0.0, 0.0];
 
-
     let application = Application::new(&context, dims);
 
     let triangle = Shape::Triangle { size:150.0 , color: red.clone()};

@@ -18,8 +18,6 @@ impl Geom {
                 ])
                 .collect()
         });
-
-        hey(vertices.clone());
         
         let color = color_unit
             .iter()
