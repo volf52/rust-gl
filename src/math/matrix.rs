@@ -68,7 +68,7 @@ impl Matrix {
     }
 
     pub fn project(&self, width: &f32, height: &f32) -> Matrix {
-        self.scale(2.0 / width, - 2.0 / height)
+        self.scale(2.0 / width, -2.0 / height)
     }
 
     pub fn transpose(&self) -> [f32; 9] {
@@ -119,21 +119,21 @@ impl Matrix {
      * @param {number} angle - The angle in radians.
      * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
      */
-    pub fn rotate(mat: &Matrix, angle: f32) -> Matrix {
+    pub fn rotate(&self, angle: &f32) -> Matrix {
         let sin = angle.sin();
         let cos = angle.cos();
 
-        let a1 = mat.a;
-        let c1 = mat.c;
-        let tx1 = mat.tx;
+        let a1 = self.a;
+        let c1 = self.c;
+        let tx1 = self.tx;
 
         Matrix {
-            a: (a1 * cos) - (mat.b * sin),
-            b: (a1 * sin) + (mat.b * cos),
-            c: (c1 * cos) - (mat.d * sin),
-            d: (c1 * sin) + (mat.d * cos),
-            tx: (tx1 * cos) - (mat.ty * sin),
-            ty: (tx1 * sin) + (mat.ty * cos),
+            a: (a1 * cos) - (self.b * sin),
+            b: (a1 * sin) + (self.b * cos),
+            c: (c1 * cos) - (self.d * sin),
+            d: (c1 * sin) + (self.d * cos),
+            tx: (tx1 * cos) - (self.ty * sin),
+            ty: (tx1 * sin) + (self.ty * cos),
         }
     }
     /**
@@ -143,7 +143,7 @@ impl Matrix {
      * @param y - How much to translate y by
      * @return This matrix. Good for chaining method calls.
      */
-    pub fn translate(&self, x: f32, y: f32) -> Matrix {
+    pub fn translate(&self, x: &f32, y: &f32) -> Matrix {
         Matrix {
             a: self.a,
             b: self.b,
@@ -180,13 +180,12 @@ impl Matrix {
     }
 
     fn dot_product(a: &[f32], b: &[f32]) -> Option<f32> {
-        if a.len() != b.len() {
-            return None;
-        }
-        Some(
-            a.iter()
+        match (a.len(), b.len()) {
+            t if t.0 != t.1 => None,
+            _ => Some(a
+                .iter()
                 .zip(b.iter())
-                .fold(0.0, |sum, (el_a, el_b)| sum + el_a * el_b),
-        )
+                .fold(0.0, |sum, (el_a, el_b)| sum + el_a * el_b))
+        }
     }
 }

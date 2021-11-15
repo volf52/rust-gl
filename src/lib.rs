@@ -60,10 +60,14 @@ pub fn main() -> Result<(), JsValue> {
     };
 
     let application = Application::new(&context, dims);
-    let triangle = Shape::Triangle { size: 200.0 };
-    let transform = Matrix::new().translate(100.0, 100.0);
+
+    let triangle = Shape::Triangle { size:150.0 };
+    let circle = Shape::Ellipse { width: 100.0, height: 200.0 };
+
+    let transform = Matrix::new().translate(&200.0, &100.0);
 
     application.draw_shape(&triangle, transform);
+    application.draw_shape(&circle, Matrix::new());
 
     Ok(())
 }

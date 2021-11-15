@@ -1,6 +1,7 @@
 mod geom;
 pub mod quad;
 pub mod triangle;
+pub mod ellipse;
 
 use wasm_bindgen::prelude::*;
 
