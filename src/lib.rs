@@ -59,15 +59,21 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
+    let red = vec![1.0, 0.0, 0.0];
+
+
     let application = Application::new(&context, dims);
 
     let triangle = Shape::Triangle { size:150.0 };
-    let circle = Shape::Ellipse { width: 100.0, height: 200.0 };
+    let circle = Shape::Circle { radius: 100.0, color: red.clone()};
+    let polygon = Shape::RegularPolygon { radius: 70.0, sides: 7, color: red.clone()};
 
     let transform = Matrix::new().translate(&200.0, &100.0);
+    let transform_poly = Matrix::new().translate(&-150.0, &-170.0);
 
     application.draw_shape(&triangle, transform);
     application.draw_shape(&circle, Matrix::new());
+    application.draw_shape(&polygon, transform_poly);
 
     Ok(())
 }
