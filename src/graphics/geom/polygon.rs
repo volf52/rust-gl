@@ -20,6 +20,7 @@ impl Geom {
         });
 
         hey(vertices.clone());
+        
         let color = color_unit
             .iter()
             .cycle()

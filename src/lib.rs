@@ -64,7 +64,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let application = Application::new(&context, dims);
 
-    let triangle = Shape::Triangle { size:150.0 };
+    let triangle = Shape::Triangle { size:150.0 , color: red.clone()};
     let circle = Shape::Circle { radius: 100.0, color: red.clone()};
     let polygon = Shape::RegularPolygon { radius: 70.0, sides: 7, color: red.clone()};
 
