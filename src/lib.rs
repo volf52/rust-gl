@@ -5,9 +5,9 @@ mod math;
 mod shaders;
 mod utils;
 
-use crate::core::application::{Application,CanvasDimensions};
+use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::geom::Geom;
-use graphics::shape::Shape;
+use crate::graphics::geom::{ellipse::Circle, polygon::RegularPolygon, triangle::Triangle};
 use math::Matrix;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
@@ -33,7 +33,7 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn hey(mat : Vec<f32>) {
+pub fn hey(mat: Vec<f32>) {
     console_log!("{:#?}", mat);
 }
 
@@ -59,20 +59,31 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let red = vec![1.0, 0.0, 0.0];
-
     let application = Application::new(&context, dims);
 
-    let triangle = Shape::Triangle { size:150.0 , color: red.clone()};
-    let circle = Shape::Circle { radius: 100.0, color: red.clone()};
-    let polygon = Shape::RegularPolygon { radius: 70.0, sides: 7, color: red.clone()};
+    let red = vec![1.0, 0.0, 0.0];
 
-    let transform = Matrix::new().translate(&200.0, &100.0);
-    let transform_poly = Matrix::new().translate(&-150.0, &-170.0);
+    let triangle = Triangle {
+        size: 150.0,
+        color: red.clone(),
+    };
+    let circle = Circle {
+        radius: 100.0,
+        color: red.clone(),
+    };
+    let polygon = RegularPolygon {
+        radius: 70.0,
+        sides: 7,
+        color: red.clone(),
+    };
+
+    let mat = Matrix::new();
+    let transform = mat.translate(&200.0, &100.0);
+    let transform_poly = mat.translate(&-150.0, &-170.0);
 
     application.draw_shape(&triangle, transform);
-    application.draw_shape(&circle, Matrix::new());
     application.draw_shape(&polygon, transform_poly);
+    application.draw_shape(&circle, mat);
 
     Ok(())
 }

@@ -1,20 +1,32 @@
+use crate::graphics::shape::Drawing;
+
 use super::Geom;
-use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
-#[wasm_bindgen]
-impl Geom {
-    pub fn new_rectangle(width: f32, height: f32, color_unit: Vec<f32>) -> Self {
-        let right = width / 2.0;
+pub struct Rectangle {
+    width: f32,
+    height: f32,
+    color: Vec<f32>,
+}
+
+pub struct Square {
+    size: f32,
+    color: Vec<f32>,
+}
+
+impl Drawing for Rectangle {
+    fn draw_shape(&self) -> Geom {
+        let right = self.width / 2.0;
         let left = -right;
-        let top = height / 2.0;
+        let top = self.height / 2.0;
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom, right, bottom].to_vec();
-        let color = color_unit
+        let color = self
+            .color
             .iter()
             .cycle()
-            .take(color_unit.len() * 4)
+            .take(self.color.len() * 4)
             .map(|f| f.clone())
             .collect();
 
@@ -27,3 +39,8 @@ impl Geom {
     }
 }
 
+impl Drawing for Square {
+    fn draw_shape(&self) -> Geom {
+        Rectangle{ width: self.size, height: self.size, color: self.color.clone()}.draw_shape()
+    }
+}

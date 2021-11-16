@@ -39,7 +39,7 @@ pub struct Matrix {
 }
 
 impl Matrix {
-    pub fn new() -> Matrix {
+    pub fn new() -> Self {
         Matrix {
             a: 1.0,
             b: 0.0,

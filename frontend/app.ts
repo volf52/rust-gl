@@ -1,4 +1,4 @@
-import { test_error, main as RGL } from "rust-gl";
+import { test_error, main as RGL, Application } from "rust-gl";
 // import { getGlContext } from "./utils";
 
 const CANVAS_ID = "canvas";
@@ -14,4 +14,6 @@ const CANVAS_ID = "canvas";
 // };
 
 // test_error();
+
 RGL();
+

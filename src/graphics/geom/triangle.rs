@@ -1,22 +1,26 @@
 use super::Geom;
-
-use wasm_bindgen::prelude::*;
+use crate::graphics::shape::Drawing;
 use web_sys::WebGl2RenderingContext;
 
-#[wasm_bindgen]
-impl Geom {
-    pub fn new_triangle(size: f32, color_unit: Vec<f32>) -> Self {
-        let right = size / 2.0;
+pub struct Triangle {
+    pub size: f32,
+    pub color: Vec<f32>,
+}
+
+impl Drawing for Triangle {
+    fn draw_shape(&self) -> Geom {
+        let right = self.size / 2.0;
         let left = -right;
-        let top = size / 2.0;
+        let top = self.size / 2.0;
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom].to_vec();
-        
-        let color = color_unit
+
+        let color = self
+            .color
             .iter()
             .cycle()
-            .take(color_unit.len() * 3)
+            .take(self.color.len() * 3)
             .map(|f| f.clone())
             .collect();
 
