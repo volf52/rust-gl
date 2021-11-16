@@ -1,6 +1,6 @@
-use crate::graphics::shape::Drawing;
+use crate::graphics::shape::{Drawing, calc_n_vertices, color_n_vertices};
 use super::Geom;
-use std::{cmp, f32::consts::PI};
+use std::cmp;
 use web_sys::WebGl2RenderingContext;
 pub struct RegularPolygon {
     pub radius: f32,
@@ -11,24 +11,9 @@ pub struct RegularPolygon {
 impl Drawing for RegularPolygon {
     fn draw_shape(&self) -> Geom {
         let no_sides = cmp::max(3, self.sides);
-        let delta = (PI * 2.0) / self.sides as f32;
 
-        let vertices = (0..no_sides).fold(vec![], |acc, x| {
-            acc.iter()
-                .copied()
-                .chain([
-                    self.radius * (delta * x as f32).cos(),
-                    self.radius * (delta * x as f32).sin(),
-                ])
-                .collect()
-        });
-
-        let color = self.color
-            .iter()
-            .cycle()
-            .take(self.color.len() * no_sides)
-            .map(|f| f.clone())
-            .collect();
+        let vertices = calc_n_vertices(&self.radius, &self.radius, no_sides as u32);
+        let color = color_n_vertices(&self.color, no_sides.clone() as usize);
 
         Geom {
             vertices,

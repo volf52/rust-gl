@@ -7,7 +7,7 @@ mod utils;
 
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::geom::Geom;
-use crate::graphics::geom::{ellipse::Circle, polygon::RegularPolygon, triangle::Triangle};
+use crate::graphics::geom::{ellipse::Ellipse, polygon::RegularPolygon, triangle::Triangle};
 use math::Matrix;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
@@ -60,17 +60,19 @@ pub fn main() -> Result<(), JsValue> {
     };
 
     let application = Application::new(&context, dims);
-
     let red = vec![1.0, 0.0, 0.0];
 
     let triangle = Triangle {
         size: 150.0,
         color: red.clone(),
     };
-    let circle = Circle {
-        radius: 100.0,
+
+    let ellipse = Ellipse {
+        width: 100.0,
+        height: 150.0,
         color: red.clone(),
     };
+
     let polygon = RegularPolygon {
         radius: 70.0,
         sides: 7,
@@ -83,7 +85,7 @@ pub fn main() -> Result<(), JsValue> {
 
     application.draw_shape(&triangle, transform);
     application.draw_shape(&polygon, transform_poly);
-    application.draw_shape(&circle, mat);
+    application.draw_shape(&ellipse, mat);
 
     Ok(())
 }
