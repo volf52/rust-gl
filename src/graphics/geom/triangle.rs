@@ -1,5 +1,5 @@
 use super::Geom;
-use crate::graphics::shape::Drawing;
+use crate::graphics::shape::{Drawing, color_n_vertices};
 use web_sys::WebGl2RenderingContext;
 
 pub struct Triangle {
@@ -15,14 +15,7 @@ impl Drawing for Triangle {
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom].to_vec();
-
-        let color = self
-            .color
-            .iter()
-            .cycle()
-            .take(self.color.len() * 3)
-            .map(|f| f.clone())
-            .collect();
+        let color = color_n_vertices(&self.color, 3);
 
         Geom {
             vertices,

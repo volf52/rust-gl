@@ -7,7 +7,7 @@ mod utils;
 
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::geom::Geom;
-use crate::graphics::geom::{ellipse::Ellipse, polygon::RegularPolygon, triangle::Triangle};
+use crate::graphics::geom::{ellipse::Ellipse, polygon::IrregularPolygon, triangle::Triangle};
 use math::Matrix;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
@@ -73,9 +73,10 @@ pub fn main() -> Result<(), JsValue> {
         color: red.clone(),
     };
 
-    let polygon = RegularPolygon {
-        radius: 70.0,
-        sides: 7,
+    let polygon = IrregularPolygon {
+        width: 120.0,
+        height: 70.0,
+        sides: 4,
         color: red.clone(),
     };
 

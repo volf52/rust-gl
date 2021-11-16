@@ -1,4 +1,4 @@
-use crate::graphics::shape::Drawing;
+use crate::graphics::shape::{Drawing, color_n_vertices};
 
 use super::Geom;
 use web_sys::WebGl2RenderingContext;
@@ -22,13 +22,7 @@ impl Drawing for Rectangle {
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom, right, bottom].to_vec();
-        let color = self
-            .color
-            .iter()
-            .cycle()
-            .take(self.color.len() * 4)
-            .map(|f| f.clone())
-            .collect();
+        let color = color_n_vertices(&self.color, 4);
 
         Geom {
             vertices,
