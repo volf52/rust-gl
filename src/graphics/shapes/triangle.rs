@@ -1,14 +1,13 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
 use crate::math::Matrix;
 
 pub struct Triangle {
-    size: f32,
+    pub size: f32,
     geom: Rc<RefCell<Geom>>,
 }
 

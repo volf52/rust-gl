@@ -1,5 +1,4 @@
 use std::cell::RefCell;
-use std::ops::Deref;
 use std::rc::Rc;
 
 use wasm_bindgen::prelude::*;
@@ -7,8 +6,6 @@ use web_sys::WebGl2RenderingContext;
 
 use crate::display::display_object::DisplayObject;
 use crate::graphics::{Geom, Shape};
-use crate::math::Matrix;
-use crate::utils::console_log;
 
 #[wasm_bindgen]
 extern "C" {
@@ -55,8 +52,8 @@ impl Application {
         }
     }
 
-    pub fn add_shape(&mut self, g: &dyn Shape) {
-        self.shapes.push(g.get_geom());
+    pub fn add_shape<T: Shape>(&mut self, shape: &T) {
+        self.shapes.push(shape.get_geom());
     }
 
     pub fn render_all(&mut self) {

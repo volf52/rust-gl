@@ -4,7 +4,6 @@ use std::rc::Rc;
 use crate::math::Matrix;
 
 use crate::graphics::{Geom, Shape};
-use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
 #[derive(Clone)]

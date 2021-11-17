@@ -1,5 +1,4 @@
-use std::cell::{Ref, RefCell};
-use std::ops::Deref;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use web_sys::WebGl2RenderingContext;
@@ -29,12 +28,12 @@ impl DisplayObject {
 
         self.attribs.set_attributes(&gl_program);
         let geom = self.geom.borrow();
-        self.set_u_matrix(&gl_program, &geom.u_mat);
+        self.set_model_matrix(&gl_program, &geom.u_mat);
         self.ctx.draw_arrays(geom.mode, 0, geom.vertex_count);
     }
 
-    pub fn set_u_matrix(&self, program: &ShaderProgram, mat: &Matrix) {
-        let matrix_loc = program.get_uniform_loc(ShaderConstant::UProjectionMatrix.to_string());
+    pub fn set_model_matrix(&self, program: &ShaderProgram, mat: &Matrix) {
+        let matrix_loc = program.get_uniform_loc(ShaderConstant::UModel.to_string());
 
         self.ctx
             .uniform_matrix3fv_with_f32_array(matrix_loc, false, &mat.to_array())
