@@ -10,7 +10,7 @@ pub enum ShaderConstant {
     UProjectionMatrix,
     UModel,
     VColor,
-    USampler,
+    USampler
 }
 
 pub const ATTRIBUTES: [ShaderConstant; 2] = [APosition, AColor];
