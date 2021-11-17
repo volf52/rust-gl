@@ -7,6 +7,7 @@ mod utils;
 
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::geom::Geom;
+use crate::graphics::geom::polygon::RegularPolygon;
 use crate::graphics::geom::{ellipse::Ellipse, polygon::IrregularPolygon, triangle::Triangle};
 use math::Matrix;
 use utils::{console_error, console_log};
@@ -62,7 +63,7 @@ pub fn main() -> Result<(), JsValue> {
     let application = Application::new(&context, dims);
     let red = vec![1.0, 0.0, 0.0];
 
-    let triangle = Triangle {
+    let triangle = Triangle {       //starting point (x,y)
         size: 150.0,
         color: red.clone(),
     };
@@ -80,13 +81,17 @@ pub fn main() -> Result<(), JsValue> {
         color: red.clone(),
     };
 
-    let mat = Matrix::new();
-    let transform = mat.translate(&200.0, &100.0);
-    let transform_poly = mat.translate(&-150.0, &-170.0);
+    let polygon2 = RegularPolygon {
+        radius: 70.0,
+        sides: 7,
+        color: red.clone(),
+    };
 
-    application.draw_shape(&triangle, transform);
-    application.draw_shape(&polygon, transform_poly);
-    application.draw_shape(&ellipse, mat);
+
+
+    application.draw_shape(&triangle, 80.0 , 100.0);
+    application.draw_shape(&polygon2, 200.0, 100.0);
+    // application.draw_shape(&ellipse, &mat);
 
     Ok(())
 }

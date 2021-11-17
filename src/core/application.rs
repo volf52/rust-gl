@@ -1,5 +1,5 @@
 use crate::display::display_object::DisplayObject;
-use crate::graphics::shape::{Drawing};
+use crate::graphics::shape::Drawing;
 use crate::math::Matrix;
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
@@ -31,18 +31,23 @@ impl Application {
         ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
+
         Application { ctx, dims }
     }
 
-    pub fn draw_shape<T: Drawing>(&self, shape: &T, proj_mat: Matrix) {
+    pub fn draw_shape<T: Drawing>(&self, shape: &T, x: f32, y: f32) {
+        let proj_mat =
+            Matrix::new().translate(&(-self.dims.width / 2.0), &(-self.dims.height / 2.0));
         DisplayObject::new(
             &self.ctx,
             &shape.draw_shape(),
-            proj_mat.project(&self.dims.width, &self.dims.height),
+            proj_mat
+                .translate(&x, &y)
+                .project(&self.dims.width, &self.dims.height),
         )
         .draw();
     }
-    
+
     pub fn projection(&self, mat: &Matrix) -> Matrix {
         mat.project(&self.dims.width, &self.dims.height)
     }

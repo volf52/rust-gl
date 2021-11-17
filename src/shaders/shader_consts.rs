@@ -9,12 +9,12 @@ pub enum ShaderConstant {
     AColor,
     UProjectionMatrix,
     VColor,
-    USampler,
+    USampler
 }
 
 pub const ATTRIBUTES: [ShaderConstant; 2] = [APosition, AColor];
 pub const UNIFORMS: [ShaderConstant; 1] = [UProjectionMatrix];
-// pub const UNIFORMS: [ShaderConstant; 0] = [];
+// pub const CONSTS: [ShaderConstant; 1] = [];
 
 impl Display for ShaderConstant {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
