@@ -2,6 +2,7 @@ use crate::display::shader_program::ShaderProgram;
 use crate::graphics::geom::Geom;
 use crate::shaders::ShaderConstant;
 use crate::utils::gl_utils::{bind_f32_buffer_data, bind_u8_buffer_data, create_array_buffer};
+use std::cell::Ref;
 use web_sys::{WebGl2RenderingContext, WebGlBuffer};
 
 #[derive(Debug, Clone)]
@@ -56,9 +57,9 @@ pub struct Attribs {
 }
 
 impl Attribs {
-    pub fn new(ctx: &WebGl2RenderingContext, g: &Geom) -> Self {
-        let position = Attrib::from_f32(ctx, &g.position(), 2);
-        let color = Attrib::from_f32(ctx, &g.color(), 3);
+    pub fn new(ctx: &WebGl2RenderingContext, g: Ref<Geom>) -> Self {
+        let position = Attrib::from_f32(ctx, &g.vertices, 2);
+        let color = Attrib::from_f32(ctx, &g.color, 3);
 
         ctx.bind_buffer(WebGl2RenderingContext::ARRAY_BUFFER, None);
 

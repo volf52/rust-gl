@@ -16,9 +16,10 @@ impl Shader for ShapeShader {
     fn compile(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShader) {
         let vs_src = format!(
             shader_utils::DEFAULT_VS!(),
-            a_postition = ShaderConstant::APosition.to_string(),
+            a_position = ShaderConstant::APosition.to_string(),
             a_color = ShaderConstant::AColor.to_string(),
-            v_color = ShaderConstant::VColor.to_string()
+            v_color = ShaderConstant::VColor.to_string(),
+            u_projection_matrix = ShaderConstant::UProjectionMatrix.to_string()
         );
         let fs_src = format!(
             shader_utils::DEFAULT_FS!(),
