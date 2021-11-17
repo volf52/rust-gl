@@ -5,7 +5,7 @@
   "author": "Arslan <rslnkrmt2552@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server --mode development --port 9013 --open",
+    "dev": "webpack-dev-server --mode development --port 9013",
     "build": "webpack --mode production"
   },
   "dependencies": {

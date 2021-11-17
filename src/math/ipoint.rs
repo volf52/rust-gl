@@ -1,10 +1,10 @@
 #[derive(Copy, Clone)]
 struct IPointData {
     x: f64,
-    y: f64
+    y: f64,
 }
 pub struct Point {
-    point : IPointData
+    point: IPointData,
 }
 
 trait PointOperations {
@@ -21,6 +21,8 @@ impl PointOperations for Point {
         return (p.x == self.point.x) && (p.y == self.point.y);
     }
     fn clone(p: &Point) -> Point {
-        return Point{point: p.point.clone()};
+        return Point {
+            point: p.point.clone(),
+        };
     }
 }

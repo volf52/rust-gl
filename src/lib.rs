@@ -1,18 +1,21 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use web_sys::WebGl2RenderingContext;
+
+use utils::{console_error, console_log};
+
+use crate::core::application::{Application, CanvasDimensions};
+use crate::graphics::shapes::{Rectangle, Shape, Triangle};
+
 mod core;
 mod display;
 mod graphics;
 mod math;
 mod shaders;
 mod utils;
-
-use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::geom::Geom;
-use crate::graphics::geom::{ellipse::Ellipse, polygon::IrregularPolygon, triangle::Triangle};
-use math::Matrix;
-use utils::{console_error, console_log};
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-use web_sys::WebGl2RenderingContext;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -59,34 +62,20 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let application = Application::new(&context, dims);
-    let red = vec![1.0, 0.0, 0.0];
+    let rectangle = Rectangle::new(0.9, 0.6);
+    let triangle = Triangle::new(0.4);
 
-    let triangle = Triangle {
-        size: 150.0,
-        color: red.clone(),
-    };
+    let mut app = Application::new(&context, dims);
 
-    let ellipse = Ellipse {
-        width: 100.0,
-        height: 150.0,
-        color: red.clone(),
-    };
+    app.add_shape(&rectangle);
+    app.add_shape(&triangle);
 
-    let polygon = IrregularPolygon {
-        width: 120.0,
-        height: 70.0,
-        sides: 4,
-        color: red.clone(),
-    };
+    rectangle.rotate(0.7);
+    triangle.rotate(0.3);
 
-    let mat = Matrix::new();
-    let transform = mat.translate(&200.0, &100.0);
-    let transform_poly = mat.translate(&-150.0, &-170.0);
+    // TODO: simulate timeout
 
-    application.draw_shape(&triangle, transform);
-    application.draw_shape(&polygon, transform_poly);
-    application.draw_shape(&ellipse, mat);
+    app.render_all();
 
     Ok(())
 }

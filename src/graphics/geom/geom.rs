@@ -1,11 +1,15 @@
-use super::Geom;
+use crate::math::Matrix;
+
+pub struct Geom {
+    pub vertices: Vec<f32>,
+    pub color: Vec<f32>,
+    pub u_mat: Matrix,
+    pub mode: u32,
+    pub vertex_count: i32,
+}
 
 impl Geom {
-    pub fn position(&self) -> Vec<f32> {
-        self.vertices.clone()
-    }
-
-    pub fn color(&self) -> Vec<f32> {
-        self.color.clone()
+    pub fn rotate(&mut self, angle: f32) {
+        self.u_mat = Matrix::rotate(&self.u_mat, angle);
     }
 }

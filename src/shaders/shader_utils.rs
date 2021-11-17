@@ -4,7 +4,6 @@ pub trait Shader {
     fn compile(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShader);
 }
 
-
 macro_rules! DEFAULT_VS {
     () => {
         "attribute vec2 {a_position};

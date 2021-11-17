@@ -1,12 +1,29 @@
-use crate::display::display_object::DisplayObject;
-use crate::graphics::shape::{Drawing};
-use crate::math::Matrix;
+use std::cell::RefCell;
+use std::ops::Deref;
+use std::rc::Rc;
+
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
+use crate::display::display_object::DisplayObject;
+use crate::graphics::{Geom, Shape};
+use crate::math::Matrix;
+use crate::utils::console_log;
+
 #[wasm_bindgen]
+extern "C" {
+    fn alert(s: &str);
+
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+
+    #[wasm_bindgen(js_namespace = console)]
+    fn error(s: &str);
+}
+
 pub struct Application {
     ctx: WebGl2RenderingContext,
+    shapes: Vec<Rc<RefCell<Geom>>>,
     dims: CanvasDimensions,
 }
 pub struct CanvasDimensions {
@@ -31,19 +48,38 @@ impl Application {
         ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
-        Application { ctx, dims }
+        Application {
+            ctx,
+            shapes: Vec::new(),
+            dims,
+        }
     }
 
-    pub fn draw_shape<T: Drawing>(&self, shape: &T, proj_mat: Matrix) {
-        DisplayObject::new(
-            &self.ctx,
-            &shape.draw_shape(),
-            proj_mat.project(&self.dims.width, &self.dims.height),
-        )
-        .draw();
+    pub fn add_shape(&mut self, g: &dyn Shape) {
+        self.shapes.push(g.get_geom());
     }
-    
-    pub fn projection(&self, mat: &Matrix) -> Matrix {
-        mat.project(&self.dims.width, &self.dims.height)
+
+    pub fn render_all(&mut self) {
+        self.ctx.clear(
+            WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
+        );
+        // self.gc();
+
+        self.shapes.iter().for_each(|shape_geom| {
+            DisplayObject::new(&self.ctx, shape_geom.clone()).draw();
+        });
+    }
+
+    pub fn total_shapes(&self) -> usize {
+        self.shapes.len()
+    }
+
+    pub fn gc(&mut self) {
+        self.shapes = self
+            .shapes
+            .iter()
+            .filter(|rc_shape| Rc::strong_count(rc_shape) > 1)
+            .cloned()
+            .collect();
     }
 }

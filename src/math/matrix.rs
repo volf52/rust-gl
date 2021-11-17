@@ -182,10 +182,11 @@ impl Matrix {
     fn dot_product(a: &[f32], b: &[f32]) -> Option<f32> {
         match (a.len(), b.len()) {
             t if t.0 != t.1 => None,
-            _ => Some(a
-                .iter()
-                .zip(b.iter())
-                .fold(0.0, |sum, (el_a, el_b)| sum + el_a * el_b))
+            _ => Some(
+                a.iter()
+                    .zip(b.iter())
+                    .fold(0.0, |sum, (el_a, el_b)| sum + el_a * el_b),
+            ),
         }
     }
 }
