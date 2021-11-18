@@ -82,10 +82,8 @@ pub fn main() -> Result<(), JsValue> {
     app.add_shape(&rectangle);
     app.add_shape(&triangle);
 
-    ellipse.rotate(0.4);
-    rectangle.rotate(0.7);
-    triangle.rotate(0.3);
-    irregular_p.rotate(-0.3);
+    rectangle.rotate_deg(75.0);
+    triangle.rotate(1.0);
 
     // TODO: simulate timeout
 
