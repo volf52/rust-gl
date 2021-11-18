@@ -52,8 +52,4 @@ impl Shape for Rectangle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
-
-    fn rotate(&self, angle: f32) {
-        self.geom.borrow_mut().rotate(angle);
-    }
 }

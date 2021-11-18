@@ -53,7 +53,7 @@ impl Application {
         }
     }
 
-    pub fn add_shape<T: Shape>(&mut self, shape: &T) {
+    pub fn add_shape(&mut self, shape: &impl Shape) {
         self.shapes.push(shape.get_geom());
     }
 

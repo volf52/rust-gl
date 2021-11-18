@@ -43,10 +43,6 @@ impl Shape for Ellipse {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
-
-    fn rotate(&self, angle: f32) {
-        self.geom.borrow_mut().rotate(angle);
-    }
 }
 
 impl Circle {
@@ -71,35 +67,4 @@ impl Shape for Circle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
-
-    fn rotate(&self, angle: f32) {
-        self.geom.borrow_mut().rotate(angle);
-    }
 }
-
-// impl Drawing for Ellipse {
-//     fn draw_shape(&self) -> Geom {
-//         let vertex_count: i32 = 200;
-
-//         let vertices = calc_n_vertices(&self.width, &self.height, vertex_count as u32);
-//         let color = color_n_vertices(&self.color, vertex_count as usize);
-
-//         Geom {
-//             vertices,
-//             color,
-//             vertex_count,
-//             mode: WebGl2RenderingContext::TRIANGLE_FAN,
-//         }
-//     }
-// }
-
-// impl Drawing for Circle {
-//     fn draw_shape(&self) -> Geom {
-//         Ellipse {
-//             width: self.radius,
-//             height: self.radius,
-//             color: self.color.clone(),
-//         }
-//         .draw_shape()
-//     }
-// }
