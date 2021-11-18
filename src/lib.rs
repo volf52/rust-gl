@@ -1,6 +1,3 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::WebGl2RenderingContext;
@@ -8,7 +5,9 @@ use web_sys::WebGl2RenderingContext;
 use utils::{console_error, console_log};
 
 use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::shapes::{Rectangle, Shape, Triangle};
+use crate::graphics::shapes::{
+    Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
+};
 
 mod core;
 mod display;
@@ -36,8 +35,8 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn hey() {
-    console_log!("testing console log");
+pub fn hey(mat: Vec<f32>) {
+    console_log!("{:#?}", mat);
 }
 
 #[wasm_bindgen]
@@ -62,16 +61,29 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let rectangle = Rectangle::new(0.9, 0.6);
-    let triangle = Triangle::new(0.4);
+    let red: Vec<f32> = vec![1.0, 0.0, 0.0];
+    let green: Vec<f32> = vec![0.0, 1.0, 0.0];
+    let blue: Vec<f32> = vec![0.0, 0.0, 1.0];
+
+    let irregular_p = IrregularPolygon::new(300.0, 250.0, 4, &blue);
+    let polygon = RegularPolygon::new(200.0, 7, &red);
+
+    let ellipse = Ellipse::new(150.0, 100.0, &blue);
+    let circle = Circle::new(120.0, &green);
+    let rectangle = Rectangle::new(100.0, 75.0);
+    let triangle = Triangle::new(60.0);
 
     let mut app = Application::new(&context, dims);
 
+    app.add_shape(&irregular_p);
+    app.add_shape(&polygon);
+    app.add_shape(&ellipse);
+    app.add_shape(&circle);
     app.add_shape(&rectangle);
     app.add_shape(&triangle);
 
-    rectangle.rotate(0.7);
-    triangle.rotate(0.3);
+    rectangle.rotate_deg(75.0);
+    triangle.rotate(1.0);
 
     // TODO: simulate timeout
 

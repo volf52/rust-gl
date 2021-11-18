@@ -8,12 +8,14 @@ macro_rules! DEFAULT_VS {
     () => {
         "attribute vec2 {a_position};
          attribute vec3 {a_color};
-        
-         uniform mat3 {u_projection_matrix};
+
+         uniform mat3 {u_projection};
+
+         uniform mat3 {u_model};
          varying vec3 {v_color};
 
          void main(void) {{
-            gl_Position = vec4(({u_projection_matrix} * vec3({a_position}, 1.0)).xy, 0.0, 1.0);
+            gl_Position = vec4(({u_projection} * {u_model} * vec3({a_position}, 1.0)).xy, 0.0, 1.0);
             {v_color} = {a_color};
         }}"
     };

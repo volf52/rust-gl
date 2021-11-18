@@ -1,14 +1,13 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
 use crate::math::Matrix;
 
 pub struct Triangle {
-    size: f32,
+    pub size: f32,
     geom: Rc<RefCell<Geom>>,
 }
 
@@ -42,9 +41,5 @@ impl Triangle {
 impl Shape for Triangle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
-    }
-
-    fn rotate(&self, angle: f32) {
-        self.geom.borrow_mut().rotate(angle);
     }
 }

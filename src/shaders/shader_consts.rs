@@ -7,14 +7,14 @@ use wasm_bindgen::prelude::*;
 pub enum ShaderConstant {
     APosition,
     AColor,
-    UProjectionMatrix,
+    UProjection,
+    UModel,
     VColor,
     USampler,
 }
 
 pub const ATTRIBUTES: [ShaderConstant; 2] = [APosition, AColor];
-pub const UNIFORMS: [ShaderConstant; 1] = [UProjectionMatrix];
-// pub const UNIFORMS: [ShaderConstant; 0] = [];
+pub const UNIFORMS: [ShaderConstant; 2] = [UModel, UProjection];
 
 impl Display for ShaderConstant {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

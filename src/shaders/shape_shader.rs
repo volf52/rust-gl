@@ -19,7 +19,8 @@ impl Shader for ShapeShader {
             a_position = ShaderConstant::APosition.to_string(),
             a_color = ShaderConstant::AColor.to_string(),
             v_color = ShaderConstant::VColor.to_string(),
-            u_projection_matrix = ShaderConstant::UProjectionMatrix.to_string()
+            u_model = ShaderConstant::UModel.to_string(),
+            u_projection = ShaderConstant::UProjection.to_string(),
         );
         let fs_src = format!(
             shader_utils::DEFAULT_FS!(),

@@ -4,7 +4,6 @@ use std::rc::Rc;
 use crate::math::Matrix;
 
 use crate::graphics::{Geom, Shape};
-use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
 #[derive(Clone)]
@@ -52,9 +51,5 @@ impl Rectangle {
 impl Shape for Rectangle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
-    }
-
-    fn rotate(&self, angle: f32) {
-        self.geom.borrow_mut().rotate(angle);
     }
 }

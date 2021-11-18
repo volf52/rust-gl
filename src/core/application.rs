@@ -1,5 +1,4 @@
 use std::cell::RefCell;
-use std::ops::Deref;
 use std::rc::Rc;
 
 use wasm_bindgen::prelude::*;
@@ -8,7 +7,6 @@ use web_sys::WebGl2RenderingContext;
 use crate::display::display_object::DisplayObject;
 use crate::graphics::{Geom, Shape};
 use crate::math::Matrix;
-use crate::utils::console_log;
 
 #[wasm_bindgen]
 extern "C" {
@@ -26,7 +24,6 @@ pub struct Application {
     shapes: Vec<Rc<RefCell<Geom>>>,
     dims: CanvasDimensions,
 }
-
 pub struct CanvasDimensions {
     pub width: f32,
     pub height: f32,
@@ -56,8 +53,8 @@ impl Application {
         }
     }
 
-    pub fn add_shape(&mut self, g: &dyn Shape) {
-        self.shapes.push(g.get_geom());
+    pub fn add_shape(&mut self, shape: &impl Shape) {
+        self.shapes.push(shape.get_geom());
     }
 
     pub fn render_all(&mut self) {
@@ -66,13 +63,11 @@ impl Application {
         );
         // self.gc();
 
-        self.shapes.iter().for_each(|shape_geom| {
-            DisplayObject::new(&self.ctx, shape_geom.clone()).draw();
-        });
-    }
+        let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
 
-    pub fn total_shapes(&self) -> usize {
-        self.shapes.len()
+        self.shapes.iter().for_each(|shape_geom| {
+            DisplayObject::new(&self.ctx, shape_geom.clone()).draw(&proj_mat);
+        });
     }
 
     pub fn gc(&mut self) {

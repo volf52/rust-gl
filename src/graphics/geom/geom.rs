@@ -10,6 +10,6 @@ pub struct Geom {
 
 impl Geom {
     pub fn rotate(&mut self, angle: f32) {
-        self.u_mat = Matrix::rotate(&self.u_mat, angle);
+        self.u_mat = self.u_mat.rotate(&angle);
     }
 }

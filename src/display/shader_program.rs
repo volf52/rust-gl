@@ -79,14 +79,6 @@ impl ShaderProgram {
         self.ctx
             .get_uniform_location(&self.prog, &uniform.to_string())
     }
-
-    pub fn get_a_locations(&self) -> HashMap<String, i32> {
-        self.a_locations.clone()
-    }
-
-    pub fn get_u_locations(&self) -> HashMap<String, WebGlUniformLocation> {
-        self.u_locations.clone()
-    }
 }
 
 fn link_program(
