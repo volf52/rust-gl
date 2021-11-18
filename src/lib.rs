@@ -65,13 +65,13 @@ pub fn main() -> Result<(), JsValue> {
     let green: Vec<f32> = vec![0.0, 1.0, 0.0];
     let blue: Vec<f32> = vec![0.0, 0.0, 1.0];
 
-    let irregular_p = IrregularPolygon::new(300.0, 250.0, 4, &blue);
-    let polygon = RegularPolygon::new(200.0, 7, &red);
+    let irregular_p = IrregularPolygon::new_at_origin(300.0, 250.0, 4, &blue);
+    let polygon = RegularPolygon::new_at_origin(200.0, 7, &red);
 
-    let ellipse = Ellipse::new(150.0, 100.0, &blue);
-    let circle = Circle::new(120.0, &green);
-    let rectangle = Rectangle::new(100.0, 75.0);
-    let triangle = Triangle::new(60.0);
+    let ellipse = Ellipse::new_at_origin(150.0, 100.0, &blue);
+    let circle = Circle::new_at_origin(120.0, &green);
+    let rectangle = Rectangle::new_at_origin(100.0, 75.0);
+    let triangle = Triangle::new(100, 100, 60.0);
 
     let mut app = Application::new(&context, dims);
 
@@ -83,7 +83,7 @@ pub fn main() -> Result<(), JsValue> {
     app.add_shape(&triangle);
 
     rectangle.rotate_deg(75.0);
-    triangle.rotate(1.0);
+    triangle.rotate(0.3);
 
     // TODO: simulate timeout
 
