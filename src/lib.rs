@@ -65,13 +65,13 @@ pub fn main() -> Result<(), JsValue> {
     let green: Vec<f32> = vec![0.0, 1.0, 0.0];
     let blue: Vec<f32> = vec![0.0, 0.0, 1.0];
 
-    let irregular_p = IrregularPolygon::new(1.2, 0.7, 4, &blue);
-    let polygon = RegularPolygon::new(0.7, 7, &red);
+    let irregular_p = IrregularPolygon::new(300.0, 250.0, 4, &blue);
+    let polygon = RegularPolygon::new(200.0, 7, &red);
 
-    let ellipse = Ellipse::new(0.5, 0.35, &blue);
-    let circle = Circle::new(0.3, &green);
-    let rectangle = Rectangle::new(0.2, 0.1);
-    let triangle = Triangle::new(0.1);
+    let ellipse = Ellipse::new(150.0, 100.0, &blue);
+    let circle = Circle::new(120.0, &green);
+    let rectangle = Rectangle::new(100.0, 75.0);
+    let triangle = Triangle::new(60.0);
 
     let mut app = Application::new(&context, dims);
 

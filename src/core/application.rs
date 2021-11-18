@@ -6,6 +6,7 @@ use web_sys::WebGl2RenderingContext;
 
 use crate::display::display_object::DisplayObject;
 use crate::graphics::{Geom, Shape};
+use crate::math::Matrix;
 
 #[wasm_bindgen]
 extern "C" {
@@ -62,13 +63,11 @@ impl Application {
         );
         // self.gc();
 
-        self.shapes.iter().for_each(|shape_geom| {
-            DisplayObject::new(&self.ctx, shape_geom.clone()).draw();
-        });
-    }
+        let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
 
-    pub fn total_shapes(&self) -> usize {
-        self.shapes.len()
+        self.shapes.iter().for_each(|shape_geom| {
+            DisplayObject::new(&self.ctx, shape_geom.clone()).draw(&proj_mat);
+        });
     }
 
     pub fn gc(&mut self) {
