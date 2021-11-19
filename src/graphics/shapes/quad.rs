@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use crate::math::Matrix;
+use crate::math::{BoundingRect, Matrix};
 
 use crate::graphics::{Geom, Shape};
 use web_sys::WebGl2RenderingContext;
@@ -60,5 +60,13 @@ impl Rectangle {
 impl Shape for Rectangle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
+    }
+
+    fn get_bounds(&self) -> BoundingRect {
+        BoundingRect::new(self.x as f32, self.y as f32, self.width, self.height)
+    }
+
+    fn contains(&self, x: f32, y: f32) -> bool {
+        self.get_bounds().contains(x, y)
     }
 }

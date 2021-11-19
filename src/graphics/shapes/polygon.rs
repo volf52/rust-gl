@@ -1,6 +1,6 @@
 use crate::graphics::shapes::utils::{calc_n_vertices, color_n_vertices};
 use crate::graphics::{Geom, Shape};
-use crate::math::Matrix;
+use crate::math::{BoundingRect, Matrix};
 use std::cell::RefCell;
 use std::rc::Rc;
 use web_sys::WebGl2RenderingContext;
@@ -58,6 +58,14 @@ impl Shape for RegularPolygon {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+
+    fn get_bounds(&self) -> BoundingRect {
+        todo!()
+    }
+
+    fn contains(&self, x: f32, y: f32) -> bool {
+        todo!()
+    }
 }
 
 impl IrregularPolygon {
@@ -92,5 +100,13 @@ impl IrregularPolygon {
 impl Shape for IrregularPolygon {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
+    }
+
+    fn get_bounds(&self) -> BoundingRect {
+        todo!()
+    }
+
+    fn contains(&self, x: f32, y: f32) -> bool {
+        todo!()
     }
 }
