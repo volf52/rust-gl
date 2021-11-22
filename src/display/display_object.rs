@@ -1,6 +1,6 @@
 use super::attribs::Attribs;
 use crate::display::shader_program::ShaderProgram;
-use crate::graphics::geom::Geom;
+use crate::graphics::geom::geom::Geom;
 use crate::math::Matrix;
 use crate::shaders::ShaderConstant;
 use web_sys::WebGl2RenderingContext;

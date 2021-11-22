@@ -6,10 +6,9 @@ mod shaders;
 mod utils;
 
 use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::geom::Geom;
 use crate::graphics::geom::polygon::RegularPolygon;
-use crate::graphics::geom::{ellipse::Ellipse, polygon::IrregularPolygon, triangle::Triangle};
-use math::Matrix;
+use crate::graphics::geom::triangle::Triangle;
+use graphics::geom::polygon::IrregularPolygon;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -63,35 +62,23 @@ pub fn main() -> Result<(), JsValue> {
     let application = Application::new(&context, dims);
     let red = vec![1.0, 0.0, 0.0];
 
-    let triangle = Triangle {       //starting point (x,y)
-        size: 150.0,
-        color: red.clone(),
-    };
-
-    let ellipse = Ellipse {
-        width: 100.0,
-        height: 150.0,
-        color: red.clone(),
-    };
-
-    let polygon = IrregularPolygon {
-        width: 120.0,
-        height: 70.0,
-        sides: 4,
-        color: red.clone(),
-    };
-
     let polygon2 = RegularPolygon {
         radius: 70.0,
         sides: 7,
         color: red.clone(),
     };
 
+    let triangle = Triangle::new(150.0, red.clone());
+
+    let poly = IrregularPolygon::new_from_path(
+        vec![0.0, 0.0, 200.0, 200.0, 300.0, 100.0, -100.0, 100.0],
+        &red.clone(),
+    );
 
 
-    application.draw_shape(&triangle, 80.0 , 100.0);
-    application.draw_shape(&polygon2, 200.0, 100.0);
-    // application.draw_shape(&ellipse, &mat);
+    application.draw_from_origin(&triangle.rotate_deg(45.0));
+    application.draw_shape(&poly.rotate_deg(-15.0), 200.0, 100.0);
 
     Ok(())
 }
+

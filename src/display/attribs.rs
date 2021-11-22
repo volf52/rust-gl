@@ -1,7 +1,7 @@
 use crate::display::shader_program::ShaderProgram;
-use crate::graphics::geom::Geom;
+use crate::graphics::geom::geom::Geom;
 use crate::shaders::ShaderConstant;
-use crate::utils::gl_utils::{bind_f32_buffer_data, bind_u8_buffer_data, create_array_buffer};
+use crate::utils::gl_utils::{bind_f32_buffer_data, create_array_buffer};
 use web_sys::{WebGl2RenderingContext, WebGlBuffer};
 
 #[derive(Debug, Clone)]
@@ -22,16 +22,16 @@ impl Attrib {
         }
     }
 
-    pub fn from_u8(ctx: &WebGl2RenderingContext, data: &Vec<u8>, num_components: i32) -> Self {
-        let buffer = create_array_buffer(ctx);
+    // pub fn from_u8(ctx: &WebGl2RenderingContext, data: &Vec<u8>, num_components: i32) -> Self {
+    //     let buffer = create_array_buffer(ctx);
 
-        bind_u8_buffer_data(ctx, data);
+    //     bind_u8_buffer_data(ctx, data);
 
-        Attrib {
-            num_components,
-            buffer,
-        }
-    }
+    //     Attrib {
+    //         num_components,
+    //         buffer,
+    //     }
+    // }
 }
 
 impl Attrib {
