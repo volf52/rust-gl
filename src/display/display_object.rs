@@ -23,14 +23,17 @@ impl DisplayObject {
 
         DisplayObject { ctx, geom, attribs }
     }
-    pub fn draw(&self, proj_mat: &Matrix) {
+
+    pub fn draw(&self, proj_mat: &Matrix, parent_transform_mat: &Matrix) {
         let gl_program = ShaderProgram::new(&self.ctx);
         let geom = self.geom.borrow();
 
         self.attribs.set_attributes(&gl_program);
 
         self.set_projection_matrix(&gl_program, proj_mat);
-        self.set_model_matrix(&gl_program, &geom.u_mat);
+
+        let model_matrix = Matrix::multiply(parent_transform_mat, &geom.u_mat);
+        self.set_model_matrix(&gl_program, &model_matrix);
 
         self.ctx.draw_arrays(geom.mode, 0, geom.vertex_count);
     }
