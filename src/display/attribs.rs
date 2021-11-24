@@ -3,7 +3,7 @@ use crate::graphics::geom::Geom;
 use crate::shaders::ShaderConstant;
 use crate::utils::gl_utils::{bind_f32_buffer_data, bind_u8_buffer_data, create_array_buffer};
 use std::cell::Ref;
-use web_sys::{WebGl2RenderingContext, WebGlBuffer};
+use web_sys::{WebGl2RenderingContext, WebGlBuffer, WebGlTexture};
 
 #[derive(Debug, Clone)]
 pub struct Attrib {
@@ -33,6 +33,28 @@ impl Attrib {
             buffer,
         }
     }
+
+    pub fn from_texture(
+        ctx: &WebGl2RenderingContext,
+        texture: &WebGlTexture,
+        num_components: i32,
+    ) -> Self {
+        let buffer = create_array_buffer(ctx);
+
+        ctx.framebuffer_texture_2d(
+            WebGl2RenderingContext::FRAMEBUFFER,
+            WebGl2RenderingContext::COLOR_ATTACHMENT0,
+            WebGl2RenderingContext::TEXTURE_2D,
+            Some(texture),
+            0,
+        );
+        ctx.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(texture));
+
+        Attrib {
+            num_components,
+            buffer,
+        }
+    }
 }
 
 impl Attrib {
@@ -53,17 +75,18 @@ impl Attrib {
 #[derive(Debug, Clone)]
 pub struct Attribs {
     position: Attrib,
-    color: Attrib,
+    texture_coords: Attrib,
 }
 
 impl Attribs {
     pub fn new(ctx: &WebGl2RenderingContext, g: Ref<Geom>) -> Self {
         let position = Attrib::from_f32(ctx, &g.vertices, 2);
-        let color = Attrib::from_f32(ctx, &g.color, 3);
+        let texture_coords = Attrib::from_f32(ctx, &g.tex_coords, 2);
+        // let color = Attrib::from_texture(ctx, &g.texture, 2);
 
         ctx.bind_buffer(WebGl2RenderingContext::ARRAY_BUFFER, None);
 
-        Attribs { position, color }
+        Attribs { position, texture_coords }
     }
 
     pub fn set_attributes(&self, program: &ShaderProgram) {
@@ -75,9 +98,9 @@ impl Attribs {
             None => (),
         }
 
-        let color_loc = program.get_attrib_loc(ShaderConstant::AColor.to_string());
+        let color_loc = program.get_attrib_loc(ShaderConstant::ATextureCoord.to_string());
         match color_loc {
-            Some(x) => self.color.set_attribute(&ctx, x as u32),
+            Some(x) => self.texture_coords.set_attribute(&ctx, x as u32),
             None => (),
         }
     }

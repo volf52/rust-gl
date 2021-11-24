@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use web_sys::WebGl2RenderingContext;
+use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
 use crate::display::shader_program::ShaderProgram;
 use crate::graphics::geom::Geom;
@@ -31,7 +31,22 @@ impl DisplayObject {
 
         self.set_projection_matrix(&gl_program, proj_mat);
         self.set_model_matrix(&gl_program, &geom.u_mat);
+        self.set_usampler(&gl_program);
 
+        self.ctx.draw_arrays(geom.mode, 0, geom.vertex_count);
+    }
+
+    pub fn draw_textured(&self, proj_mat: &Matrix, texture: WebGlTexture) {
+        let gl_program = ShaderProgram::new(&self.ctx);
+        let geom = self.geom.borrow();
+
+        self.attribs.set_attributes(&gl_program);
+
+        self.set_projection_matrix(&gl_program, proj_mat);
+        self.set_model_matrix(&gl_program, &geom.u_mat);
+        self.activate_texture(texture);
+        self.set_usampler(&gl_program);
+        
         self.ctx.draw_arrays(geom.mode, 0, geom.vertex_count);
     }
 
@@ -50,7 +65,19 @@ impl DisplayObject {
         mat: &Matrix,
     ) {
         let matrix_loc = program.get_uniform_loc(type_.to_string());
-
         ctx.uniform_matrix3fv_with_f32_array(matrix_loc, false, &mat.to_array());
+    }
+
+    pub fn set_usampler(
+        &self,
+        program: &ShaderProgram,
+    ) {
+        let loc = program.get_uniform_loc(ShaderConstant::USampler.to_string());
+        self.ctx.uniform1i(loc, 0);
+    }
+
+    pub fn activate_texture(&self, texture: WebGlTexture) {
+        self.ctx.active_texture(WebGl2RenderingContext::TEXTURE0);
+        self.ctx.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture));
     }
 }

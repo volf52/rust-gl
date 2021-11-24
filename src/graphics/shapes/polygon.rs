@@ -3,12 +3,10 @@ use crate::graphics::{Geom, Shape};
 use crate::math::Matrix;
 use std::cell::RefCell;
 use std::rc::Rc;
-use web_sys::WebGl2RenderingContext;
-
+use web_sys::{WebGl2RenderingContext, WebGlTexture};
 pub struct RegularPolygon {
     pub radius: f32,
     pub sides: usize,
-
     geom: Rc<RefCell<Geom>>,
 }
 
@@ -16,23 +14,21 @@ pub struct IrregularPolygon {
     pub width: f32,
     pub height: f32,
     pub sides: usize,
-
     geom: Rc<RefCell<Geom>>,
 }
 
 impl RegularPolygon {
-    pub fn new(radius: f32, n_sides: usize, color: &Vec<f32>) -> Self {
+    pub fn new(radius: f32, n_sides: usize) -> Self {
         let sides = n_sides.max(3);
-        let vertices = calc_n_vertices(radius, radius, n_sides);
-        let color_data = color_n_vertices(color, n_sides);
+        let vertices = calc_n_vertices(radius, radius, sides);
+        // let color_data = color_n_vertices(color, n_sides);
 
-        let geom = Rc::new(RefCell::new(Geom {
+        let geom = Rc::new(RefCell::new(Geom::new(
             vertices,
-            color: color_data,
-            u_mat: Matrix::new(),
-            mode: WebGl2RenderingContext::TRIANGLE_FAN,
-            vertex_count: sides as i32,
-        }));
+            Matrix::new(),
+            WebGl2RenderingContext::TRIANGLE_FAN,
+            sides as i32,
+        )));
 
         RegularPolygon {
             radius,
@@ -49,18 +45,17 @@ impl Shape for RegularPolygon {
 }
 
 impl IrregularPolygon {
-    pub fn new(width: f32, height: f32, n_sides: usize, color: &Vec<f32>) -> Self {
+    pub fn new(width: f32, height: f32, n_sides: usize) -> Self {
         let sides = n_sides.max(3);
-        let vertices = calc_n_vertices(width, height, n_sides);
-        let color = color_n_vertices(color, n_sides);
+        let vertices = calc_n_vertices(width, height, sides);
+        // let color = color_n_vertices(color, n_sides);
 
-        let geom = Rc::new(RefCell::new(Geom {
+        let geom = Rc::new(RefCell::new(Geom::new(
             vertices,
-            color,
-            u_mat: Matrix::new(),
-            mode: WebGl2RenderingContext::TRIANGLE_FAN,
-            vertex_count: sides as i32,
-        }));
+            Matrix::new(),
+            WebGl2RenderingContext::TRIANGLE_FAN,
+            sides as i32,
+        )));
 
         IrregularPolygon {
             width,
@@ -70,34 +65,36 @@ impl IrregularPolygon {
         }
     }
 
-    pub fn new_from_path(vertices: Vec<f32>, color: &Vec<f32>) -> Self {
-        let color_data = color_n_vertices(color, vertices.len());
+    pub fn new_from_path(vertices: Vec<f32>) -> Self {
+        // let color_data = color_n_vertices(color, vertices.len());
         let sides = vertices.len() / 2;
-     
 
         let xs: Vec<f32> = vertices
             .iter()
             .enumerate()
-            .filter(|&(i, _)| i % 2 != 0)
-            .map(|(_, e)| e.clone()).collect();
-            
+            .filter(|&(i, _)| i % 2 == 0)
+            .map(|(_, e)| e.clone())
+            .collect();
+
         let ys: Vec<f32> = vertices
             .iter()
             .enumerate()
-            .filter(|&(i, _)| i % 2 == 0)
-            .map(|(_, e)| e.clone()).collect();
+            .filter(|&(i, _)| i % 2 != 0)
+            .map(|(_, e)| e.clone())
+            .collect();
 
-        let width = xs.iter().cloned().fold(0./0., f32::max) - xs.iter().cloned().fold(0./0., f32::min);
-        let height = ys.iter().cloned().fold(0./0., f32::max) - ys.iter().cloned().fold(0./0., f32::min);
+        let width =
+            xs.iter().cloned().fold(0. / 0., f32::max) - xs.iter().cloned().fold(0. / 0., f32::min);
+        let height =
+            ys.iter().cloned().fold(0. / 0., f32::max) - ys.iter().cloned().fold(0. / 0., f32::min);
 
-        let geom = Rc::new(RefCell::new(Geom {
+        let geom = Rc::new(RefCell::new(Geom::new(
             vertices,
-            color: color_data,
-            u_mat: Matrix::new(),
-            mode: WebGl2RenderingContext::TRIANGLE_FAN,
-            vertex_count: sides as i32,
-        }));
-        
+            Matrix::new(),
+            WebGl2RenderingContext::TRIANGLE_FAN,
+            sides as i32,
+        )));
+
         IrregularPolygon {
             width,
             height,

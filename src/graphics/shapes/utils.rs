@@ -18,3 +18,12 @@ pub fn color_n_vertices(unit_color: &Vec<f32>, num_vertices: usize) -> Vec<f32> 
         .map(|f| f.clone())
         .collect()
 }
+
+pub fn color_n_times(unit_color: &Vec<u8>, num_vertices: usize) -> Vec<u8> {
+    unit_color
+        .iter()
+        .cycle()
+        .take(unit_color.len() * num_vertices)
+        .map(|f| f.clone())
+        .collect()
+}

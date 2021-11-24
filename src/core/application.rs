@@ -2,11 +2,12 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use wasm_bindgen::prelude::*;
-use web_sys::WebGl2RenderingContext;
+use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
 use crate::display::display_object::DisplayObject;
 use crate::graphics::{Geom, Shape};
 use crate::math::Matrix;
+use crate::textures::solid_texture::create_solid_texture;
 
 #[wasm_bindgen]
 extern "C" {
@@ -68,6 +69,17 @@ impl Application {
         self.shapes.iter().for_each(|shape_geom| {
             DisplayObject::new(&self.ctx, shape_geom.clone()).draw(&proj_mat);
         });
+    }
+
+    pub fn draw_textured_shape(&mut self, shape: &Rc<RefCell<Geom>>, texture: WebGlTexture) {
+        let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
+        DisplayObject::new(&self.ctx, shape.clone()).draw_textured(&proj_mat, texture);
+    }
+
+    pub fn draw_colored_shape(&mut self, shape: &Rc<RefCell<Geom>>, color: &Vec<u8>) {
+        let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
+        DisplayObject::new(&self.ctx, shape.clone())
+            .draw_textured(&proj_mat, create_solid_texture(&self.ctx, &color));
     }
 
     pub fn gc(&mut self) {

@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use web_sys::WebGl2RenderingContext;
+use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
 use crate::graphics::{Geom, Shape};
 use crate::math::Matrix;
@@ -19,20 +19,13 @@ impl Triangle {
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom].to_vec();
-        let color = [
-            0.0, 0.0, 0.0, // vertex 1
-            0.0, 0.0, 0.0, // vertex 2
-            1.0, 0.0, 0.0, // vertex 3
-        ]
-        .to_vec();
 
-        let geom = Rc::new(RefCell::new(Geom {
-            u_mat: Matrix::new(),
+        let geom = Rc::new(RefCell::new(Geom::new(
             vertices,
-            color,
-            vertex_count: 3,
-            mode: WebGl2RenderingContext::TRIANGLES,
-        }));
+            Matrix::new(),
+            WebGl2RenderingContext::TRIANGLES,
+            3,
+        )));
 
         Triangle { size, geom }
     }

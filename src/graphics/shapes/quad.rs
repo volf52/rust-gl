@@ -1,10 +1,9 @@
 use std::cell::RefCell;
 use std::rc::Rc;
-
 use crate::math::Matrix;
 
 use crate::graphics::{Geom, Shape};
-use web_sys::WebGl2RenderingContext;
+use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
 #[derive(Clone)]
 pub struct Rectangle {
@@ -22,26 +21,20 @@ impl Rectangle {
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom, right, bottom].to_vec();
-        let color = [
-            1.0, 0.4, 0.4, // vertex 1
-            1.0, 0.0, 0.0, // vertex 2
-            0.0, 1.0, 0.0, // vertex 3
-            0.0, 0.0, 1.0, // vertex 4
-        ]
-        .to_vec();
 
-        let geom = Geom {
-            u_mat: Matrix::new(),
+        // let color: [u8; 3] = [0,0,255];
+
+        let geom = Rc::new(RefCell::new(Geom::new(
             vertices,
-            color,
-            vertex_count: 4,
-            mode: WebGl2RenderingContext::TRIANGLE_STRIP,
-        };
+            Matrix::new(),
+            WebGl2RenderingContext::TRIANGLE_STRIP,
+            4,
+        )));
 
         let rect = Rectangle {
             width,
             height,
-            geom: Rc::new(RefCell::new(geom)),
+            geom,
         };
 
         rect
