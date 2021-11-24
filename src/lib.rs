@@ -73,20 +73,21 @@ pub fn main() -> Result<(), JsValue> {
     let rectangle = Rectangle::new_at_origin(100.0, 75.0);
     // let triangle = Triangle::new(100, 100, 60.0);
     let triangle = Triangle::new_at_origin(75.0);
+    triangle.rotate_deg(5.0); // total 45.0 deg rotation for triangle
 
     let mut container = Container::default();
+    container.rotate_deg(55.0); // total 90 deg rotation for rectangle
+
     container.add_shape(&circle);
     container.add_shape(&rectangle);
 
     let mut app = Application::new(&context, dims);
+    app.stage.rotate_deg(35.0);
+    triangle.rotate_deg(5.0);
 
     app.add_container(&container);
 
     app.add_shape(&triangle);
-
-    app.stage.rotate_deg(35.0);
-    container.rotate_deg(55.0); // total 90 deg rotation for rectangle
-    triangle.rotate_deg(10.0); // total 45.0 deg rotation for triangle
 
     app.render();
 
