@@ -1,5 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
+use crate::graphics::scene_graph::GraphNode;
 use crate::math::Matrix;
 use crate::{core::application::Application, display::display_object::DisplayObject};
 
@@ -10,7 +11,7 @@ pub struct Container {
 
     pub geom: Rc<RefCell<Geom>>,
 
-    pub children: Vec<Rc<RefCell<Container>>>,
+    pub children: Vec<Rc<RefCell<GraphNode>>>,
 }
 
 impl Default for Container {
@@ -57,9 +58,8 @@ impl Container {
         });
     }
 
-    // FIXME: Can potentially add container
     pub fn add_shape(&mut self, shape: &impl Shape) {
-        let node = Container {
+        let node = GraphNode {
             is_leaf: true,
             geom: shape.get_geom(),
             children: Vec::new(),
@@ -73,7 +73,7 @@ impl Container {
     }
 
     pub fn add_container(&mut self, container: &Container) {
-        let node = Container {
+        let node = GraphNode {
             is_leaf: false,
             geom: container.geom.clone(),
             children: container.children.clone(),
