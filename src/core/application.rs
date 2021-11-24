@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
-use crate::graphics::Container;
+use crate::graphics::{Container, Shape};
 use crate::math::Matrix;
 
 #[wasm_bindgen]
@@ -57,6 +57,14 @@ impl Application {
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
         self.stage.render(self, &Matrix::new());
+    }
+
+    pub fn add_container(&mut self, container: &Container) {
+        self.stage.add_container(container);
+    }
+
+    pub fn add_shape(&mut self, shape: &impl Shape) {
+        self.stage.add_shape(shape);
     }
 
     // pub fn gc(&mut self) {

@@ -80,9 +80,9 @@ pub fn main() -> Result<(), JsValue> {
 
     let mut app = Application::new(&context, dims);
 
-    app.stage.add_container(&container);
+    app.add_container(&container);
 
-    app.stage.add_shape(&triangle);
+    app.add_shape(&triangle);
 
     app.stage.rotate_deg(35.0);
     container.rotate_deg(55.0); // total 90 deg rotation for rectangle
