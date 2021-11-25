@@ -1,5 +1,3 @@
-use web_sys::WebGlTexture;
-
 use crate::math::Matrix;
 
 pub struct Geom {
@@ -12,14 +10,14 @@ pub struct Geom {
 
 impl Geom {
     pub fn new(vertices: Vec<f32>, u_mat: Matrix, mode: u32, vertex_count: i32) -> Self {
-        let tex_coords= calc_tex_coords(&vertices);
+        let tex_coords = calc_tex_coords(&vertices);
 
         Geom {
             vertices,
             tex_coords,
             u_mat,
             mode,
-            vertex_count
+            vertex_count,
         }
     }
     pub fn rotate(&mut self, angle: f32) {
@@ -31,7 +29,6 @@ impl Geom {
 }
 
 fn calc_tex_coords(vertices: &Vec<f32>) -> Vec<f32> {
-
     let xs: Vec<f32> = vertices
         .iter()
         .enumerate()
@@ -57,14 +54,15 @@ fn calc_tex_coords(vertices: &Vec<f32>) -> Vec<f32> {
 
     let diff = (max.0 - min.0, max.1 - min.1);
 
+
     vertices
         .iter()
         .enumerate()
         .map(|f| {
             if f.0 % 2 != 0 {
-                f.1 - min.0 / diff.0
+                (f.1 - min.0) / diff.0
             } else {
-                f.1 - min.0 / diff.1
+                (f.1 - min.1) / diff.1
             }
         })
         .collect()

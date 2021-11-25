@@ -1,5 +1,5 @@
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
-use crate::{graphics::shapes::utils::color_n_times, hey, puts};
+use crate::{graphics::shapes::utils::color_n_times};
 
 pub fn create_solid_texture(gl: &WebGl2RenderingContext, color: &Vec<u8>) -> WebGlTexture {
     let level = 0;

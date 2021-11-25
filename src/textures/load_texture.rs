@@ -18,7 +18,7 @@ use web_sys::{
 pub fn load_texture(
     gl: &WebGl2RenderingContext,
     img_src: &str,
-) -> Result<Rc<WebGlTexture>, JsValue> {
+) -> Result<WebGlTexture, JsValue> {
     let texture = gl.create_texture().expect("Cannot create gl texture");
     gl.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture));
     let level = 0;
@@ -46,9 +46,11 @@ pub fn load_texture(
     let img = HtmlImageElement::new().unwrap();
     img.set_cross_origin(Some(""));
 
+    img.set_src(img_src);
+
     let imgrc = Rc::new(img);
 
-    let texture = Rc::new(texture);
+    let texture = texture;
 
     {
         let img = imgrc.clone();

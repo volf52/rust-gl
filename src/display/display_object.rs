@@ -36,7 +36,7 @@ impl DisplayObject {
         self.ctx.draw_arrays(geom.mode, 0, geom.vertex_count);
     }
 
-    pub fn draw_textured(&self, proj_mat: &Matrix, texture: WebGlTexture) {
+    pub fn draw_textured(&self, proj_mat: &Matrix, texture: &WebGlTexture) {
         let gl_program = ShaderProgram::new(&self.ctx);
         let geom = self.geom.borrow();
 
@@ -76,8 +76,8 @@ impl DisplayObject {
         self.ctx.uniform1i(loc, 0);
     }
 
-    pub fn activate_texture(&self, texture: WebGlTexture) {
-        self.ctx.active_texture(WebGl2RenderingContext::TEXTURE0);
+    pub fn activate_texture(&self, texture: &WebGlTexture) {
+        // self.ctx.active_texture(WebGl2RenderingContext::TEXTURE0);
         self.ctx.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture));
     }
 }

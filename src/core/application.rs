@@ -58,6 +58,12 @@ impl Application {
         self.shapes.push(shape.get_geom());
     }
 
+    pub fn clear_all(&self) {
+        self.ctx.clear(
+            WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
+        );
+    }
+
     pub fn render_all(&mut self) {
         self.ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
@@ -71,15 +77,13 @@ impl Application {
         });
     }
 
-    pub fn draw_textured_shape(&mut self, shape: &Rc<RefCell<Geom>>, texture: WebGlTexture) {
+    pub fn draw_textured_shape(&self, shape: &Rc<RefCell<Geom>>, texture: &WebGlTexture) {
         let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
-        DisplayObject::new(&self.ctx, shape.clone()).draw_textured(&proj_mat, texture);
+        DisplayObject::new(&self.ctx, shape.clone()).draw_textured(&proj_mat, &texture);
     }
 
-    pub fn draw_colored_shape(&mut self, shape: &Rc<RefCell<Geom>>, color: &Vec<u8>) {
-        let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
-        DisplayObject::new(&self.ctx, shape.clone())
-            .draw_textured(&proj_mat, create_solid_texture(&self.ctx, &color));
+    pub fn draw_colored_shape(&self, shape: &Rc<RefCell<Geom>>, color: &Vec<u8>) {
+        self.draw_textured_shape(shape, &create_solid_texture(&self.ctx, color));
     }
 
     pub fn gc(&mut self) {
