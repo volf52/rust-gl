@@ -5,6 +5,7 @@ const path = require("path");
 module.exports = (env, args) => {
   const isProduction = args.mode === "production";
 
+  
   return {
     entry: "./frontend/bootstrap.js",
     output: {
@@ -21,6 +22,7 @@ module.exports = (env, args) => {
           use: {
             loader: "swc-loader",
           },
+          
         },
         {
           test: /\.ts$/,
@@ -48,6 +50,10 @@ module.exports = (env, args) => {
         {
           test: /\.css/i,
           use: ["style-loader", "css-loader"],
+        },
+        {
+          test: /\.jpg$/,
+          use: "file-loader",
         },
       ],
     },

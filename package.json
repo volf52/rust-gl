@@ -9,12 +9,14 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
+    "jimp": "^0.16.1",
     "rust-gl": "link:./pkg"
   },
   "devDependencies": {
     "@swc/core": "^1.2.106",
     "@wasm-tool/wasm-pack-plugin": "^1.6.0",
     "css-loader": "^6.5.0",
+    "file-loader": "^6.2.0",
     "html-loader": "^3.0.0",
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.1",

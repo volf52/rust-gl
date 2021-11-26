@@ -9,3 +9,6 @@ pkg/
 wasm-pack.log
 .idea
 testit
+.pnpm-debug.log
+.gitignore
+webpack.config.js
