@@ -10,5 +10,8 @@ wasm-pack.log
 .idea
 testit
 .pnpm-debug.log
+pnpm-lock.yaml
 .gitignore
 webpack.config.js
+.*
+!/.gitignore

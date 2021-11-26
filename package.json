@@ -9,7 +9,6 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
-    "jimp": "^0.16.1",
     "rust-gl": "link:./pkg"
   },
   "devDependencies": {
