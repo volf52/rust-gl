@@ -1,5 +1,6 @@
+use crate::graphics::shapes::Triangle;
 use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::shapes::{IrregularPolygon, RegularPolygon, Shape};
+use crate::graphics::shapes::{RegularPolygon, Shape};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -75,48 +76,49 @@ pub fn main() -> Result<(), JsValue> {
 
     let app = Application::new(&context, dims);
 
-    let _red: Vec<u8> = vec![255, 0, 0];
-    let _green: Vec<f32> = vec![0.0, 1.0, 0.0];
+    let red: Vec<u8> = vec![255, 0, 0];
+    let _green: Vec<u8> = vec![0, 255, 0];
     let _blue: Vec<u8> = vec![0, 0, 255];
 
-    // let poly = IrregularPolygon::new_from_path(vec![
-    //     100.0, 100.0, 200.0, 100.0, 200.0, 200.0, 100.0, 200.0
-    // ]);
 
-    let pentagon = RegularPolygon::new(100.0 , 7);
+    let pentagon = RegularPolygon::new(100.0, 7);
+    let triangle = Triangle::new(100.0);
 
-
-    // app.add_shape(&pentagon);
     pentagon.translate(-70.0, 00.0);
-
-    // app.draw_colored_shape(&poly.get_geom(), &blue);
+    triangle.translate(200.0, 0.0);
 
 
     let tex = load_texture_image(Rc::new(context), get_img().as_str());
 
-    let f = Rc::new(RefCell::new(None));
-    let g = f.clone();
 
-    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
+    render_loop(move || {
         app.clear_all();
-        app.draw_textured_shape(&pentagon.get_geom(), &tex);
-
-        request_animation_frame(f.borrow().as_ref().unwrap());
-    }) as Box<dyn FnMut() -> ()>));
-
-    request_animation_frame(g.borrow().as_ref().unwrap());
+        app.draw_textured_shape(&pentagon, &tex);
+        app.draw_colored_shape(&triangle, &red);
+        triangle.rotate_deg(5.0);
+    });
 
     Ok(())
 }
 
-fn window() -> web_sys::Window {
-    web_sys::window().expect("no global `window` exists")
+pub fn render_loop<F>(mut closure: F)
+where
+    F: 'static + FnMut(),
+{
+    let f = Rc::new(RefCell::new(None));
+    let g = f.clone();
+    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
+        closure();
+        request_animation_frame(f.borrow().as_ref().unwrap());
+    }) as Box<dyn FnMut()>));
+    request_animation_frame(g.borrow().as_ref().unwrap());
 }
 
+
 fn request_animation_frame(f: &Closure<dyn FnMut()>) {
-    window()
+    web_sys::window()
+        .unwrap()
         .request_animation_frame(f.as_ref().unchecked_ref())
         .expect("should register `requestAnimationFrame` OK");
 }
-
 

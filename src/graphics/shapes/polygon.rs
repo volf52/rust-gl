@@ -1,9 +1,11 @@
-use crate::graphics::shapes::utils::{calc_n_vertices, color_n_vertices};
+
 use crate::graphics::{Geom, Shape};
 use crate::math::Matrix;
 use std::cell::RefCell;
 use std::rc::Rc;
-use web_sys::{WebGl2RenderingContext, WebGlTexture};
+use web_sys::{WebGl2RenderingContext};
+use crate::graphics::shapes::utils::build;
+
 pub struct RegularPolygon {
     pub radius: f32,
     pub sides: usize,
@@ -20,15 +22,7 @@ pub struct IrregularPolygon {
 impl RegularPolygon {
     pub fn new(radius: f32, n_sides: usize) -> Self {
         let sides = n_sides.max(3);
-        let vertices = calc_n_vertices(radius, radius, sides);
-        // let color_data = color_n_vertices(color, n_sides);
-
-        let geom = Rc::new(RefCell::new(Geom::new(
-            vertices,
-            Matrix::new(),
-            WebGl2RenderingContext::TRIANGLE_FAN,
-            sides as i32,
-        )));
+        let geom = build(radius, radius, sides);
 
         RegularPolygon {
             radius,
@@ -47,15 +41,7 @@ impl Shape for RegularPolygon {
 impl IrregularPolygon {
     pub fn new(width: f32, height: f32, n_sides: usize) -> Self {
         let sides = n_sides.max(3);
-        let vertices = calc_n_vertices(width, height, sides);
-        // let color = color_n_vertices(color, n_sides);
-
-        let geom = Rc::new(RefCell::new(Geom::new(
-            vertices,
-            Matrix::new(),
-            WebGl2RenderingContext::TRIANGLE_FAN,
-            sides as i32,
-        )));
+        let geom = build(width, height, sides);
 
         IrregularPolygon {
             width,

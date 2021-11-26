@@ -1,3 +1,11 @@
+// use crate::Rc;
+// use crate::RefCell;
+// use crate::graphics::Geom;
+use web_sys::WebGl2RenderingContext;
+use std::rc::Rc;
+use crate::RefCell;
+use crate::graphics::Geom;
+use crate::math::Matrix;
 use std::f32::consts::PI;
 
 pub fn calc_n_vertices(width: f32, height: f32, num_sides: usize) -> Vec<f32> {
@@ -10,15 +18,6 @@ pub fn calc_n_vertices(width: f32, height: f32, num_sides: usize) -> Vec<f32> {
     })
 }
 
-pub fn color_n_vertices(unit_color: &Vec<f32>, num_vertices: usize) -> Vec<f32> {
-    unit_color
-        .iter()
-        .cycle()
-        .take(unit_color.len() * num_vertices)
-        .map(|f| f.clone())
-        .collect()
-}
-
 pub fn color_n_times(unit_color: &Vec<u8>, num_vertices: usize) -> Vec<u8> {
     unit_color
         .iter()
@@ -27,3 +26,16 @@ pub fn color_n_times(unit_color: &Vec<u8>, num_vertices: usize) -> Vec<u8> {
         .map(|f| f.clone())
         .collect()
 }
+
+pub fn build(width: f32, height: f32, no_sides: usize) -> Rc<RefCell<Geom>> {
+        let vertices = calc_n_vertices(width, height, no_sides);
+
+        Rc::new(RefCell::new(Geom::new(
+            vertices,
+             Matrix::new(),
+             WebGl2RenderingContext::TRIANGLE_FAN,
+             no_sides as i32,
+    )))
+}
+
+
