@@ -1,19 +1,16 @@
 // use image::{DynamicImage, GenericImageView};
 use std::rc::Rc;
 
+use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{HtmlImageElement, WebGl2RenderingContext, WebGlTexture};
-use wasm_bindgen::{JsCast, prelude::*};
 
 use std::borrow::BorrowMut;
-
 
 pub fn get_img() -> String {
     img_to_src().unwrap()
 }
 
-
 pub fn load_texture_image(gl: Rc<WebGl2RenderingContext>, src: &str) -> WebGlTexture {
-
     let texture = gl.create_texture().unwrap();
     let tex = texture.clone();
     let image = HtmlImageElement::new().unwrap();
@@ -21,13 +18,11 @@ pub fn load_texture_image(gl: Rc<WebGl2RenderingContext>, src: &str) -> WebGlTex
     // image.set_src(src);
 
     let onload = Closure::wrap(Box::new(move || {
-
         let level = 0;
         let internal_format = WebGl2RenderingContext::RGBA as i32;
         // let border = 0;
         let src_format = WebGl2RenderingContext::RGBA;
         let src_type = WebGl2RenderingContext::UNSIGNED_BYTE;
-    
         // gl.active_texture(WebGl2RenderingContext::TEXTURE0);
 
         gl.bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture));

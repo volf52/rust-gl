@@ -1,6 +1,3 @@
-// use crate::Rc;
-// use crate::RefCell;
-// use crate::graphics::Geom;
 use web_sys::WebGl2RenderingContext;
 use std::rc::Rc;
 use crate::RefCell;

@@ -1,11 +1,11 @@
-use crate::graphics::shapes::Triangle;
 use crate::core::application::{Application, CanvasDimensions};
+use crate::graphics::shapes::Triangle;
 use crate::graphics::shapes::{RegularPolygon, Shape};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use textures::texture_img::load_texture_image;
 use textures::texture_img::get_img;
+use textures::texture_img::load_texture_image;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -80,26 +80,25 @@ pub fn main() -> Result<(), JsValue> {
     let _green: Vec<u8> = vec![0, 255, 0];
     let _blue: Vec<u8> = vec![0, 0, 255];
 
-
-    let pentagon = RegularPolygon::new(100.0, 7);
+    let pentagon = RegularPolygon::new_at_origin(100.0, 7);
     let triangle = Triangle::new(100.0);
 
     pentagon.translate(-70.0, 00.0);
     triangle.translate(200.0, 0.0);
 
-
     let tex = load_texture_image(Rc::new(context), get_img().as_str());
-
 
     render_loop(move || {
         app.clear_all();
-        app.draw_textured_shape(&pentagon, &tex);
-        app.draw_colored_shape(&triangle, &red);
+        app.draw_shape(&pentagon, &tex);
+        app.draw_shape(&triangle, &red);
         triangle.rotate_deg(5.0);
     });
 
     Ok(())
 }
+
+
 
 pub fn render_loop<F>(mut closure: F)
 where
@@ -114,11 +113,9 @@ where
     request_animation_frame(g.borrow().as_ref().unwrap());
 }
 
-
 fn request_animation_frame(f: &Closure<dyn FnMut()>) {
     web_sys::window()
         .unwrap()
         .request_animation_frame(f.as_ref().unchecked_ref())
         .expect("should register `requestAnimationFrame` OK");
 }
-

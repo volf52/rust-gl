@@ -1,8 +1,9 @@
+use crate::textures::utils::{TextureGen, TextureOrColor};
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
 use crate::display::display_object::DisplayObject;
-use crate::graphics::{Shape};
+use crate::graphics::Shape;
 use crate::math::Matrix;
 use crate::textures::solid_texture::create_solid_texture;
 
@@ -36,42 +37,21 @@ impl Application {
             0,
             ctx.drawing_buffer_width(),
             ctx.drawing_buffer_height(),
-            );
+        );
         ctx.clear_color(0.8, 0.9, 1.0, 1.0);
         ctx.clear_depth(1.0);
         ctx.enable(WebGl2RenderingContext::DEPTH_TEST);
         ctx.depth_func(WebGl2RenderingContext::LEQUAL);
         ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
-            );
-        Application {
-            ctx,
-            dims,
-        }
+        );
+        Application { ctx, dims }
     }
-
-    // pub fn add_shape(&mut self, shape: &impl Shape) {
-    //     self.shapes.push(shape.get_geom());
-    // }
-
     pub fn clear_all(&self) {
         self.ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
-            );
+        );
     }
-
-    // pub fn render_all(&mut self) {
-    //     self.ctx.clear(
-    //         WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
-    //     );
-    //     // self.gc();
-
-    //     let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
-
-    //     self.shapes.iter().for_each(|shape_geom| {
-    //         DisplayObject::new(&self.ctx, shape_geom.clone()).draw(&proj_mat);
-    //     });
-    // }
 
     pub fn draw_textured_shape<T: Shape>(&self, shape: &T, texture: &WebGlTexture) {
         let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
@@ -82,12 +62,11 @@ impl Application {
         self.draw_textured_shape(shape, &create_solid_texture(&self.ctx, color));
     }
 
-    // pub fn gc(&mut self) {
-    //     self.shapes = self
-    //         .shapes
-    //         .iter()
-    //         .filter(|rc_shape| Rc::strong_count(rc_shape) > 1)
-    //         .cloned()
-    //         .collect();
-    // }
+    pub fn draw_shape<T: Shape, U: TextureGen>(&self, shape: &T, mask: &U) {
+        let temp = mask.to_enum();
+        match temp {
+            TextureOrColor::Color(color) => self.draw_colored_shape(shape, &color),
+            TextureOrColor::Texture(texture) => self.draw_textured_shape(shape, &texture),
+        }
+    }
 }

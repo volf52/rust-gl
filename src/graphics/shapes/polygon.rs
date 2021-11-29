@@ -20,7 +20,7 @@ pub struct IrregularPolygon {
 }
 
 impl RegularPolygon {
-    pub fn new(radius: f32, n_sides: usize) -> Self {
+    pub fn new_at_origin(radius: f32, n_sides: usize) -> Self {
         let sides = n_sides.max(3);
         let geom = build(radius, radius, sides);
 

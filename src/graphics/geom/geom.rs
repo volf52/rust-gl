@@ -54,7 +54,6 @@ fn calc_tex_coords(vertices: &Vec<f32>) -> Vec<f32> {
 
     let diff = (max.0 - min.0, max.1 - min.1);
 
-
     vertices
         .iter()
         .enumerate()
