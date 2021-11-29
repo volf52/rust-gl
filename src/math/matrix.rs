@@ -56,7 +56,7 @@ impl Matrix {
      * @param {number} y - Height of the canvas.
      * @return {Matrix} This matrix.
      */
-    pub fn projection(width: &f32, height: &f32) -> Matrix {
+    pub fn projection(width: f32, height: f32) -> Matrix {
         return Matrix {
             a: 2.0 / width,
             b: 0.0,

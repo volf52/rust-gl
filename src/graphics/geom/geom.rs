@@ -8,6 +8,18 @@ pub struct Geom {
     pub vertex_count: i32,
 }
 
+impl Default for Geom {
+    fn default() -> Self {
+        Geom {
+            vertices: Vec::new(),
+            color: Vec::new(),
+            u_mat: Matrix::new(),
+            mode: 0,
+            vertex_count: 0,
+        }
+    }
+}
+
 impl Geom {
     pub fn rotate(&mut self, angle: f32) {
         self.u_mat = self.u_mat.rotate(&angle);

@@ -1,8 +1,8 @@
+use graphics::Container;
+use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::WebGl2RenderingContext;
-
-use utils::{console_error, console_log};
 
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::shapes::{
@@ -65,29 +65,31 @@ pub fn main() -> Result<(), JsValue> {
     let green: Vec<f32> = vec![0.0, 1.0, 0.0];
     let blue: Vec<f32> = vec![0.0, 0.0, 1.0];
 
-    let irregular_p = IrregularPolygon::new(300.0, 250.0, 4, &blue);
-    let polygon = RegularPolygon::new(200.0, 7, &red);
+    // let irregular_p = IrregularPolygon::new_at_origin(300.0, 250.0, 4, &blue);
+    // let polygon = RegularPolygon::new_at_origin(200.0, 7, &red);
 
-    let ellipse = Ellipse::new(150.0, 100.0, &blue);
-    let circle = Circle::new(120.0, &green);
-    let rectangle = Rectangle::new(100.0, 75.0);
-    let triangle = Triangle::new(60.0);
+    // let ellipse = Ellipse::new_at_origin(150.0, 100.0, &blue);
+    let circle = Circle::new_at_origin(120.0, &blue);
+    let rectangle = Rectangle::new_at_origin(100.0, 75.0);
+    // let triangle = Triangle::new(100, 100, 60.0);
+    let triangle = Triangle::new_at_origin(75.0);
+    triangle.rotate_deg(5.0); // total 45.0 deg rotation for triangle
+
+    let mut container = Container::default();
+    container.rotate_deg(55.0); // total 90 deg rotation for rectangle
+
+    container.add_shape(&circle);
+    container.add_shape(&rectangle);
 
     let mut app = Application::new(&context, dims);
+    app.stage.rotate_deg(35.0);
+    triangle.rotate_deg(5.0);
 
-    app.add_shape(&irregular_p);
-    app.add_shape(&polygon);
-    app.add_shape(&ellipse);
-    app.add_shape(&circle);
-    app.add_shape(&rectangle);
+    app.add_container(&container);
+
     app.add_shape(&triangle);
 
-    rectangle.rotate_deg(75.0);
-    triangle.rotate(1.0);
-
-    // TODO: simulate timeout
-
-    app.render_all();
+    app.render();
 
     Ok(())
 }
