@@ -41,15 +41,13 @@ impl Rectangle {
             mode: WebGl2RenderingContext::TRIANGLE_STRIP,
         };
 
-        let rect = Rectangle {
+        Rectangle {
             x,
             y,
             width,
             height,
             geom: Rc::new(RefCell::new(geom)),
-        };
-
-        rect
+        }
     }
 
     pub fn new_at_origin(width: f32, height: f32) -> Self {

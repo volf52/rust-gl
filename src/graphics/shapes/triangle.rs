@@ -54,7 +54,7 @@ impl Shape for Triangle {
         todo!()
     }
 
-    fn contains(&self, x: f32, y: f32) -> bool {
+    fn contains(&self, _x: f32, _y: f32) -> bool {
         todo!()
     }
 }

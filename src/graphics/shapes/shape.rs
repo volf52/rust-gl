@@ -21,4 +21,9 @@ pub trait Shape {
     fn rotate_deg(&self, angle_degrees: f32) {
         self.rotate(angle_degrees.to_radians());
     }
+
+    fn translate(&self, tx: f32, ty: f32) {
+        let geom = self.get_geom();
+        geom.borrow_mut().translate(tx, ty);
+    }
 }
