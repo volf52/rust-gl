@@ -1,11 +1,7 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use wasm_bindgen::prelude::*;
 use web_sys::WebGl2RenderingContext;
 
-use crate::display::display_object::DisplayObject;
-use crate::graphics::{Geom, Shape};
+use crate::graphics::{Container, Shape};
 use crate::math::Matrix;
 
 #[wasm_bindgen]
@@ -20,9 +16,9 @@ extern "C" {
 }
 
 pub struct Application {
-    ctx: WebGl2RenderingContext,
-    shapes: Vec<Rc<RefCell<Geom>>>,
-    dims: CanvasDimensions,
+    pub ctx: WebGl2RenderingContext,
+    pub proj_mat: Matrix,
+    pub stage: Container,
 }
 pub struct CanvasDimensions {
     pub width: f32,
@@ -46,36 +42,37 @@ impl Application {
         ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
+
+        let proj_mat = Matrix::projection(dims.width, dims.height);
+
         Application {
             ctx,
-            shapes: Vec::new(),
-            dims,
+            proj_mat,
+            stage: Container::default(),
         }
     }
 
-    pub fn add_shape(&mut self, shape: &impl Shape) {
-        self.shapes.push(shape.get_geom());
-    }
-
-    pub fn render_all(&mut self) {
+    pub fn render(&self) {
         self.ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
-        // self.gc();
-
-        let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
-
-        self.shapes.iter().for_each(|shape_geom| {
-            DisplayObject::new(&self.ctx, shape_geom.clone()).draw(&proj_mat);
-        });
+        self.stage.render(self, &Matrix::new());
     }
 
-    pub fn gc(&mut self) {
-        self.shapes = self
-            .shapes
-            .iter()
-            .filter(|rc_shape| Rc::strong_count(rc_shape) > 1)
-            .cloned()
-            .collect();
+    pub fn add_container(&mut self, container: &Container) {
+        self.stage.add_container(container);
     }
+
+    pub fn add_shape(&mut self, shape: &impl Shape) {
+        self.stage.add_shape(shape);
+    }
+
+    // pub fn gc(&mut self) {
+    //     self.shapes = self
+    //         .shapes
+    //         .iter()
+    //         .filter(|rc_shape| Rc::strong_count(rc_shape) > 1)
+    //         .cloned()
+    //         .collect();
+    // }
 }

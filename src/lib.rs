@@ -1,13 +1,11 @@
+use graphics::Container;
+use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::WebGl2RenderingContext;
 
-use utils::{console_error, console_log};
-
 use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::shapes::{
-    Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
-};
+use crate::graphics::shapes::{Circle, IrregularPolygon, Rectangle, Shape, Triangle};
 
 mod core;
 mod display;
@@ -61,21 +59,44 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let red: Vec<f32> = vec![1.0, 0.0, 0.0];
-    let green: Vec<f32> = vec![0.0, 1.0, 0.0];
+    let _red: Vec<f32> = vec![1.0, 0.0, 0.0];
+    let _green: Vec<f32> = vec![0.0, 1.0, 0.0];
     let blue: Vec<f32> = vec![0.0, 0.0, 1.0];
+
+    // let irregular_p = IrregularPolygon::new_at_origin(300.0, 250.0, 4, &blue);
+    // let polygon = RegularPolygon::new_at_origin(200.0, 7, &red);
+
+    // let ellipse = Ellipse::new_at_origin(150.0, 100.0, &blue);
+    let _circle = Circle::new_at_origin(120.0, &blue);
+    let rectangle = Rectangle::new_at_origin(100.0, 75.0);
+    // let triangle = Triangle::new(100, 100, 60.0);
+    let triangle = Triangle::new_at_origin(75.0);
+    triangle.rotate_deg(5.0); // total 45.0 deg rotation for triangle
+
+    let mut container = Container::default();
+    container.rotate_deg(55.0); // total 90 deg rotation for rectangle
+
+    // container.add_shape(&circle);
+    container.add_shape(&rectangle);
+
     let poly = IrregularPolygon::new_from_path(
-        vec![0.0, 0.0, 200.0 , 200.0, 300.0, 100.0, -100.0, 100.0],
+        vec![0.0, 0.0, 200.0, 200.0, 300.0, 100.0, -100.0, 100.0],
         &blue,
     );
+
     let mut app = Application::new(&context, dims);
 
     app.add_shape(&poly);
-    poly.translate(-70.0,00.0);
+    poly.translate(-70.0, 0.0);
 
-    // TODO: simulate timeout
+    // app.stage.rotate_deg(35.0);
+    triangle.rotate_deg(5.0);
 
-    app.render_all();
+    app.add_container(&container);
+
+    app.add_shape(&triangle);
+
+    app.render();
 
     Ok(())
 }

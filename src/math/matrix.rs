@@ -56,18 +56,18 @@ impl Matrix {
      * @param {number} y - Height of the canvas.
      * @return {Matrix} This matrix.
      */
-    pub fn projection(width: &f32, height: &f32) -> Matrix {
-        return Matrix {
+    pub fn projection(width: f32, height: f32) -> Matrix {
+        Matrix {
             a: 2.0 / width,
             b: 0.0,
             c: 0.0,
             d: -2.0 / height,
             tx: 0.0,
             ty: 0.0,
-        };
+        }
     }
 
-    pub fn project(&self, width: &f32, height: &f32) -> Matrix {
+    pub fn project(&self, width: f32, height: f32) -> Matrix {
         self.scale(2.0 / width, -2.0 / height)
     }
 
@@ -119,7 +119,7 @@ impl Matrix {
      * @param {number} angle - The angle in radians.
      * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
      */
-    pub fn rotate(&self, angle: &f32) -> Matrix {
+    pub fn rotate(&self, angle: f32) -> Matrix {
         let sin = angle.sin();
         let cos = angle.cos();
 
@@ -143,7 +143,7 @@ impl Matrix {
      * @param y - How much to translate y by
      * @return This matrix. Good for chaining method calls.
      */
-    pub fn translate(&self, x: &f32, y: &f32) -> Matrix {
+    pub fn translate(&self, x: f32, y: f32) -> Matrix {
         Matrix {
             a: self.a,
             b: self.b,
