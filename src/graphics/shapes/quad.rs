@@ -6,6 +6,8 @@ use crate::math::{BoundingRect, Matrix};
 use crate::graphics::{Geom, Shape};
 use web_sys::WebGl2RenderingContext;
 
+use super::utils::color_n_vertices;
+
 #[derive(Clone)]
 pub struct Rectangle {
     pub x: i32,
@@ -18,20 +20,14 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    pub fn new(x: i32, y: i32, width: f32, height: f32) -> Self {
+    pub fn new(x: i32, y: i32, width: f32, height: f32, color: &[f32]) -> Self {
         let right = width / 2.0;
         let left = -right;
         let top = height / 2.0;
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom, right, bottom].to_vec();
-        let color = [
-            1.0, 0.4, 0.4, // vertex 1
-            1.0, 0.0, 0.0, // vertex 2
-            0.0, 1.0, 0.0, // vertex 3
-            0.0, 0.0, 1.0, // vertex 4
-        ]
-        .to_vec();
+        let color = color_n_vertices(color, 4);
 
         let geom = Geom {
             u_mat: Matrix::translation(x as f32, y as f32),
@@ -50,8 +46,8 @@ impl Rectangle {
         }
     }
 
-    pub fn new_at_origin(width: f32, height: f32) -> Self {
-        Self::new(0, 0, width, height)
+    pub fn new_at_origin(width: f32, height: f32, color: &[f32]) -> Self {
+        Self::new(0, 0, width, height, color)
     }
 }
 
