@@ -14,7 +14,11 @@ pub struct Circle {
 }
 
 impl Circle {
-    pub fn new(x: i32, y: i32, radius: f32, color: &[f32]) -> Self {
+    pub fn new(radius: f32, color: &[f32]) -> Self {
+        Self::new_at(0, 0, radius, color)
+    }
+
+    pub fn new_at(x: i32, y: i32, radius: f32, color: &[f32]) -> Self {
         let vertex_count = 200;
         let vertices = calc_n_vertices(radius, radius, vertex_count);
         let color_data = color_n_vertices(color, vertex_count);
@@ -28,10 +32,6 @@ impl Circle {
         }));
 
         Circle { x, y, radius, geom }
-    }
-
-    pub fn new_at_origin(radius: f32, color: &[f32]) -> Self {
-        Self::new(0, 0, radius, color)
     }
 }
 

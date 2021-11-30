@@ -15,7 +15,11 @@ pub struct Ellipse {
 }
 
 impl Ellipse {
-    pub fn new(x: i32, y: i32, width: f32, height: f32, color: &[f32]) -> Self {
+    pub fn new(width: f32, height: f32, color: &[f32]) -> Self {
+        Self::new_at(0, 0, width, height, color)
+    }
+
+    pub fn new_at(x: i32, y: i32, width: f32, height: f32, color: &[f32]) -> Self {
         let vertex_count = 200;
         let vertices = calc_n_vertices(width, height, vertex_count);
         let color_data = color_n_vertices(color, vertex_count);
@@ -35,10 +39,6 @@ impl Ellipse {
             height,
             geom,
         }
-    }
-
-    pub fn new_at_origin(width: f32, height: f32, color: &[f32]) -> Self {
-        Self::new(0, 0, width, height, color)
     }
 }
 

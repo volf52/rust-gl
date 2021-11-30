@@ -15,7 +15,11 @@ pub struct Triangle {
 }
 
 impl Triangle {
-    pub fn new(x: i32, y: i32, size: f32) -> Self {
+    pub fn new(size: f32, color: &[f32]) -> Self {
+        Self::new_at(0, 0, size, color)
+    }
+
+    pub fn new_at(x: i32, y: i32, size: f32, color: &[f32]) -> Self {
         let right = size / 2.0;
         let left = -right;
         let top = right;
@@ -38,10 +42,6 @@ impl Triangle {
         }));
 
         Triangle { size, geom, x, y }
-    }
-
-    pub fn new_at_origin(size: f32) -> Self {
-        Self::new(0, 0, size)
     }
 }
 

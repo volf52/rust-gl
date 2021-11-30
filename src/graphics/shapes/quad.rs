@@ -20,7 +20,11 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    pub fn new(x: i32, y: i32, width: f32, height: f32, color: &[f32]) -> Self {
+    pub fn new(width: f32, height: f32, color: &[f32]) -> Self {
+        Self::new_at(0, 0, width, height, color)
+    }
+
+    pub fn new_at(x: i32, y: i32, width: f32, height: f32, color: &[f32]) -> Self {
         let right = width / 2.0;
         let left = -right;
         let top = height / 2.0;
@@ -44,10 +48,6 @@ impl Rectangle {
             height,
             geom: Rc::new(RefCell::new(geom)),
         }
-    }
-
-    pub fn new_at_origin(width: f32, height: f32, color: &[f32]) -> Self {
-        Self::new(0, 0, width, height, color)
     }
 }
 

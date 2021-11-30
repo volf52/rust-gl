@@ -64,9 +64,9 @@ pub fn main() -> Result<(), JsValue> {
     let _green: Vec<f32> = vec![0.0, 1.0, 0.0];
     let blue: Vec<f32> = vec![0.0, 0.0, 1.0];
 
-    let _circle = Circle::new_at_origin(120.0, &blue);
-    let rectangle = Rectangle::new_at_origin(300.0, 300.0, &red);
-    let rectangle_2 = Rectangle::new(-100, -100, 100.0, 100.0, &blue); // topleft corners of both should line up
+    let _circle = Circle::new(120.0, &blue);
+    let rectangle = Rectangle::new(300.0, 300.0, &red);
+    let rectangle_2 = Rectangle::new_at(-100, -100, 100.0, 100.0, &blue); // topleft corners of both should line up
 
     let mut container = Container::default();
     container.move_by(-100.0, -100.0);
