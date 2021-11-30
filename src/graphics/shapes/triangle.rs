@@ -1,6 +1,6 @@
+use crate::math::bounding_rect::Bounded;
 use std::cell::RefCell;
 use std::rc::Rc;
-
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
@@ -49,7 +49,9 @@ impl Shape for Triangle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for Triangle {
     fn get_bounds(&self) -> BoundingRect {
         todo!()
     }

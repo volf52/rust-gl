@@ -1,5 +1,6 @@
 use graphics::container;
 use graphics::Container;
+use math::bounding_rect::Bounded;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -70,6 +71,15 @@ pub fn main() -> Result<(), JsValue> {
 
     let mut container = Container::default();
     container.move_by(-100.0, -100.0);
+
+    console_log!(
+        "Contains (0, 0) for rect1: {}",
+        rectangle.contains(0.0, 0.0)
+    );
+    console_log!(
+        "Contains (0, 0) for rect2: {}",
+        rectangle_2.contains(0.0, 0.0)
+    );
 
     container.add_shape(&rectangle);
     container.add_shape(&rectangle_2);

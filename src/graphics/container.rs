@@ -30,14 +30,6 @@ impl Shape for Container {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
-
-    fn get_bounds(&self) -> crate::math::BoundingRect {
-        todo!()
-    }
-
-    fn contains(&self, x: f32, y: f32) -> bool {
-        todo!()
-    }
 }
 
 impl Container {

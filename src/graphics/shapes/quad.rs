@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use crate::math::bounding_rect::Bounded;
 use crate::math::{BoundingRect, Matrix};
 
 use crate::graphics::{Geom, Shape};
@@ -55,7 +56,9 @@ impl Shape for Rectangle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for Rectangle {
     fn get_bounds(&self) -> BoundingRect {
         BoundingRect::new(self.x as f32, self.y as f32, self.width, self.height)
     }

@@ -37,3 +37,12 @@ impl BoundingRect {
         }
     }
 }
+
+pub trait Bounded {
+    fn get_bounds(&self) -> BoundingRect;
+    fn contains(&self, x: f32, y: f32) -> bool;
+
+    fn contains_in_bounds(&self, x: f32, y: f32) -> bool {
+        self.get_bounds().contains(x, y)
+    }
+}

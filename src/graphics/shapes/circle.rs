@@ -1,5 +1,6 @@
 use crate::graphics::shapes::utils::{calc_n_vertices, color_n_vertices};
 use crate::graphics::{Geom, Shape};
+use crate::math::bounding_rect::Bounded;
 use crate::math::{BoundingRect, Matrix};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -39,7 +40,9 @@ impl Shape for Circle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for Circle {
     fn get_bounds(&self) -> BoundingRect {
         let x_pos = (self.x as f32) - self.radius;
         let y_pos = (self.y as f32) - self.radius;

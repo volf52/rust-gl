@@ -1,5 +1,6 @@
 use crate::graphics::shapes::utils::{calc_n_vertices, color_n_vertices};
 use crate::graphics::{Geom, Shape};
+use crate::math::bounding_rect::Bounded;
 use crate::math::{BoundingRect, Matrix};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -58,7 +59,9 @@ impl Shape for RegularPolygon {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for RegularPolygon {
     fn get_bounds(&self) -> BoundingRect {
         todo!()
     }
@@ -142,7 +145,9 @@ impl Shape for IrregularPolygon {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for IrregularPolygon {
     fn get_bounds(&self) -> BoundingRect {
         todo!()
     }
