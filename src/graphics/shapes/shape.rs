@@ -26,4 +26,8 @@ pub trait Shape {
         let geom = self.get_geom();
         geom.borrow_mut().translate(tx, ty);
     }
+
+    fn move_by(&self, tx: f32, ty: f32) {
+        self.translate(tx, ty);
+    }
 }
