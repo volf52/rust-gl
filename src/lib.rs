@@ -4,7 +4,6 @@ use crate::graphics::shapes::{RegularPolygon, Shape};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use textures::texture_img::get_img;
 use textures::texture_img::load_texture_image;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
@@ -86,7 +85,7 @@ pub fn main() -> Result<(), JsValue> {
     pentagon.translate(-70.0, 00.0);
     triangle.translate(200.0, 0.0);
 
-    let tex = load_texture_image(Rc::new(context), get_img().as_str());
+    let tex = app.tex_from_img("assets/test.jpg");
 
     render_loop(move || {
         app.clear_all();
@@ -97,8 +96,6 @@ pub fn main() -> Result<(), JsValue> {
 
     Ok(())
 }
-
-
 
 pub fn render_loop<F>(mut closure: F)
 where

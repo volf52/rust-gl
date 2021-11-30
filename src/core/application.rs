@@ -1,4 +1,6 @@
+use crate::load_texture_image;
 use crate::textures::utils::{TextureGen, TextureOrColor};
+use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
@@ -68,5 +70,9 @@ impl Application {
             TextureOrColor::Color(color) => self.draw_colored_shape(shape, &color),
             TextureOrColor::Texture(texture) => self.draw_textured_shape(shape, &texture),
         }
+    }
+
+    pub fn tex_from_img(&self, src: &str) -> WebGlTexture {
+        load_texture_image(Rc::new(self.ctx.clone()), src)
     }
 }
