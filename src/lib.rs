@@ -70,18 +70,35 @@ pub fn main() -> Result<(), JsValue> {
     let mut container = Container::default();
     // container.move_by(-200.0, -200.0);
 
-    console_log!("Contains (0, 0) for c: {}", c.contains(0.0, 0.0));
-    console_log!(
-        "Contains in bounds (0, 0) for c: {}",
-        c.contains_in_bounds(0.0, 0.0)
-    );
-
     c.move_by(200.0, 200.0);
 
-    console_log!("Center for c: {:?}", c.get_center());
+    console_log!("Center for c: {:?}", c.get_center()); // should be 0.0, 0.0
+
+    let p = (-50.0, 50.0);
+    console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // true
+    console_log!(
+        "Contains in bounds {:?} for c: {}",
+        p,
+        c.contains_in_bounds(p.0, p.1)
+    ); // true
+
+    let p = (-90.0, -90.0);
+    console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
+    console_log!(
+        "Contains in bounds {:?} for c: {}",
+        p,
+        c.contains_in_bounds(p.0, p.1)
+    ); // true
+
+    let p = (100.1, 100.0);
+    console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
+    console_log!(
+        "Contains in bounds {:?} for c: {}",
+        p,
+        c.contains_in_bounds(p.0, p.1)
+    ); // false
 
     let c_bounds = c.get_bounds();
-
     let rect = Rectangle::new_at(
         c_bounds.x as i32,
         c_bounds.y as i32,

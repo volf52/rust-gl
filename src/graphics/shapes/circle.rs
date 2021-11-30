@@ -51,13 +51,15 @@ impl Bounded for Circle {
     }
 
     fn contains(&self, x: f32, y: f32) -> bool {
-        match self.radius * 2.0 {
+        let (c_x, c_y) = self.get_center();
+
+        match self.radius {
             r2 if r2 <= 0.0 => false,
             r2 => {
-                let dx = (self.x as f32 - x).powi(2);
-                let dy = (self.y as f32 - y).powi(2);
+                let dx = (x - c_x).powi(2);
+                let dy = (y - c_y).powi(2);
 
-                (dx + dy) <= r2
+                (dx + dy) <= r2.powi(2)
             }
         }
     }
