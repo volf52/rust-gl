@@ -32,7 +32,7 @@ impl BoundingRect {
     pub fn contains(&self, x: f32, y: f32) -> bool {
         match (self.width, self.height) {
             t if t.0 <= 0.0 || t.1 <= 0.0 => false,
-            t if ((x - self.x).abs() <= t.0) && ((y - self.y).abs() <= t.1) => true,
+            t if ((x - self.x).abs() <= (t.0 / 2.0)) && ((y - self.y).abs() <= (t.1 / 2.0)) => true,
             _ => false,
         }
     }
