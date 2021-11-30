@@ -1,10 +1,15 @@
 use crate::graphics::Geom;
-use crate::math::BoundingRect;
 use std::cell::RefCell;
 use std::rc::Rc;
 
 pub trait Shape {
     fn get_geom(&self) -> Rc<RefCell<Geom>>;
+
+    fn get_center(&self) -> (f32, f32) {
+        let mat = self.get_geom().borrow().u_mat.clone();
+
+        (mat.tx, mat.ty)
+    }
 
     // Transformation funcs
     fn rotate(&self, angle_radians: f32) {

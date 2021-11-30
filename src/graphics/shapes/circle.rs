@@ -27,7 +27,7 @@ impl Circle {
         let geom = Rc::new(RefCell::new(Geom {
             vertices,
             color: color_data,
-            u_mat: Matrix::new(),
+            u_mat: Matrix::translation(x as f32, y as f32),
             mode: WebGl2RenderingContext::TRIANGLE_FAN,
             vertex_count: vertex_count as i32,
         }));
@@ -44,15 +44,14 @@ impl Shape for Circle {
 
 impl Bounded for Circle {
     fn get_bounds(&self) -> BoundingRect {
-        let x_pos = (self.x as f32) - self.radius;
-        let y_pos = (self.y as f32) - self.radius;
-        let width_height = self.radius.powi(2);
+        let (x_pos, y_pos) = self.get_center();
+        let width_height = self.radius * 2.0;
 
         BoundingRect::new(x_pos, y_pos, width_height, width_height)
     }
 
     fn contains(&self, x: f32, y: f32) -> bool {
-        match self.radius.powi(2) {
+        match self.radius * 2.0 {
             r2 if r2 <= 0.0 => false,
             r2 => {
                 let dx = (self.x as f32 - x).powi(2);

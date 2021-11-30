@@ -65,27 +65,36 @@ pub fn main() -> Result<(), JsValue> {
     let _green: Vec<f32> = vec![0.0, 1.0, 0.0];
     let blue: Vec<f32> = vec![0.0, 0.0, 1.0];
 
-    let _circle = Circle::new(120.0, &blue);
-    let rectangle = Rectangle::new(300.0, 300.0, &red);
-    let rectangle_2 = Rectangle::new_at(-100, -100, 100.0, 100.0, &blue); // topleft corners of both should line up
+    let c = Circle::new_at(-200, -200, 100.0, &red);
 
     let mut container = Container::default();
-    container.move_by(-100.0, -100.0);
+    // container.move_by(-200.0, -200.0);
 
+    console_log!("Contains (0, 0) for c: {}", c.contains(0.0, 0.0));
     console_log!(
-        "Contains (0, 0) for rect1: {}",
-        rectangle.contains(0.0, 0.0)
-    );
-    console_log!(
-        "Contains (0, 0) for rect2: {}",
-        rectangle_2.contains(0.0, 0.0)
+        "Contains in bounds (0, 0) for c: {}",
+        c.contains_in_bounds(0.0, 0.0)
     );
 
-    container.add_shape(&rectangle);
-    container.add_shape(&rectangle_2);
+    c.move_by(200.0, 200.0);
+
+    console_log!("Center for c: {:?}", c.get_center());
+
+    let c_bounds = c.get_bounds();
+
+    let rect = Rectangle::new_at(
+        c_bounds.x as i32,
+        c_bounds.y as i32,
+        c_bounds.width,
+        c_bounds.height,
+        &blue,
+    );
+
+    container.add_shape(&c);
 
     let mut app = Application::new(&context, dims);
 
+    app.add_shape(&rect);
     app.add_container(&container);
 
     app.render();
