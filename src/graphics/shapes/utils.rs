@@ -10,7 +10,7 @@ pub fn calc_n_vertices(width: f32, height: f32, num_sides: usize) -> Vec<f32> {
     })
 }
 
-pub fn color_n_vertices(unit_color: &[f32], num_vertices: usize) -> Vec<f32> {
+pub fn color_n_times(unit_color: &[u8], num_vertices: usize) -> Vec<u8> {
     unit_color
         .iter()
         .cycle()

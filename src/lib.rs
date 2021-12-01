@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use graphics::Container;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
@@ -5,13 +7,16 @@ use wasm_bindgen::JsCast;
 use web_sys::WebGl2RenderingContext;
 
 use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::shapes::{Circle, IrregularPolygon, Rectangle, Shape, Triangle};
+use crate::graphics::shapes::{
+    Circle, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
+};
 
 mod core;
 mod display;
 mod graphics;
 mod math;
 mod shaders;
+mod textures;
 mod utils;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -38,6 +43,16 @@ pub fn hey(mat: Vec<f32>) {
 }
 
 #[wasm_bindgen]
+pub fn hey2(mat: Vec<u8>) {
+    console_log!("{:#?}", mat);
+}
+
+#[wasm_bindgen]
+pub fn puts(str: &str) {
+    console_log!("{}", str);
+}
+
+#[wasm_bindgen]
 pub fn test_error() {
     console_error!("testing console.error");
 }
@@ -59,44 +74,49 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let _red: Vec<f32> = vec![1.0, 0.0, 0.0];
-    let _green: Vec<f32> = vec![0.0, 1.0, 0.0];
-    let blue: Vec<f32> = vec![0.0, 0.0, 1.0];
-
-    // let irregular_p = IrregularPolygon::new_at_origin(300.0, 250.0, 4, &blue);
-    // let polygon = RegularPolygon::new_at_origin(200.0, 7, &red);
-
-    // let ellipse = Ellipse::new_at_origin(150.0, 100.0, &blue);
-    let _circle = Circle::new_at_origin(120.0, &blue);
-    let rectangle = Rectangle::new_at_origin(100.0, 75.0);
-    // let triangle = Triangle::new(100, 100, 60.0);
-    let triangle = Triangle::new_at_origin(75.0);
-    triangle.rotate_deg(5.0); // total 45.0 deg rotation for triangle
+    let red: Vec<u8> = vec![255, 0, 0];
+    let _green: Vec<u8> = vec![0, 255, 0];
+    let _blue: Vec<u8> = vec![0, 0, 255];
 
     let mut container = Container::default();
-    container.rotate_deg(55.0); // total 90 deg rotation for rectangle
-
-    // container.add_shape(&circle);
-    container.add_shape(&rectangle);
-
-    let poly = IrregularPolygon::new_from_path(
-        vec![0.0, 0.0, 200.0, 200.0, 300.0, 100.0, -100.0, 100.0],
-        &blue,
-    );
-
     let mut app = Application::new(&context, dims);
 
-    app.add_shape(&poly);
-    poly.translate(-70.0, 0.0);
-
-    // app.stage.rotate_deg(35.0);
-    triangle.rotate_deg(5.0);
+    let tr = Triangle::new_at_origin(100.0, &red);
+    container.add_shape(&tr);
 
     app.add_container(&container);
 
-    app.add_shape(&triangle);
+    let tex = app.tex_from_img("../assets/test.jpg");
+    let c = Circle::new(0, 0, 100.0, &tex);
+    c.translate(-150.0, 75.0);
 
-    app.render();
+    app.add_shape(&c);
+
+    render_loop(move || {
+        app.render();
+        tr.rotate_deg(5.0);
+        c.rotate_deg(1.0);
+    });
 
     Ok(())
+}
+
+pub fn render_loop<F>(mut closure: F)
+where
+    F: 'static + FnMut(),
+{
+    let f = Rc::new(RefCell::new(None));
+    let g = f.clone();
+    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
+        closure();
+        request_animation_frame(f.borrow().as_ref().unwrap());
+    }) as Box<dyn FnMut()>));
+    request_animation_frame(g.borrow().as_ref().unwrap());
+}
+
+fn request_animation_frame(f: &Closure<dyn FnMut()>) {
+    web_sys::window()
+        .unwrap()
+        .request_animation_frame(f.as_ref().unchecked_ref())
+        .expect("should register `requestAnimationFrame` OK");
 }

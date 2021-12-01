@@ -17,15 +17,17 @@ impl Shader for ShapeShader {
         let vs_src = format!(
             shader_utils::DEFAULT_VS!(),
             a_position = ShaderConstant::APosition.to_string(),
-            a_color = ShaderConstant::AColor.to_string(),
-            v_color = ShaderConstant::VColor.to_string(),
+            a_texture_coord = ShaderConstant::ATextureCoord.to_string(),
+            v_texture_coord = ShaderConstant::VTextureCoord.to_string(),
             u_model = ShaderConstant::UModel.to_string(),
             u_projection = ShaderConstant::UProjection.to_string(),
         );
         let fs_src = format!(
             shader_utils::DEFAULT_FS!(),
-            v_color = ShaderConstant::VColor.to_string()
+            u_sampler = ShaderConstant::USampler.to_string(),
+            v_texture_coord = ShaderConstant::VTextureCoord.to_string(),
         );
+
 
         compile_shaders(ctx, vs_src.as_str(), fs_src.as_str())
     }

@@ -3,6 +3,8 @@ use crate::math::BoundingRect;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+
+
 pub trait Shape {
     fn get_geom(&self) -> Rc<RefCell<Geom>>;
     fn get_bounds(&self) -> BoundingRect;
@@ -27,3 +29,5 @@ pub trait Shape {
         geom.borrow_mut().translate(tx, ty);
     }
 }
+
+
