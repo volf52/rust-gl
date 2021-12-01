@@ -1,11 +1,10 @@
-use crate::load_texture_image;
+use crate::textures::texture_img::load_texture_image;
 use crate::textures::utils::{TextureGen, TextureOrColor};
-use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
 use crate::display::display_object::DisplayObject;
-use crate::graphics::Shape;
+use crate::graphics::{Container, Shape};
 use crate::math::Matrix;
 use crate::textures::solid_texture::create_solid_texture;
 
@@ -21,9 +20,9 @@ extern "C" {
 }
 
 pub struct Application {
-    ctx: WebGl2RenderingContext,
-    // shapes: Vec<Rc<RefCell<Geom>>>,
-    dims: CanvasDimensions,
+    pub ctx: WebGl2RenderingContext,
+    pub proj_mat: Matrix,
+    pub stage: Container,
 }
 pub struct CanvasDimensions {
     pub width: f32,
@@ -47,17 +46,33 @@ impl Application {
         ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
-        Application { ctx, dims }
+
+        let proj_mat = Matrix::projection(dims.width, dims.height);
+
+        Application {
+            ctx,
+            proj_mat,
+            stage: Container::default(),
+        }
     }
-    pub fn clear_all(&self) {
+
+    pub fn render(&self) {
         self.ctx.clear(
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
+        self.stage.render(self, &Matrix::new());
+    }
+
+    pub fn add_container(&mut self, container: &Container) {
+        self.stage.add_container(container);
+    }
+
+    pub fn add_shape(&mut self, shape: &impl Shape) {
+        self.stage.add_shape(shape);
     }
 
     pub fn draw_textured_shape<T: Shape>(&self, shape: &T, texture: &WebGlTexture) {
-        let proj_mat = Matrix::projection(&self.dims.width, &self.dims.height);
-        DisplayObject::new(&self.ctx, shape.get_geom()).draw_textured(&proj_mat, &texture);
+        DisplayObject::new(&self.ctx, shape.get_geom()).draw_textured(&self.proj_mat, &texture);
     }
 
     pub fn draw_colored_shape<T: Shape>(&self, shape: &T, color: &Vec<u8>) {
@@ -73,6 +88,15 @@ impl Application {
     }
 
     pub fn tex_from_img(&self, src: &str) -> WebGlTexture {
-        load_texture_image(Rc::new(self.ctx.clone()), src)
+        load_texture_image(&self.ctx, src)
     }
+
+    // pub fn gc(&mut self) {
+    //     self.shapes = self
+    //         .shapes
+    //         .iter()
+    //         .filter(|rc_shape| Rc::strong_count(rc_shape) > 1)
+    //         .cloned()
+    //         .collect();
+    // }
 }

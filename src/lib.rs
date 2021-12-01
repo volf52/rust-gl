@@ -1,14 +1,15 @@
-use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::shapes::Triangle;
-use crate::graphics::shapes::{RegularPolygon, Shape};
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 
-use textures::texture_img::load_texture_image;
+use graphics::Container;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::WebGl2RenderingContext;
+
+use crate::core::application::{Application, CanvasDimensions};
+use crate::graphics::shapes::{
+    Circle, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
+};
 
 mod core;
 mod display;
@@ -73,25 +74,28 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let app = Application::new(&context, dims);
-
     let red: Vec<u8> = vec![255, 0, 0];
     let _green: Vec<u8> = vec![0, 255, 0];
     let _blue: Vec<u8> = vec![0, 0, 255];
 
-    let pentagon = RegularPolygon::new_at_origin(100.0, 7);
-    let triangle = Triangle::new(100.0);
+    let mut container = Container::default();
+    let mut app = Application::new(&context, dims);
 
-    pentagon.translate(-70.0, 00.0);
-    triangle.translate(200.0, 0.0);
+    let tr = Triangle::new_at_origin(100.0, &red);
+    container.add_shape(&tr);
 
-    let tex = app.tex_from_img("assets/test.jpg");
+    app.add_container(&container);
+
+    let tex = app.tex_from_img("../assets/test.jpg");
+    let c = Circle::new(0, 0, 100.0, &tex);
+    c.translate(-150.0, 75.0);
+
+    app.add_shape(&c);
 
     render_loop(move || {
-        app.clear_all();
-        app.draw_shape(&pentagon, &tex);
-        app.draw_shape(&triangle, &red);
-        triangle.rotate_deg(5.0);
+        app.render();
+        tr.rotate_deg(5.0);
+        c.rotate_deg(1.0);
     });
 
     Ok(())

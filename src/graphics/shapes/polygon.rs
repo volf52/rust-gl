@@ -1,18 +1,23 @@
-
+use crate::graphics::shapes::utils::color_n_times;
 use crate::graphics::{Geom, Shape};
-use crate::math::Matrix;
+use crate::math::BoundingRect;
+use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
 use std::rc::Rc;
-use web_sys::{WebGl2RenderingContext};
-use crate::graphics::shapes::utils::build;
 
 pub struct RegularPolygon {
+    pub x: i32,
+    pub y: i32,
+
     pub radius: f32,
     pub sides: usize,
     geom: Rc<RefCell<Geom>>,
 }
 
 pub struct IrregularPolygon {
+    pub x: i32,
+    pub y: i32,
+
     pub width: f32,
     pub height: f32,
     pub sides: usize,
@@ -20,15 +25,27 @@ pub struct IrregularPolygon {
 }
 
 impl RegularPolygon {
-    pub fn new_at_origin(radius: f32, n_sides: usize) -> Self {
+    pub fn new(
+        x: i32,
+        y: i32,
+        radius: f32,
+        n_sides: usize,
+        color_or_texture: &impl TextureGen,
+    ) -> Self {
         let sides = n_sides.max(3);
-        let geom = build(radius, radius, sides);
+        let geom = Geom::build_geom(x as f32, y as f32, radius, radius, sides, color_or_texture);
 
         RegularPolygon {
+            x,
+            y,
             radius,
             sides,
             geom,
         }
+    }
+
+    pub fn new_at_origin(radius: f32, n_sides: usize, color_or_texture: &impl TextureGen) -> Self {
+        Self::new(0, 0, radius, n_sides, color_or_texture)
     }
 }
 
@@ -36,14 +53,31 @@ impl Shape for RegularPolygon {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+
+    fn get_bounds(&self) -> BoundingRect {
+        todo!()
+    }
+
+    fn contains(&self, x: f32, y: f32) -> bool {
+        todo!()
+    }
 }
 
 impl IrregularPolygon {
-    pub fn new(width: f32, height: f32, n_sides: usize) -> Self {
+    pub fn new(
+        x: i32,
+        y: i32,
+        width: f32,
+        height: f32,
+        n_sides: usize,
+        color_or_texture: &impl TextureGen,
+    ) -> Self {
         let sides = n_sides.max(3);
-        let geom = build(width, height, sides);
+        let geom = Geom::build_geom(x as f32, y as f32, width, height, sides, color_or_texture);
 
         IrregularPolygon {
+            x,
+            y,
             width,
             height,
             sides,
@@ -51,47 +85,60 @@ impl IrregularPolygon {
         }
     }
 
-    pub fn new_from_path(vertices: Vec<f32>) -> Self {
-        // let color_data = color_n_vertices(color, vertices.len());
+    pub fn new_from_path(vertices: Vec<f32>, color_or_texture: &impl TextureGen) -> Self {
         let sides = vertices.len() / 2;
 
         let xs: Vec<f32> = vertices
             .iter()
             .enumerate()
-            .filter(|&(i, _)| i % 2 == 0)
-            .map(|(_, e)| e.clone())
+            .filter(|&(i, _)| i % 2 != 0)
+            .map(|(_, e)| *e)
             .collect();
 
         let ys: Vec<f32> = vertices
             .iter()
             .enumerate()
-            .filter(|&(i, _)| i % 2 != 0)
-            .map(|(_, e)| e.clone())
+            .filter(|&(i, _)| i % 2 == 0)
+            .map(|(_, e)| *e)
             .collect();
 
-        let width =
-            xs.iter().cloned().fold(0. / 0., f32::max) - xs.iter().cloned().fold(0. / 0., f32::min);
-        let height =
-            ys.iter().cloned().fold(0. / 0., f32::max) - ys.iter().cloned().fold(0. / 0., f32::min);
+        let width = xs.iter().cloned().fold(f32::NAN, f32::max)
+            - xs.iter().cloned().fold(f32::NAN, f32::min);
+        let height = ys.iter().cloned().fold(f32::NAN, f32::max)
+            - ys.iter().cloned().fold(f32::NAN, f32::min);
 
-        let geom = Rc::new(RefCell::new(Geom::new(
-            vertices,
-            Matrix::new(),
-            WebGl2RenderingContext::TRIANGLE_FAN,
-            sides as i32,
-        )));
+        let geom = Geom::build_geom(0.0, 0.0, width, height, sides, color_or_texture);
 
         IrregularPolygon {
+            x: 0,
+            y: 0,
             width,
             height,
             sides,
             geom,
         }
+    }
+
+    pub fn new_at_origin(
+        width: f32,
+        height: f32,
+        n_sides: usize,
+        color_or_texture: &impl TextureGen,
+    ) -> Self {
+        Self::new(0, 0, width, height, n_sides, color_or_texture)
     }
 }
 
 impl Shape for IrregularPolygon {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
+    }
+
+    fn get_bounds(&self) -> BoundingRect {
+        todo!()
+    }
+
+    fn contains(&self, _x: f32, _y: f32) -> bool {
+        todo!()
     }
 }

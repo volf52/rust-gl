@@ -1,11 +1,10 @@
-use std::rc::Rc;
-
 use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{HtmlImageElement, WebGl2RenderingContext, WebGlTexture};
 
 use std::borrow::BorrowMut;
 
-pub fn load_texture_image(gl: Rc<WebGl2RenderingContext>, src: &str) -> WebGlTexture {
+pub fn load_texture_image(gl: &WebGl2RenderingContext, src: &str) -> WebGlTexture {
+    let gl = gl.clone();
     let texture = gl.create_texture().unwrap();
     let tex = texture.clone();
     let image = HtmlImageElement::new().unwrap();

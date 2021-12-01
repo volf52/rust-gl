@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "@swc/core": "^1.2.106",
-    "@wasm-tool/wasm-pack-plugin": "^1.6.0",
     "copy-webpack-plugin": "^10.0.0",
     "css-loader": "^6.5.0",
     "file-loader": "^6.2.0",

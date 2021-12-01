@@ -5,7 +5,7 @@ pub enum TextureOrColor {
     Color(Vec<u8>),
 }
 
-pub trait TextureGen {
+pub trait TextureGen: Sized {
     fn to_enum(&self) -> TextureOrColor;
 }
 
@@ -20,4 +20,3 @@ impl TextureGen for Vec<u8> {
         TextureOrColor::Color(self.clone())
     }
 }
-
