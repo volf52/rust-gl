@@ -6,15 +6,16 @@ use wasm_bindgen::prelude::*;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ShaderConstant {
     APosition,
-    AColor,
+    ATextureCoord,
     UProjection,
     UModel,
-    VColor,
+    VTextureCoord,
+    VTextureCoord2,
     USampler,
 }
 
-pub const ATTRIBUTES: [ShaderConstant; 2] = [APosition, AColor];
-pub const UNIFORMS: [ShaderConstant; 2] = [UModel, UProjection];
+pub const ATTRIBUTES: [ShaderConstant; 2] = [APosition, ATextureCoord];
+pub const UNIFORMS: [ShaderConstant; 3] = [UModel, UProjection, USampler];
 
 impl Display for ShaderConstant {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

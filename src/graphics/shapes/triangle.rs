@@ -1,10 +1,10 @@
 use crate::math::bounding_rect::Bounded;
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
 use crate::math::{BoundingRect, Matrix};
+use crate::textures::utils::TextureGen;
 
 pub struct Triangle {
     pub x: i32,
@@ -15,33 +15,27 @@ pub struct Triangle {
 }
 
 impl Triangle {
-    pub fn new(size: f32, color: &[f32]) -> Self {
-        Self::new_at(0, 0, size, color)
-    }
-
-    pub fn new_at(x: i32, y: i32, size: f32, color: &[f32]) -> Self {
+    pub fn new(x: i32, y: i32, size: f32, color_or_texture: &impl TextureGen) -> Self {
         let right = size / 2.0;
         let left = -right;
         let top = right;
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom].to_vec();
-        let color = [
-            0.0, 0.0, 0.0, // vertex 1
-            0.0, 0.0, 0.0, // vertex 2
-            1.0, 0.0, 0.0, // vertex 3
-        ]
-        .to_vec();
 
-        let geom = Rc::new(RefCell::new(Geom {
-            u_mat: Matrix::translation(x as f32, y as f32),
-            vertices,
-            color,
-            vertex_count: 3,
-            mode: WebGl2RenderingContext::TRIANGLES,
-        }));
+        let geom = Rc::new(RefCell::new(Geom::new(
+            &vertices,
+            Matrix::translation(x as f32, y as f32),
+            WebGl2RenderingContext::TRIANGLES,
+            3,
+            color_or_texture,
+        )));
 
         Triangle { size, geom, x, y }
+    }
+
+    pub fn new_at_origin(size: f32, color_or_texture: &impl TextureGen) -> Self {
+        Self::new(0, 0, size, color_or_texture)
     }
 }
 

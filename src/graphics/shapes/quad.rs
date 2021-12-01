@@ -1,13 +1,12 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use crate::math::bounding_rect::Bounded;
-use crate::math::{BoundingRect, Matrix};
-
-use crate::graphics::{Geom, Shape};
 use web_sys::WebGl2RenderingContext;
 
-use super::utils::color_n_vertices;
+use crate::graphics::{Geom, Shape};
+use crate::math::bounding_rect::Bounded;
+use crate::math::{BoundingRect, Matrix};
+use crate::textures::utils::TextureGen;
 
 #[derive(Clone)]
 pub struct Rectangle {
@@ -21,26 +20,27 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    pub fn new(width: f32, height: f32, color: &[f32]) -> Self {
-        Self::new_at(0, 0, width, height, color)
-    }
-
-    pub fn new_at(x: i32, y: i32, width: f32, height: f32, color: &[f32]) -> Self {
+    pub fn new_at(
+        x: i32,
+        y: i32,
+        width: f32,
+        height: f32,
+        color_or_texture: &impl TextureGen,
+    ) -> Self {
         let right = width / 2.0;
         let left = -right;
         let top = height / 2.0;
         let bottom = -top;
 
         let vertices = [left, top, right, top, left, bottom, right, bottom].to_vec();
-        let color = color_n_vertices(color, 4);
 
-        let geom = Geom {
-            u_mat: Matrix::translation(x as f32, y as f32),
-            vertices,
-            color,
-            vertex_count: 4,
-            mode: WebGl2RenderingContext::TRIANGLE_STRIP,
-        };
+        let geom = Geom::new(
+            &vertices,
+            Matrix::translation(x as f32, y as f32),
+            WebGl2RenderingContext::TRIANGLE_STRIP,
+            4,
+            color_or_texture,
+        );
 
         Rectangle {
             x,
@@ -49,6 +49,10 @@ impl Rectangle {
             height,
             geom: Rc::new(RefCell::new(geom)),
         }
+    }
+
+    pub fn new_at_origin(width: f32, height: f32, color_or_texture: &impl TextureGen) -> Self {
+        Self::new_at(0, 0, width, height, color_or_texture)
     }
 }
 

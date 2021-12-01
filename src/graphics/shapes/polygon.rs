@@ -1,10 +1,10 @@
-use crate::graphics::shapes::utils::{calc_n_vertices, color_n_vertices};
+use crate::graphics::shapes::utils::color_n_times;
 use crate::graphics::{Geom, Shape};
 use crate::math::bounding_rect::Bounded;
-use crate::math::{BoundingRect, Matrix};
+use crate::math::BoundingRect;
+use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
 use std::rc::Rc;
-use web_sys::WebGl2RenderingContext;
 
 pub struct RegularPolygon {
     pub x: i32,
@@ -12,7 +12,6 @@ pub struct RegularPolygon {
 
     pub radius: f32,
     pub sides: usize,
-
     geom: Rc<RefCell<Geom>>,
 }
 
@@ -23,27 +22,19 @@ pub struct IrregularPolygon {
     pub width: f32,
     pub height: f32,
     pub sides: usize,
-
     geom: Rc<RefCell<Geom>>,
 }
 
 impl RegularPolygon {
-    pub fn new(radius: f32, n_sides: usize, color: &[f32]) -> Self {
-        Self::new_at(0, 0, radius, n_sides, color)
-    }
-
-    pub fn new_at(x: i32, y: i32, radius: f32, n_sides: usize, color: &[f32]) -> Self {
+    pub fn new_at(
+        x: i32,
+        y: i32,
+        radius: f32,
+        n_sides: usize,
+        color_or_texture: &impl TextureGen,
+    ) -> Self {
         let sides = n_sides.max(3);
-        let vertices = calc_n_vertices(radius, radius, n_sides);
-        let color_data = color_n_vertices(color, n_sides);
-
-        let geom = Rc::new(RefCell::new(Geom {
-            vertices,
-            color: color_data,
-            u_mat: Matrix::translation(x as f32, y as f32),
-            mode: WebGl2RenderingContext::TRIANGLE_FAN,
-            vertex_count: sides as i32,
-        }));
+        let geom = Geom::build_geom(x as f32, y as f32, radius, radius, sides, color_or_texture);
 
         RegularPolygon {
             x,
@@ -52,6 +43,10 @@ impl RegularPolygon {
             sides,
             geom,
         }
+    }
+
+    pub fn new_at_origin(radius: f32, n_sides: usize, color_or_texture: &impl TextureGen) -> Self {
+        Self::new_at(0, 0, radius, n_sides, color_or_texture)
     }
 }
 
@@ -72,12 +67,28 @@ impl Bounded for RegularPolygon {
 }
 
 impl IrregularPolygon {
-    pub fn new(width: f32, height: f32, n_sides: usize, color: &[f32]) -> Self {
-        Self::new_at(0, 0, width, height, n_sides, color)
+    pub fn new_at(
+        x: i32,
+        y: i32,
+        width: f32,
+        height: f32,
+        n_sides: usize,
+        color_or_texture: &impl TextureGen,
+    ) -> Self {
+        let sides = n_sides.max(3);
+        let geom = Geom::build_geom(x as f32, y as f32, width, height, sides, color_or_texture);
+
+        IrregularPolygon {
+            x,
+            y,
+            width,
+            height,
+            sides,
+            geom,
+        }
     }
 
-    pub fn new_from_path(vertices: Vec<f32>, color: &[f32]) -> Self {
-        let color_data = color_n_vertices(color, vertices.len());
+    pub fn new_from_path(vertices: Vec<f32>, color_or_texture: &impl TextureGen) -> Self {
         let sides = vertices.len() / 2;
 
         let xs: Vec<f32> = vertices
@@ -99,13 +110,7 @@ impl IrregularPolygon {
         let height = ys.iter().cloned().fold(f32::NAN, f32::max)
             - ys.iter().cloned().fold(f32::NAN, f32::min);
 
-        let geom = Rc::new(RefCell::new(Geom {
-            vertices,
-            color: color_data,
-            u_mat: Matrix::new(),
-            mode: WebGl2RenderingContext::TRIANGLE_FAN,
-            vertex_count: sides as i32,
-        }));
+        let geom = Geom::build_geom(0.0, 0.0, width, height, sides, color_or_texture);
 
         IrregularPolygon {
             x: 0,
@@ -117,27 +122,13 @@ impl IrregularPolygon {
         }
     }
 
-    pub fn new_at(x: i32, y: i32, width: f32, height: f32, n_sides: usize, color: &[f32]) -> Self {
-        let sides = n_sides.max(3);
-        let vertices = calc_n_vertices(width, height, n_sides);
-        let color = color_n_vertices(color, n_sides);
-
-        let geom = Rc::new(RefCell::new(Geom {
-            vertices,
-            color,
-            u_mat: Matrix::translation(x as f32, y as f32),
-            mode: WebGl2RenderingContext::TRIANGLE_FAN,
-            vertex_count: sides as i32,
-        }));
-
-        IrregularPolygon {
-            x,
-            y,
-            width,
-            height,
-            sides,
-            geom,
-        }
+    pub fn new_at_origin(
+        width: f32,
+        height: f32,
+        n_sides: usize,
+        color_or_texture: &impl TextureGen,
+    ) -> Self {
+        Self::new_at(0, 0, width, height, n_sides, color_or_texture)
     }
 }
 

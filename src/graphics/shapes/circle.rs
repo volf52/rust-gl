@@ -1,10 +1,9 @@
-use crate::graphics::shapes::utils::{calc_n_vertices, color_n_vertices};
 use crate::graphics::{Geom, Shape};
 use crate::math::bounding_rect::Bounded;
-use crate::math::{BoundingRect, Matrix};
+use crate::math::BoundingRect;
+use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
 use std::rc::Rc;
-use web_sys::WebGl2RenderingContext;
 
 pub struct Circle {
     pub x: i32,
@@ -15,22 +14,17 @@ pub struct Circle {
 }
 
 impl Circle {
-    pub fn new(radius: f32, color: &[f32]) -> Self {
-        Self::new_at(0, 0, radius, color)
-    }
-
-    pub fn new_at(x: i32, y: i32, radius: f32, color: &[f32]) -> Self {
+    pub fn new_at(x: i32, y: i32, radius: f32, color_or_texture: &impl TextureGen) -> Self {
         let vertex_count = 200;
-        let vertices = calc_n_vertices(radius, radius, vertex_count);
-        let color_data = color_n_vertices(color, vertex_count);
 
-        let geom = Rc::new(RefCell::new(Geom {
-            vertices,
-            color: color_data,
-            u_mat: Matrix::translation(x as f32, y as f32),
-            mode: WebGl2RenderingContext::TRIANGLE_FAN,
-            vertex_count: vertex_count as i32,
-        }));
+        let geom = Geom::build_geom(
+            x as f32,
+            y as f32,
+            radius,
+            radius,
+            vertex_count,
+            color_or_texture,
+        );
 
         Circle { x, y, radius, geom }
     }
