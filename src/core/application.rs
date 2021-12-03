@@ -1,4 +1,5 @@
 use crate::textures::texture_img::load_texture_image;
+use crate::textures::texture_text::create_text_texture;
 use crate::textures::utils::{TextureGen, TextureOrColor};
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
@@ -91,12 +92,22 @@ impl Application {
         load_texture_image(&self.ctx, src)
     }
 
+    pub fn text_texture(
+        &self,
+        text: &str,
+        font: &str,
+        text_size: u32,
+        color: &str,
+    ) -> WebGlTexture {
+        create_text_texture(&self.ctx, text, font, text_size, color)
+    }
+
     // pub fn gc(&mut self) {
     //     self.shapes = self
     //         .shapes
     //         .iter()
     //         .filter(|rc_shape| Rc::strong_count(rc_shape) > 1)
-    //         .cloned()
+    //         .cloned(k
     //         .collect();
     // }
 }

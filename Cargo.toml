@@ -34,10 +34,12 @@ version = "0.3.55"
 default-features = false
 features = [
   "console",
+  "CanvasRenderingContext2d",
   "Document",
   "Element",
   "HtmlCanvasElement",
   "HtmlImageElement",
+  "TextMetrics",
   "WebGlBuffer",
   "WebGlUniformLocation",
   'WebGlVertexArrayObject',

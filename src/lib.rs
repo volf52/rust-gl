@@ -86,8 +86,9 @@ pub fn main() -> Result<(), JsValue> {
 
     app.add_container(&container);
 
-    let tex = app.tex_from_img("../assets/test.jpg");
-    let c = Circle::new(0, 0, 100.0, &tex);
+    let _tex = app.tex_from_img("../assets/test.jpg");
+    let text = app.text_texture("test", "monospace", 24, "white");
+    let c = Circle::new(0, 0, 100.0, &text);
     c.translate(-150.0, 75.0);
 
     app.add_shape(&c);

@@ -9,6 +9,7 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
+    "@wasm-tool/wasm-pack-plugin": "^1.6.0",
     "fs": "^0.0.1-security",
     "rust-gl": "link:./pkg",
     "url-loader": "^4.1.1"
