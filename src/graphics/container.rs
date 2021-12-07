@@ -26,12 +26,6 @@ impl Default for Container {
     }
 }
 
-impl Shape for Container {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
-    }
-}
-
 impl Container {
     pub fn render(&self, app: &Application, parent_model_mat: &Matrix) {
         self.children.iter().for_each(|child| {
