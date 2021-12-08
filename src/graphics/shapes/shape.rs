@@ -1,13 +1,17 @@
 use crate::graphics::Geom;
 use crate::math::BoundingRect;
+use crate::textures::utils::TextureOrColor;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-
-
+pub struct Dims {
+    pub width: f32,
+    pub height: f32,
+}
 pub trait Shape {
     fn get_geom(&self) -> Rc<RefCell<Geom>>;
     fn get_bounds(&self) -> BoundingRect;
+
     fn contains(&self, x: f32, y: f32) -> bool;
 
     fn contains_in_bounds(&self, x: f32, y: f32) -> bool {
@@ -28,6 +32,13 @@ pub trait Shape {
         let geom = self.get_geom();
         geom.borrow_mut().translate(tx, ty);
     }
+
+    fn set_texture(&self, mask: TextureOrColor) {
+        let geom = self.get_geom();
+        geom.borrow_mut().set_texture(mask);
+    }
+
+    fn get_dims(&self) -> Dims {
+        self.get_geom().borrow().get_dims()
+    }
 }
-
-

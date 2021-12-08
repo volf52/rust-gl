@@ -1,3 +1,4 @@
+use crate::graphics::shapes::shape::Dims;
 use crate::textures::texture_img::load_texture_image;
 use crate::textures::texture_text::create_text_texture;
 use crate::textures::utils::{TextureGen, TextureOrColor};
@@ -98,8 +99,10 @@ impl Application {
         font: &str,
         text_size: u32,
         color: &str,
+        tx: f32,
+        ty: f32,
     ) -> WebGlTexture {
-        create_text_texture(&self.ctx, text, font, text_size, color)
+        create_text_texture(&self.ctx, text, font, text_size, color, tx, ty)
     }
 
     // pub fn gc(&mut self) {

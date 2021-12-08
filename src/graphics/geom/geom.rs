@@ -1,7 +1,7 @@
 use web_sys::WebGl2RenderingContext;
 
 use crate::{
-    graphics::shapes::utils::calc_n_vertices,
+    graphics::shapes::{shape::Dims, utils::calc_n_vertices},
     math::Matrix,
     textures::utils::{TextureGen, TextureOrColor},
 };
@@ -74,6 +74,42 @@ impl Geom {
     }
     pub fn translate(&mut self, tx: f32, ty: f32) {
         self.u_mat = self.u_mat.translate(tx, ty);
+    }
+
+    pub fn set_texture(&mut self, mask: TextureOrColor) {
+        self.texture_data = mask;
+    }
+
+    pub fn get_dims(&self) -> Dims {
+        let xs: Vec<f32> = self
+            .vertices
+            .iter()
+            .enumerate()
+            .filter(|&(i, _)| i % 2 != 0)
+            .map(|(_, e)| *e)
+            .collect();
+
+        let ys: Vec<f32> = self
+            .vertices
+            .iter()
+            .enumerate()
+            .filter(|&(i, _)| i % 2 == 0)
+            .map(|(_, e)| *e)
+            .collect();
+
+        let max = (
+            xs.iter().cloned().fold(f32::NAN, f32::max),
+            ys.iter().cloned().fold(f32::NAN, f32::max),
+        );
+        let min = (
+            xs.iter().cloned().fold(f32::NAN, f32::min),
+            ys.iter().cloned().fold(f32::NAN, f32::min),
+        );
+
+        Dims {
+            width: max.0 - min.0,
+            height: max.1 - min.1,
+        }
     }
 
     pub fn calc_tex_coords(vertices: &[f32]) -> Vec<f32> {

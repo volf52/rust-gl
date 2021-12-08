@@ -5,6 +5,7 @@ use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::WebGl2RenderingContext;
+use web_sys::WebGlTexture;
 
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::shapes::{
@@ -81,17 +82,16 @@ pub fn main() -> Result<(), JsValue> {
     let mut container = Container::default();
     let mut app = Application::new(&context, dims);
 
-    let tr = Triangle::new_at_origin(100.0, &red);
-    container.add_shape(&tr);
-
-    app.add_container(&container);
-
     let _tex = app.tex_from_img("../assets/test.jpg");
-    let text = app.text_texture("test", "monospace", 24, "white");
+    let text: WebGlTexture = app.text_texture("test", "sans-serif", 36, "white", 20.0, 0.0);
     let c = Circle::new(0, 0, 100.0, &text);
     c.translate(-150.0, 75.0);
 
     app.add_shape(&c);
+    let tr = Triangle::new_at_origin(100.0, &red);
+    container.add_shape(&tr);
+
+    app.add_container(&container);
 
     render_loop(move || {
         app.render();

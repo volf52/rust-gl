@@ -1,4 +1,3 @@
-use crate::graphics::shapes::utils::color_n_times;
 use crate::graphics::{Geom, Shape};
 use crate::math::BoundingRect;
 use crate::textures::utils::TextureGen;
