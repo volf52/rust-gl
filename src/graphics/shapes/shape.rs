@@ -2,11 +2,10 @@ use crate::graphics::Geom;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-
-
 pub trait Shape {
     fn get_geom(&self) -> Rc<RefCell<Geom>>;
 
+    // This center is not the absolute, rather relative to its parent's center
     fn get_center(&self) -> (f32, f32) {
         let mat = self.get_geom().borrow().u_mat.clone();
 
@@ -32,5 +31,3 @@ pub trait Shape {
         self.translate(tx, ty);
     }
 }
-
-

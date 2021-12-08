@@ -54,10 +54,6 @@ impl Container {
         self.children.push(Rc::new(RefCell::new(node)));
     }
 
-    pub fn len(&self) -> usize {
-        self.children.len()
-    }
-
     pub fn add_container(&mut self, container: &Container) {
         let node = GraphNode {
             is_leaf: false,
@@ -66,5 +62,16 @@ impl Container {
         };
 
         self.children.push(Rc::new(RefCell::new(node)));
+    }
+
+    pub fn len(&self) -> usize {
+        self.children.len()
+    }
+}
+
+// `Shape` would be a misnomer here. Vector Space/Coord System would be better
+impl Shape for Container {
+    fn get_geom(&self) -> Rc<RefCell<Geom>> {
+        self.geom.clone()
     }
 }
