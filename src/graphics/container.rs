@@ -58,7 +58,7 @@ impl Container {
         let node = GraphNode {
             is_leaf: false,
             geom: container.geom.clone(),
-            children: container.children.clone(),
+            children: container.children.clone(), // FIXME: need to update this part. This won't allow adding a shape after container has been added to parent
         };
 
         self.children.push(Rc::new(RefCell::new(node)));

@@ -72,8 +72,13 @@ impl Geom {
     pub fn rotate(&mut self, angle: f32) {
         self.u_mat = self.u_mat.rotate(angle);
     }
+
     pub fn translate(&mut self, tx: f32, ty: f32) {
         self.u_mat = self.u_mat.translate(tx, ty);
+    }
+
+    pub fn scale(&mut self, x: f32, y: f32) {
+        self.u_mat = self.u_mat.scale(x, y);
     }
 
     pub fn calc_tex_coords(vertices: &[f32]) -> Vec<f32> {

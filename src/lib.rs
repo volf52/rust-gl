@@ -83,41 +83,38 @@ pub fn main() -> Result<(), JsValue> {
 
     let tex = app.tex_from_img("../assets/test.jpg");
 
-    let c = Circle::new_at(-200, -200, 100.0, &tex);
+    let c = Circle::new_at_origin(100.0, &red);
 
     let mut container = Container::default();
-    // container.move_by(-200.0, -200.0);
 
-    c.move_by(200.0, 200.0);
+    // console_log!("Center for c: {:?}", c.get_center()); // should be 0.0, 0.0
 
-    console_log!("Center for c: {:?}", c.get_center()); // should be 0.0, 0.0
+    // let p = (-50.0, 50.0);
+    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // true
+    // console_log!(
+    //     "Contains in bounds {:?} for c: {}",
+    //     p,
+    //     c.contains_in_bounds(p.0, p.1)
+    // ); // true
 
-    let p = (-50.0, 50.0);
-    console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // true
-    console_log!(
-        "Contains in bounds {:?} for c: {}",
-        p,
-        c.contains_in_bounds(p.0, p.1)
-    ); // true
+    // let p = (-90.0, -90.0);
+    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
+    // console_log!(
+    //     "Contains in bounds {:?} for c: {}",
+    //     p,
+    //     c.contains_in_bounds(p.0, p.1)
+    // ); // true
 
-    let p = (-90.0, -90.0);
-    console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
-    console_log!(
-        "Contains in bounds {:?} for c: {}",
-        p,
-        c.contains_in_bounds(p.0, p.1)
-    ); // true
-
-    let p = (100.1, 100.0);
-    console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
-    console_log!(
-        "Contains in bounds {:?} for c: {}",
-        p,
-        c.contains_in_bounds(p.0, p.1)
-    ); // false
+    // let p = (100.1, 100.0);
+    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
+    // console_log!(
+    //     "Contains in bounds {:?} for c: {}",
+    //     p,
+    //     c.contains_in_bounds(p.0, p.1)
+    // ); // false
 
     let c_bounds = c.get_bounds();
-    let rect = Rectangle::new_at(
+    let c_bounding_rect = Rectangle::new_at(
         c_bounds.x as i32,
         c_bounds.y as i32,
         c_bounds.width,
@@ -126,27 +123,24 @@ pub fn main() -> Result<(), JsValue> {
     );
 
     container.add_shape(&c);
-
-    let red: Vec<u8> = vec![255, 0, 0];
-    let _green: Vec<u8> = vec![0, 255, 0];
-    let _blue: Vec<u8> = vec![0, 0, 255];
-
-    let mut container = Container::default();
-
-    let tr = Triangle::new_at_origin(100.0, &red);
-    container.add_shape(&tr);
-
-    tr.translate(-200.0, -200.0);
-
-    app.add_shape(&rect);
+    container.add_shape(&c_bounding_rect);
     app.add_container(&container);
 
-    app.add_shape(&c);
+    c.rotate(0.3);
+    c.scale(1.1, 2.1);
+    c.move_by(10.0, 10.0);
+    let c_current_center = c.get_center();
+    console_log!("-----------");
+    console_log!("C orig center: {:?}", c_current_center);
+    c.scale(2.1, 1.1);
+    c.move_to(110.1, 121.2);
+    let c_new_center = c.get_center();
+    console_log!("C new center: {:?}", c_new_center); // should be 110.1, 121.2
 
     render_loop(move || {
         app.render();
-        tr.rotate_deg(0.5);
-        c.rotate_deg(1.0);
+        // tr.rotate_deg(0.5);
+        // c.rotate_deg(1.0);
     });
 
     Ok(())

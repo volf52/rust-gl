@@ -28,6 +28,10 @@ impl Circle {
 
         Circle { x, y, radius, geom }
     }
+
+    pub fn new_at_origin(radius: f32, color_or_texture: &impl TextureGen) -> Self {
+        Circle::new_at(0, 0, radius, color_or_texture)
+    }
 }
 
 impl Shape for Circle {
@@ -39,7 +43,7 @@ impl Shape for Circle {
 impl Bounded for Circle {
     fn get_bounds(&self) -> BoundingRect {
         let (x_pos, y_pos) = self.get_center();
-        let width_height = self.radius * 2.0;
+        let width_height = self.radius * 2.0; // update this, as this doesn't take into account the scale/rotate operations
 
         BoundingRect::new(x_pos, y_pos, width_height, width_height)
     }
