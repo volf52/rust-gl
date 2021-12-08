@@ -39,21 +39,6 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn hey(mat: Vec<f32>) {
-    console_log!("{:#?}", mat);
-}
-
-#[wasm_bindgen]
-pub fn hey2(mat: Vec<u8>) {
-    console_log!("{:#?}", mat);
-}
-
-#[wasm_bindgen]
-pub fn puts(str: &str) {
-    console_log!("{}", str);
-}
-
-#[wasm_bindgen]
 pub fn test_error() {
     console_error!("testing console.error");
 }
@@ -122,8 +107,6 @@ pub fn main() -> Result<(), JsValue> {
         &blue,
     );
 
-    container.add_shape(&c);
-    container.add_shape(&c_bounding_rect);
     app.add_container(&container);
 
     c.rotate(0.3);
@@ -134,6 +117,11 @@ pub fn main() -> Result<(), JsValue> {
     console_log!("C orig center: {:?}", c_current_center);
     c.scale(2.1, 1.1);
     c.move_to(110.1, 121.2);
+    container.scale(0.4, 0.5);
+
+    container.add_shape(&c);
+    container.add_shape(&c_bounding_rect);
+
     let c_new_center = c.get_center();
     console_log!("C new center: {:?}", c_new_center); // should be 110.1, 121.2
 
