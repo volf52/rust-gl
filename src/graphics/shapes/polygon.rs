@@ -1,24 +1,16 @@
-use crate::graphics::shapes::utils::color_n_times;
 use crate::graphics::{Geom, Shape};
 use crate::math::bounding_rect::Bounded;
-use crate::math::BoundingRect;
 use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct RegularPolygon {
-    pub x: i32,
-    pub y: i32,
-
     pub radius: f32,
     pub sides: usize,
     geom: Rc<RefCell<Geom>>,
 }
 
 pub struct IrregularPolygon {
-    pub x: i32,
-    pub y: i32,
-
     pub width: f32,
     pub height: f32,
     pub sides: usize,
@@ -27,18 +19,16 @@ pub struct IrregularPolygon {
 
 impl RegularPolygon {
     pub fn new_at(
-        x: i32,
-        y: i32,
+        x: f32,
+        y: f32,
         radius: f32,
         n_sides: usize,
         color_or_texture: &impl TextureGen,
     ) -> Self {
         let sides = n_sides.max(3);
-        let geom = Geom::build_geom(x as f32, y as f32, radius, radius, sides, color_or_texture);
+        let geom = Geom::build_geom(x, y, radius, radius, sides, color_or_texture);
 
         RegularPolygon {
-            x,
-            y,
             radius,
             sides,
             geom,
@@ -46,7 +36,7 @@ impl RegularPolygon {
     }
 
     pub fn new_at_origin(radius: f32, n_sides: usize, color_or_texture: &impl TextureGen) -> Self {
-        Self::new_at(0, 0, radius, n_sides, color_or_texture)
+        Self::new_at(0.0, 0.0, radius, n_sides, color_or_texture)
     }
 }
 
@@ -57,30 +47,24 @@ impl Shape for RegularPolygon {
 }
 
 impl Bounded for RegularPolygon {
-    fn get_bounds(&self) -> BoundingRect {
-        todo!()
-    }
-
-    fn contains(&self, x: f32, y: f32) -> bool {
+    fn contains(&self, _x: f32, _y: f32) -> bool {
         todo!()
     }
 }
 
 impl IrregularPolygon {
     pub fn new_at(
-        x: i32,
-        y: i32,
+        x: f32,
+        y: f32,
         width: f32,
         height: f32,
         n_sides: usize,
         color_or_texture: &impl TextureGen,
     ) -> Self {
         let sides = n_sides.max(3);
-        let geom = Geom::build_geom(x as f32, y as f32, width, height, sides, color_or_texture);
+        let geom = Geom::build_geom(x, y, width, height, sides, color_or_texture);
 
         IrregularPolygon {
-            x,
-            y,
             width,
             height,
             sides,
@@ -113,8 +97,6 @@ impl IrregularPolygon {
         let geom = Geom::build_geom(0.0, 0.0, width, height, sides, color_or_texture);
 
         IrregularPolygon {
-            x: 0,
-            y: 0,
             width,
             height,
             sides,
@@ -128,7 +110,7 @@ impl IrregularPolygon {
         n_sides: usize,
         color_or_texture: &impl TextureGen,
     ) -> Self {
-        Self::new_at(0, 0, width, height, n_sides, color_or_texture)
+        Self::new_at(0.0, 0.0, width, height, n_sides, color_or_texture)
     }
 }
 
@@ -139,10 +121,6 @@ impl Shape for IrregularPolygon {
 }
 
 impl Bounded for IrregularPolygon {
-    fn get_bounds(&self) -> BoundingRect {
-        todo!()
-    }
-
     fn contains(&self, _x: f32, _y: f32) -> bool {
         todo!()
     }

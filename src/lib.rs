@@ -9,7 +9,7 @@ use web_sys::WebGl2RenderingContext;
 
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::shapes::{
-    Circle, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
+    Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
 };
 
 mod core;
@@ -68,7 +68,12 @@ pub fn main() -> Result<(), JsValue> {
 
     let tex = app.tex_from_img("../assets/test.jpg");
 
-    let c = Circle::new_at_origin(100.0, &red);
+    // let c = Ellipse::new_at_origin(200.0, 150.0, &red);
+    let c = RegularPolygon::new_at_origin(200.0, 6, &red);
+    // let c = IrregularPolygon::new_from_path(
+    //     vec![0.0, 0.0, 200.0, 200.0, 300.0, 100.0, -50.0, 100.0],
+    //     &red,
+    // );
 
     let mut container = Container::default();
 
@@ -98,32 +103,33 @@ pub fn main() -> Result<(), JsValue> {
     //     c.contains_in_bounds(p.0, p.1)
     // ); // false
 
-    let c_bounds = c.get_bounds();
-    let c_bounding_rect = Rectangle::new_at(
-        c_bounds.x as i32,
-        c_bounds.y as i32,
-        c_bounds.width,
-        c_bounds.height,
-        &blue,
-    );
-
     app.add_container(&container);
 
-    c.rotate(0.3);
-    c.scale(1.1, 2.1);
+    // c.rotate(0.3); // TODO: Add rotation part to BoundingRect impl
+    // c.scale(1.1, 2.1);
     c.move_by(10.0, 10.0);
     let c_current_center = c.get_center();
     console_log!("-----------");
     console_log!("C orig center: {:?}", c_current_center);
     c.scale(2.1, 1.1);
-    c.move_to(110.1, 121.2);
+    c.move_to(-50.1, -32.2);
     container.scale(0.4, 0.5);
 
-    container.add_shape(&c);
+    let c_new_center = c.get_center();
+    console_log!("C new center: {:?}", c_new_center); // should be -50.1, -32.2
+
+    let c_bounds = c.get_bounds();
+    let c_bounding_rect = Rectangle::new_at(
+        c_bounds.x,
+        c_bounds.y,
+        c_bounds.width,
+        c_bounds.height,
+        &blue,
+    );
+
     container.add_shape(&c_bounding_rect);
 
-    let c_new_center = c.get_center();
-    console_log!("C new center: {:?}", c_new_center); // should be 110.1, 121.2
+    container.add_shape(&c);
 
     render_loop(move || {
         app.render();

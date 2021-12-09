@@ -12,6 +12,12 @@ pub trait Shape {
         (mat.tx, mat.ty)
     }
 
+    fn get_scale(&self) -> (f32, f32) {
+        let mat = self.get_geom().borrow().u_mat.clone();
+
+        (mat.a, mat.d)
+    }
+
     // Transformation funcs
     fn rotate(&self, angle_radians: f32) {
         let geom = self.get_geom();
