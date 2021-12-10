@@ -28,6 +28,12 @@ console_error_panic_hook = { version = "0.1.6", optional = true }
 # Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
 wee_alloc = { version = "0.4.5", optional = true }
 js-sys = "0.3.55"
+webgl2-glyph-atlas = { path="webgl2-glyph-atlas/" }
+rusttype = "0.9.2"
+image = "0.23.14"
+ab_glyph = "0.2.12"
+typer = "0.1.1"
+xml-rs = "0.8"
 
 [dependencies.web-sys]
 version = "0.3.55"
