@@ -68,40 +68,9 @@ pub fn main() -> Result<(), JsValue> {
 
     let tex = app.tex_from_img("../assets/test.jpg");
 
-    // let c = Ellipse::new_at_origin(200.0, 150.0, &red);
-    let c = RegularPolygon::new_at_origin(200.0, 6, &red);
-    // let c = IrregularPolygon::new_from_path(
-    //     vec![0.0, 0.0, 200.0, 200.0, 300.0, 100.0, -50.0, 100.0],
-    //     &red,
-    // );
+    let c = Rectangle::new_at_origin(200.0, 100.0, &tex);
 
     let mut container = Container::default();
-
-    // console_log!("Center for c: {:?}", c.get_center()); // should be 0.0, 0.0
-
-    // let p = (-50.0, 50.0);
-    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // true
-    // console_log!(
-    //     "Contains in bounds {:?} for c: {}",
-    //     p,
-    //     c.contains_in_bounds(p.0, p.1)
-    // ); // true
-
-    // let p = (-90.0, -90.0);
-    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
-    // console_log!(
-    //     "Contains in bounds {:?} for c: {}",
-    //     p,
-    //     c.contains_in_bounds(p.0, p.1)
-    // ); // true
-
-    // let p = (100.1, 100.0);
-    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
-    // console_log!(
-    //     "Contains in bounds {:?} for c: {}",
-    //     p,
-    //     c.contains_in_bounds(p.0, p.1)
-    // ); // false
 
     app.add_container(&container);
 
@@ -120,6 +89,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let c_bounding_rect = c.get_bounds();
     c_bounding_rect.set_texture(&blue);
+    c_bounding_rect.scale(1.1, 1.1);
 
     container.add_shape(&c_bounding_rect);
 
