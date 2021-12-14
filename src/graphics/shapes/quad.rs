@@ -49,6 +49,16 @@ impl Rectangle {
     pub fn new_at_origin(width: f32, height: f32, color_or_texture: &impl TextureGen) -> Self {
         Self::new_at(0.0, 0.0, width, height, color_or_texture)
     }
+
+    pub fn contains(&self, x: f32, y: f32) -> bool {
+        let (c_x, c_y) = self.get_center();
+
+        match (self.width, self.height) {
+            t if t.0 <= 0.0 || t.1 <= 0.0 => false,
+            t if ((x - c_x).abs() <= (t.0 / 2.0)) && ((y - c_y).abs() <= (t.1 / 2.0)) => true,
+            _ => false,
+        }
+    }
 }
 
 impl Shape for Rectangle {
@@ -59,6 +69,6 @@ impl Shape for Rectangle {
 
 impl Bounded for Rectangle {
     fn contains(&self, x: f32, y: f32) -> bool {
-        self.get_bounds().contains(x, y)
+        self.contains(x, y)
     }
 }

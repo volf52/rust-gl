@@ -3,7 +3,7 @@ use std::{cell::RefCell, rc::Rc};
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
-use crate::math::{BoundingRect, Matrix};
+use crate::math::Matrix;
 use crate::textures::utils::TextureGen;
 
 pub struct Triangle {
@@ -42,8 +42,4 @@ impl Shape for Triangle {
     }
 }
 
-impl Bounded for Triangle {
-    fn contains(&self, _x: f32, _y: f32) -> bool {
-        todo!()
-    }
-}
+impl Bounded for Triangle {}

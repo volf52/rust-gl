@@ -1,9 +1,27 @@
 use crate::graphics::Geom;
+use crate::math::Matrix;
+use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
 use std::rc::Rc;
 
 pub trait Shape {
     fn get_geom(&self) -> Rc<RefCell<Geom>>;
+
+    fn apply_transformations(&self, tranformation_mat: &Matrix) {
+        self.get_geom().borrow_mut().u_mat = tranformation_mat.clone();
+    }
+
+    fn copy_transformations_from_geom(&self, geom: Rc<RefCell<Geom>>) {
+        self.get_geom().borrow_mut().u_mat = geom.borrow().u_mat.clone();
+    }
+
+    fn copy_transformations(&self, other_shape: &impl Shape) {
+        self.get_geom().borrow_mut().u_mat = other_shape.get_geom().borrow().u_mat.clone();
+    }
+
+    fn set_texture(&self, text_gen: &impl TextureGen) {
+        self.get_geom().borrow_mut().set_texture(text_gen);
+    }
 
     // This center is not the absolute, rather relative to its parent's center
     fn get_center(&self) -> (f32, f32) {

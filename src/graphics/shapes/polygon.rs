@@ -46,11 +46,7 @@ impl Shape for RegularPolygon {
     }
 }
 
-impl Bounded for RegularPolygon {
-    fn contains(&self, _x: f32, _y: f32) -> bool {
-        todo!()
-    }
-}
+impl Bounded for RegularPolygon {}
 
 impl IrregularPolygon {
     pub fn new_at(
@@ -120,8 +116,4 @@ impl Shape for IrregularPolygon {
     }
 }
 
-impl Bounded for IrregularPolygon {
-    fn contains(&self, _x: f32, _y: f32) -> bool {
-        todo!()
-    }
-}
+impl Bounded for IrregularPolygon {}

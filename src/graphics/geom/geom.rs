@@ -69,6 +69,10 @@ impl Geom {
         )))
     }
 
+    pub fn set_texture(&mut self, text_gen: &impl TextureGen) {
+        self.texture_data = text_gen.to_enum();
+    }
+
     pub fn rotate(&mut self, angle: f32) {
         self.u_mat = self.u_mat.rotate(angle);
     }

@@ -105,8 +105,8 @@ pub fn main() -> Result<(), JsValue> {
 
     app.add_container(&container);
 
-    // c.rotate(0.3); // TODO: Add rotation part to BoundingRect impl
-    // c.scale(1.1, 2.1);
+    c.rotate(0.3);
+    c.scale(1.1, 2.1);
     c.move_by(10.0, 10.0);
     let c_current_center = c.get_center();
     console_log!("-----------");
@@ -118,14 +118,8 @@ pub fn main() -> Result<(), JsValue> {
     let c_new_center = c.get_center();
     console_log!("C new center: {:?}", c_new_center); // should be -50.1, -32.2
 
-    let c_bounds = c.get_bounds();
-    let c_bounding_rect = Rectangle::new_at(
-        c_bounds.x,
-        c_bounds.y,
-        c_bounds.width,
-        c_bounds.height,
-        &blue,
-    );
+    let c_bounding_rect = c.get_bounds();
+    c_bounding_rect.set_texture(&blue);
 
     container.add_shape(&c_bounding_rect);
 
