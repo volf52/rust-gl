@@ -68,10 +68,7 @@ impl Shape for Rectangle {
 }
 
 impl Bounded for Rectangle {
-    fn get_bounds(&self) -> Rectangle {
-        let bounds = Rectangle::new_at_origin(self.width, self.height, &vec![]);
-        bounds.copy_transformations_from_geom(self.geom.clone());
-
-        bounds
+    fn get_bounding_rect_inner(&self) -> Rectangle {
+        Rectangle::new_at_origin(self.width, self.height, &vec![])
     }
 }

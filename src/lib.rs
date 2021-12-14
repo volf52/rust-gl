@@ -68,7 +68,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let tex = app.tex_from_img("../assets/test.jpg");
 
-    let c = Rectangle::new_at_origin(200.0, 100.0, &tex);
+    let c = Ellipse::new_at_origin(150.0, 75.0, &red);
 
     let mut container = Container::default();
 
@@ -89,7 +89,6 @@ pub fn main() -> Result<(), JsValue> {
 
     let c_bounding_rect = c.get_bounds();
     c_bounding_rect.set_texture(&blue);
-    c_bounding_rect.scale(1.1, 1.1);
 
     container.add_shape(&c_bounding_rect);
 

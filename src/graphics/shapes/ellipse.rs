@@ -1,12 +1,12 @@
-use crate::graphics::{Geom, Shape};
+use crate::graphics::{shapes::Rectangle, Geom, Shape};
 use crate::math::bounding_rect::Bounded;
 use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct Ellipse {
-    pub width: f32,
-    pub height: f32,
+    pub width: f32,  // center to horizontal edge
+    pub height: f32, // center to horizontal edge
 
     geom: Rc<RefCell<Geom>>,
 }
@@ -54,5 +54,9 @@ impl Bounded for Ellipse {
                 (norm_x + norm_y) <= 1.0
             }
         }
+    }
+
+    fn get_bounding_rect_inner(&self) -> Rectangle {
+        Rectangle::new_at_origin(self.width * 2.0, self.height * 2.0, &vec![])
     }
 }

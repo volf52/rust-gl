@@ -1,4 +1,4 @@
-use crate::graphics::{Geom, Shape};
+use crate::graphics::{shapes::Rectangle, Geom, Shape};
 use crate::math::bounding_rect::Bounded;
 use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
@@ -43,5 +43,11 @@ impl Bounded for Circle {
                 (dx + dy) <= r2.powi(2)
             }
         }
+    }
+
+    fn get_bounding_rect_inner(&self) -> Rectangle {
+        let width_height = self.radius * 2.0;
+
+        Rectangle::new_at_origin(width_height, width_height, &vec![])
     }
 }
