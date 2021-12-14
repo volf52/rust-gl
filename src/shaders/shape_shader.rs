@@ -28,7 +28,6 @@ impl Shader for ShapeShader {
             v_texture_coord = ShaderConstant::VTextureCoord.to_string(),
         );
 
-
         compile_shaders(ctx, vs_src.as_str(), fs_src.as_str())
     }
 }

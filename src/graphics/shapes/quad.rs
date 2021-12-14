@@ -4,6 +4,7 @@ use std::rc::Rc;
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
+use crate::math::bounding_rect::Bounded;
 use crate::math::{BoundingRect, Matrix};
 use crate::textures::utils::TextureGen;
 
@@ -19,7 +20,7 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    pub fn new(
+    pub fn new_at(
         x: i32,
         y: i32,
         width: f32,
@@ -51,7 +52,7 @@ impl Rectangle {
     }
 
     pub fn new_at_origin(width: f32, height: f32, color_or_texture: &impl TextureGen) -> Self {
-        Self::new(0, 0, width, height, color_or_texture)
+        Self::new_at(0, 0, width, height, color_or_texture)
     }
 }
 
@@ -59,7 +60,9 @@ impl Shape for Rectangle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for Rectangle {
     fn get_bounds(&self) -> BoundingRect {
         BoundingRect::new(self.x as f32, self.y as f32, self.width, self.height)
     }

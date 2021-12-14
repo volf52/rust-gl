@@ -32,8 +32,17 @@ impl BoundingRect {
     pub fn contains(&self, x: f32, y: f32) -> bool {
         match (self.width, self.height) {
             t if t.0 <= 0.0 || t.1 <= 0.0 => false,
-            t if (x >= self.x && x < self.x + t.0) && (y >= self.y && y < self.y + t.1) => true,
+            t if ((x - self.x).abs() <= (t.0 / 2.0)) && ((y - self.y).abs() <= (t.1 / 2.0)) => true,
             _ => false,
         }
+    }
+}
+
+pub trait Bounded {
+    fn get_bounds(&self) -> BoundingRect;
+    fn contains(&self, x: f32, y: f32) -> bool;
+
+    fn contains_in_bounds(&self, x: f32, y: f32) -> bool {
+        self.get_bounds().contains(x, y)
     }
 }

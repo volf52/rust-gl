@@ -1,6 +1,7 @@
 use std::{cell::RefCell, rc::Rc};
 
 use graphics::Container;
+use math::bounding_rect::Bounded;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -38,21 +39,6 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn hey(mat: Vec<f32>) {
-    console_log!("{:#?}", mat);
-}
-
-#[wasm_bindgen]
-pub fn hey2(mat: Vec<u8>) {
-    console_log!("{:#?}", mat);
-}
-
-#[wasm_bindgen]
-pub fn puts(str: &str) {
-    console_log!("{}", str);
-}
-
-#[wasm_bindgen]
 pub fn test_error() {
     console_error!("testing console.error");
 }
@@ -74,28 +60,75 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let red: Vec<u8> = vec![255, 0, 0];
-    let _green: Vec<u8> = vec![0, 255, 0];
-    let _blue: Vec<u8> = vec![0, 0, 255];
-
-    let mut container = Container::default();
     let mut app = Application::new(&context, dims);
 
-    let tr = Triangle::new_at_origin(100.0, &red);
-    container.add_shape(&tr);
+    let red: Vec<u8> = vec![255, 0, 0];
+    let _green: Vec<u8> = vec![0, 255, 0];
+    let blue: Vec<u8> = vec![0, 0, 255];
+
+    let tex = app.tex_from_img("../assets/test.jpg");
+
+    let c = Circle::new_at_origin(100.0, &red);
+
+    let mut container = Container::default();
+
+    // console_log!("Center for c: {:?}", c.get_center()); // should be 0.0, 0.0
+
+    // let p = (-50.0, 50.0);
+    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // true
+    // console_log!(
+    //     "Contains in bounds {:?} for c: {}",
+    //     p,
+    //     c.contains_in_bounds(p.0, p.1)
+    // ); // true
+
+    // let p = (-90.0, -90.0);
+    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
+    // console_log!(
+    //     "Contains in bounds {:?} for c: {}",
+    //     p,
+    //     c.contains_in_bounds(p.0, p.1)
+    // ); // true
+
+    // let p = (100.1, 100.0);
+    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
+    // console_log!(
+    //     "Contains in bounds {:?} for c: {}",
+    //     p,
+    //     c.contains_in_bounds(p.0, p.1)
+    // ); // false
+
+    let c_bounds = c.get_bounds();
+    let c_bounding_rect = Rectangle::new_at(
+        c_bounds.x as i32,
+        c_bounds.y as i32,
+        c_bounds.width,
+        c_bounds.height,
+        &blue,
+    );
 
     app.add_container(&container);
 
-    let tex = app.tex_from_img("../assets/test.jpg");
-    let c = Circle::new(0, 0, 100.0, &tex);
-    c.translate(-150.0, 75.0);
+    c.rotate(0.3);
+    c.scale(1.1, 2.1);
+    c.move_by(10.0, 10.0);
+    let c_current_center = c.get_center();
+    console_log!("-----------");
+    console_log!("C orig center: {:?}", c_current_center);
+    c.scale(2.1, 1.1);
+    c.move_to(110.1, 121.2);
+    container.scale(0.4, 0.5);
 
-    app.add_shape(&c);
+    container.add_shape(&c);
+    container.add_shape(&c_bounding_rect);
+
+    let c_new_center = c.get_center();
+    console_log!("C new center: {:?}", c_new_center); // should be 110.1, 121.2
 
     render_loop(move || {
         app.render();
-        tr.rotate_deg(5.0);
-        c.rotate_deg(1.0);
+        // tr.rotate_deg(0.5);
+        // c.rotate_deg(1.0);
     });
 
     Ok(())

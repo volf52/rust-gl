@@ -1,4 +1,5 @@
 use crate::graphics::{Geom, Shape};
+use crate::math::bounding_rect::Bounded;
 use crate::math::BoundingRect;
 use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
@@ -14,7 +15,7 @@ pub struct Ellipse {
 }
 
 impl Ellipse {
-    pub fn new(
+    pub fn new_at(
         x: i32,
         y: i32,
         width: f32,
@@ -41,7 +42,7 @@ impl Ellipse {
     }
 
     pub fn new_at_origin(width: f32, height: f32, color_or_texture: &impl TextureGen) -> Self {
-        Self::new(0, 0, width, height, color_or_texture)
+        Self::new_at(0, 0, width, height, color_or_texture)
     }
 }
 
@@ -49,7 +50,9 @@ impl Shape for Ellipse {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for Ellipse {
     fn get_bounds(&self) -> BoundingRect {
         let x_pos = (self.x as f32) - self.width;
         let y_pos = (self.y as f32) - self.height;

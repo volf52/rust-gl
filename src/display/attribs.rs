@@ -86,7 +86,10 @@ impl Attribs {
 
         ctx.bind_buffer(WebGl2RenderingContext::ARRAY_BUFFER, None);
 
-        Attribs { position, texture_coords }
+        Attribs {
+            position,
+            texture_coords,
+        }
     }
 
     pub fn set_attributes(&self, program: &ShaderProgram) {

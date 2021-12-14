@@ -1,4 +1,5 @@
 use crate::graphics::{Geom, Shape};
+use crate::math::bounding_rect::Bounded;
 use crate::math::BoundingRect;
 use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
@@ -13,7 +14,7 @@ pub struct Circle {
 }
 
 impl Circle {
-    pub fn new(x: i32, y: i32, radius: f32, color_or_texture: &impl TextureGen) -> Self {
+    pub fn new_at(x: i32, y: i32, radius: f32, color_or_texture: &impl TextureGen) -> Self {
         let vertex_count = 200;
 
         let geom = Geom::build_geom(
@@ -27,29 +28,36 @@ impl Circle {
 
         Circle { x, y, radius, geom }
     }
+
+    pub fn new_at_origin(radius: f32, color_or_texture: &impl TextureGen) -> Self {
+        Circle::new_at(0, 0, radius, color_or_texture)
+    }
 }
 
 impl Shape for Circle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for Circle {
     fn get_bounds(&self) -> BoundingRect {
-        let x_pos = (self.x as f32) - self.radius;
-        let y_pos = (self.y as f32) - self.radius;
-        let width_height = self.radius.powi(2);
+        let (x_pos, y_pos) = self.get_center();
+        let width_height = self.radius * 2.0; // update this, as this doesn't take into account the scale/rotate operations
 
         BoundingRect::new(x_pos, y_pos, width_height, width_height)
     }
 
     fn contains(&self, x: f32, y: f32) -> bool {
-        match self.radius.powi(2) {
+        let (c_x, c_y) = self.get_center();
+
+        match self.radius {
             r2 if r2 <= 0.0 => false,
             r2 => {
-                let dx = (self.x as f32 - x).powi(2);
-                let dy = (self.y as f32 - y).powi(2);
+                let dx = (x - c_x).powi(2);
+                let dy = (y - c_y).powi(2);
 
-                (dx + dy) <= r2
+                (dx + dy) <= r2.powi(2)
             }
         }
     }

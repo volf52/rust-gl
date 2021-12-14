@@ -19,23 +19,22 @@
 #[derive(Debug, Clone)]
 pub struct Matrix {
     /// Position (0, 0) in a 3x3 affine transformation matrix.
-    a: f32,
+    pub a: f32,
 
     /// Position (0, 1) in a 3x3 affine transformation matrix.
-    b: f32,
+    pub b: f32,
 
     /// Position (1, 0) in a 3x3 affine transformation matrix.
-    c: f32,
+    pub c: f32,
 
     /// Position (1, 1) in a 3x3 affine transformation matrix.
-    d: f32,
+    pub d: f32,
 
     /// Position (2, 0) in a 3x3 affine transformation matrix.
-    tx: f32,
+    pub tx: f32,
 
     /// Position (2, 1) in a 3x3 affine transformation matrix.
-    ty: f32,
-    // list: [f32; 6]
+    pub ty: f32,
 }
 
 impl Matrix {

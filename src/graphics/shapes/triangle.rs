@@ -1,10 +1,10 @@
+use crate::math::bounding_rect::Bounded;
+use std::{cell::RefCell, rc::Rc};
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
 use crate::math::{BoundingRect, Matrix};
 use crate::textures::utils::TextureGen;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 pub struct Triangle {
     pub x: i32,
@@ -43,7 +43,9 @@ impl Shape for Triangle {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for Triangle {
     fn get_bounds(&self) -> BoundingRect {
         todo!()
     }

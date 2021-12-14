@@ -1,5 +1,6 @@
 use crate::graphics::shapes::utils::color_n_times;
 use crate::graphics::{Geom, Shape};
+use crate::math::bounding_rect::Bounded;
 use crate::math::BoundingRect;
 use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
@@ -25,7 +26,7 @@ pub struct IrregularPolygon {
 }
 
 impl RegularPolygon {
-    pub fn new(
+    pub fn new_at(
         x: i32,
         y: i32,
         radius: f32,
@@ -45,7 +46,7 @@ impl RegularPolygon {
     }
 
     pub fn new_at_origin(radius: f32, n_sides: usize, color_or_texture: &impl TextureGen) -> Self {
-        Self::new(0, 0, radius, n_sides, color_or_texture)
+        Self::new_at(0, 0, radius, n_sides, color_or_texture)
     }
 }
 
@@ -53,7 +54,9 @@ impl Shape for RegularPolygon {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for RegularPolygon {
     fn get_bounds(&self) -> BoundingRect {
         todo!()
     }
@@ -64,7 +67,7 @@ impl Shape for RegularPolygon {
 }
 
 impl IrregularPolygon {
-    pub fn new(
+    pub fn new_at(
         x: i32,
         y: i32,
         width: f32,
@@ -125,7 +128,7 @@ impl IrregularPolygon {
         n_sides: usize,
         color_or_texture: &impl TextureGen,
     ) -> Self {
-        Self::new(0, 0, width, height, n_sides, color_or_texture)
+        Self::new_at(0, 0, width, height, n_sides, color_or_texture)
     }
 }
 
@@ -133,7 +136,9 @@ impl Shape for IrregularPolygon {
     fn get_geom(&self) -> Rc<RefCell<Geom>> {
         self.geom.clone()
     }
+}
 
+impl Bounded for IrregularPolygon {
     fn get_bounds(&self) -> BoundingRect {
         todo!()
     }
