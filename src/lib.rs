@@ -11,6 +11,7 @@ use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::shapes::{
     Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
 };
+use crate::math::Matrix;
 
 mod core;
 mod display;
@@ -68,31 +69,62 @@ pub fn main() -> Result<(), JsValue> {
 
     let tex = app.tex_from_img("../assets/test.jpg");
 
-    let c = Ellipse::new_at_origin(150.0, 75.0, &red);
+    // let c = Ellipse::new_at_origin(150.0, 75.0, &red);
+    let c = Circle::new_at_origin(75.0, &red);
 
     let mut container = Container::default();
 
     app.add_container(&container);
 
-    c.rotate(0.3);
+    // c.rotate(-0.3);
     c.scale(1.1, 2.1);
     c.move_by(10.0, 10.0);
     let c_current_center = c.get_center();
     console_log!("-----------");
     console_log!("C orig center: {:?}", c_current_center);
     c.scale(2.1, 1.1);
-    c.move_to(-50.1, -32.2);
-    container.scale(0.4, 0.5);
+    c.move_to(10.0, 50.2);
+    c.scale(0.4, 0.5);
+    // container.scale(0.4, 0.5);
 
     let c_new_center = c.get_center();
-    console_log!("C new center: {:?}", c_new_center); // should be -50.1, -32.2
+    console_log!("C new center: {:?}", c_new_center); // should be -110.1, -50.2
 
     let c_bounding_rect = c.get_bounds();
+    console_log!("C new center: {:?}", c_bounding_rect.get_center()); // should be -110.1, -50.2
     c_bounding_rect.set_texture(&blue);
+
+    let p = (0.0, 240.0);
+    let p = (0.0, 360.0);
+    console_log!("Point: {:?}", p);
+    console_log!("Contains: {:?}", c.contains(p.0, p.1)); // should be false
+    console_log!("Contains in bounds: {:?}", c.contains_in_bounds(p.0, p.1)); // should be true
+
+    let mat = c.get_geom().borrow().u_mat.clone();
+    let inv = mat.inverse().unwrap();
+
+    let should_be_identity = Matrix::multiply(&mat, &inv);
+
+    console_log!("Mat: {:?}", mat);
+    console_log!("Inv: {:?}", inv);
+    console_log!("Mul: {:?}", should_be_identity);
 
     container.add_shape(&c_bounding_rect);
 
     container.add_shape(&c);
+
+    let mat1 = Matrix {
+        a: 1.0,
+        b: 2.0,
+        c: 3.0,
+        d: 4.0,
+        tx: 5.0,
+        ty: 6.0,
+    };
+    let mat2 = mat1.inverse().unwrap();
+
+    let mulans = Matrix::multiply(&mat1, &mat2);
+    console_log!("Mul test: {:?}", mulans);
 
     render_loop(move || {
         app.render();
