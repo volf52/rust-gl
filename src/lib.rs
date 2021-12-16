@@ -70,7 +70,7 @@ pub fn main() -> Result<(), JsValue> {
     let tex = app.tex_from_img("../assets/test.jpg");
 
     // let c = Ellipse::new_at_origin(150.0, 75.0, &red);
-    let c = Circle::new_at_origin(75.0, &red);
+    let c = Ellipse::new_at_origin(75.0, 25.0, &red);
 
     let mut container = Container::default();
 
@@ -84,21 +84,21 @@ pub fn main() -> Result<(), JsValue> {
     let c_bounding_rect = c.get_bounds();
     c_bounding_rect.set_texture(&blue);
 
-    let p = (180.0, 150.0);
+    let p = (180.0, 60.0);
     console_log!("Point: {:?}", p);
     let p_inv = c.get_geom().borrow().u_mat.inverse_affine_point(p.0, p.1);
     console_log!("Inv Point: {:?}", p_inv);
     console_log!("Contains: {:?}", c.contains(p.0, p.1)); // should be false
     console_log!("Contains in bounds: {:?}", c.contains_in_bounds(p.0, p.1)); // should be true
 
-    let p = (120.0, 120.0);
+    let p = (90.0, 30.0);
     console_log!("Point: {:?}", p);
     let p_inv = c.get_geom().borrow().u_mat.inverse_affine_point(p.0, p.1);
     console_log!("Inv Point: {:?}", p_inv);
     console_log!("Contains: {:?}", c.contains(p.0, p.1)); // should be true
     console_log!("Contains in bounds: {:?}", c.contains_in_bounds(p.0, p.1)); // should be true
 
-    let c_normal = Circle::new_at_origin(c.radius, &green);
+    let c_normal = Ellipse::new_at_origin(c.width, c.height, &green);
 
     let c_bound_normal =
         Rectangle::new_at_origin(c_bounding_rect.width, c_bounding_rect.height, &blue);

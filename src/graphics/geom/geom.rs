@@ -78,11 +78,11 @@ impl Geom {
     }
 
     pub fn translate(&mut self, tx: f32, ty: f32) {
-        self.u_mat = self.u_mat.translate(tx, ty);
+        self.u_mat.translate_inplace(tx, ty);
     }
 
     pub fn scale(&mut self, x: f32, y: f32) {
-        self.u_mat = self.u_mat.scale(x, y);
+        self.u_mat.scale_inplace(x, y);
     }
 
     pub fn calc_tex_coords(vertices: &[f32]) -> Vec<f32> {

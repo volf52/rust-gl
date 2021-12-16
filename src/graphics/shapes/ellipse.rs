@@ -41,17 +41,20 @@ impl Shape for Ellipse {
 }
 
 impl Bounded for Ellipse {
-    // TODO: test
+    // https://math.stackexchange.com/a/76463/525170
     fn contains(&self, x: f32, y: f32) -> bool {
-        let (c_x, c_y) = self.get_center();
+        let (x_p, y_p) = self.geom.borrow().u_mat.inverse_affine_point(x, y);
 
         match (self.width, self.height) {
             t if t.0 <= 0.0 || t.1 <= 0.0 => false,
             _ => {
-                let norm_x = ((x - c_x) / self.width).powi(2);
-                let norm_y = ((y - c_y) / self.height).powi(2);
+                let rx2 = self.width.powi(2);
+                let ry2 = self.height.powi(2);
 
-                (norm_x + norm_y) <= 1.0
+                let norm_x = x_p.powi(2) * ry2;
+                let norm_y = y_p.powi(2) * rx2;
+
+                (norm_x + norm_y) <= (rx2 * ry2)
             }
         }
     }
