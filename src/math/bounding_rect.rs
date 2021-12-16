@@ -1,9 +1,28 @@
 use crate::graphics::{shapes::Rectangle, Shape};
-
 pub trait Bounded: Shape {
-    // Check if x,y is a point within the shape. Will fallback to checking it within the bounding box if not implemented
+    // Expects vertices in counter clockwise direction
     fn contains(&self, x: f32, y: f32) -> bool {
-        self.get_bounds().contains(x, y)
+        let (x_p, y_p) = self.get_geom().borrow().u_mat.inverse_affine_point(x, y);
+
+        self.get_geom()
+            .borrow()
+            .vertices
+            .chunks_exact(2)
+            .map(|c| (c[0], c[1]))
+            .collect::<Vec<_>>()
+            .windows(2)
+            .all(|window| {
+                let (x1, y1) = window[0];
+                let (x2, y2) = window[1];
+
+                let a = y1 - y2;
+                let b = x2 - x1;
+                let c = -(a * x1 + b * y1);
+
+                let d = a * x_p + b * y_p + c; // check direction of (x_p, y_p) with respect to the edge (x1, y1) <-> (x2, y2)
+
+                d >= 0.0 // on the left
+            })
     }
 
     // Get the bounding box without the transformations. Meant to be implemented by the shapes specifically in cases where
@@ -17,7 +36,7 @@ pub trait Bounded: Shape {
         self.get_geom()
             .borrow()
             .vertices
-            .chunks(2)
+            .chunks_exact(2)
             .for_each(|chunk| {
                 let x = chunk[0];
                 let y = chunk[1];

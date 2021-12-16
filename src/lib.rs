@@ -70,38 +70,49 @@ pub fn main() -> Result<(), JsValue> {
     let tex = app.tex_from_img("../assets/test.jpg");
 
     // let c = Ellipse::new_at_origin(150.0, 75.0, &red);
-    let c = Ellipse::new_at_origin(75.0, 25.0, &red);
+    let pth = vec![0.0, 0.0, 50.0, 50.0, 150.0, 100.0, -100.0, 100.0];
+    let c = IrregularPolygon::new_from_path(&pth, &red);
 
     let mut container = Container::default();
 
     app.add_container(&container);
 
     c.rotate_deg(5.0);
-    c.scale(1.1, 2.1);
     c.move_by(10.0, 10.0);
-    c.scale(2.1, 1.1);
+    c.scale(1.1, 1.1);
 
     let c_bounding_rect = c.get_bounds();
     c_bounding_rect.set_texture(&blue);
 
-    let p = (180.0, 60.0);
+    let p = (180.0, 150.0);
     console_log!("Point: {:?}", p);
     let p_inv = c.get_geom().borrow().u_mat.inverse_affine_point(p.0, p.1);
     console_log!("Inv Point: {:?}", p_inv);
-    console_log!("Contains: {:?}", c.contains(p.0, p.1)); // should be false
-    console_log!("Contains in bounds: {:?}", c.contains_in_bounds(p.0, p.1)); // should be true
+    console_log!(
+        "Contains in bounds (false): {:?}",
+        c.contains_in_bounds(p.0, p.1)
+    ); // should be false
+
+    let p = (120.0, 150.0);
+    console_log!("Point: {:?}", p);
+    let p_inv = c.get_geom().borrow().u_mat.inverse_affine_point(p.0, p.1);
+    console_log!("Inv Point: {:?}", p_inv);
+    console_log!("Contains(false): {:?}", c.contains(p.0, p.1)); // should be false
+    console_log!(
+        "Contains in bounds (true): {:?}",
+        c.contains_in_bounds(p.0, p.1)
+    ); // should be true
 
     let p = (90.0, 30.0);
     console_log!("Point: {:?}", p);
     let p_inv = c.get_geom().borrow().u_mat.inverse_affine_point(p.0, p.1);
     console_log!("Inv Point: {:?}", p_inv);
-    console_log!("Contains: {:?}", c.contains(p.0, p.1)); // should be true
-    console_log!("Contains in bounds: {:?}", c.contains_in_bounds(p.0, p.1)); // should be true
+    console_log!("Contains(true): {:?}", c.contains(p.0, p.1)); // should be true
 
-    let c_normal = Ellipse::new_at_origin(c.width, c.height, &green);
+    let c_normal = IrregularPolygon::new_from_path(&pth, &blue);
 
     let c_bound_normal =
-        Rectangle::new_at_origin(c_bounding_rect.width, c_bounding_rect.height, &blue);
+        Rectangle::new_at_origin(c_bounding_rect.width, c_bounding_rect.height, &green);
 
     container.add_shape(&c_bounding_rect);
     container.add_shape(&c);

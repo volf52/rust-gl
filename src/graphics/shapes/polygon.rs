@@ -68,7 +68,8 @@ impl IrregularPolygon {
         }
     }
 
-    pub fn new_from_path(vertices: Vec<f32>, color_or_texture: &impl TextureGen) -> Self {
+    // path contains vertices in counter clockwise direction
+    pub fn new_from_path(vertices: &[f32], color_or_texture: &impl TextureGen) -> Self {
         let sides = vertices.len() / 2;
 
         let xs: Vec<f32> = vertices
