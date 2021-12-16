@@ -60,7 +60,7 @@ impl Matrix {
             a: 2.0 / width,
             b: 0.0,
             c: 0.0,
-            d: -2.0 / height,
+            d: 2.0 / height,
             tx: 0.0,
             ty: 0.0,
         }
@@ -158,7 +158,7 @@ impl Matrix {
             c: self.c,
             d: self.d,
             tx: self.tx + x,
-            ty: self.ty - y,
+            ty: self.ty + y,
         }
     }
 
@@ -247,5 +247,14 @@ impl Matrix {
             tx: ((self.c * self.ty) - (self.d * self.tx)) / det,
             ty: -((self.a * self.ty) - (self.b * self.tx)) / det,
         })
+    }
+
+    pub fn inverse_affine_point(&self, x: f32, y: f32) -> (f32, f32) {
+        let inv = self.inverse().unwrap();
+
+        let x_p = inv.a * x + inv.c * y + inv.tx;
+        let y_p = inv.b * x + inv.d * y + inv.ty;
+
+        (x_p, y_p)
     }
 }
