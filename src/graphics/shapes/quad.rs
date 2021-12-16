@@ -28,7 +28,7 @@ impl Rectangle {
         let top = height / 2.0;
         let bottom = -top;
 
-        let vertices = [left, top, right, top, left, bottom, right, bottom].to_vec();
+        let vertices = vec![left, top, right, top, left, bottom, right, bottom];
 
         let geom = Geom::new(
             &vertices,
@@ -54,7 +54,7 @@ impl Rectangle {
 
         match (self.width, self.height) {
             t if t.0 <= 0.0 || t.1 <= 0.0 => false,
-            t if (x_p.abs() <= t.0) && (y_p.abs() <= t.1) => true,
+            t if (x_p.abs() <= t.0 / 2.0) && (y_p.abs() <= t.1 / 2.0) => true,
             _ => false,
         }
     }
