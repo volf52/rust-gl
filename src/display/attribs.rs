@@ -96,15 +96,13 @@ impl Attribs {
         let ctx = program.context();
 
         let pos_loc = program.get_attrib_loc(ShaderConstant::APosition.to_string());
-        match pos_loc {
-            Some(x) => self.position.set_attribute(&ctx, x as u32),
-            None => (),
+        if let Some(x) = pos_loc {
+            self.position.set_attribute(&ctx, x as u32)
         }
 
         let color_loc = program.get_attrib_loc(ShaderConstant::ATextureCoord.to_string());
-        match color_loc {
-            Some(x) => self.texture_coords.set_attribute(&ctx, x as u32),
-            None => (),
+        if let Some(x) = color_loc {
+            self.texture_coords.set_attribute(&ctx, x as u32)
         }
     }
 }

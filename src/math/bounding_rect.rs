@@ -44,6 +44,6 @@ pub trait Bounded: Shape {
 
     // Check if point x,y exists within the bounding box
     fn contains_in_bounds(&self, x: f32, y: f32) -> bool {
-        self.get_bounds().contains(x, y)
+        self.get_bounds().contains(x, y) // calls the `contains` method implemented for Rectangle in impl Rectangle{} block
     }
 }

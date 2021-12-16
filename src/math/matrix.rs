@@ -127,7 +127,9 @@ impl Matrix {
      * @param {number} angle - The angle in radians.
      * @return {PIXI.Matrix} This matrix. Good for chaining method calls.
      */
+    // TODO: needs testing
     pub fn rotate(&self, angle: f32) -> Matrix {
+        let angle = -angle; // FIXME
         let sin = angle.sin();
         let cos = angle.cos();
 

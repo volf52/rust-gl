@@ -32,13 +32,13 @@ impl Shape for Circle {
 
 impl Bounded for Circle {
     fn contains(&self, x: f32, y: f32) -> bool {
-        let (c_x, c_y) = self.get_center();
+        let (x_p, y_p) = self.geom.borrow().u_mat.inverse_affine_point(x, y);
 
         match self.radius {
             r2 if r2 <= 0.0 => false,
             r2 => {
-                let dx = (x - c_x).powi(2);
-                let dy = (y - c_y).powi(2);
+                let dx = x_p.powi(2);
+                let dy = y_p.powi(2);
 
                 (dx + dy) <= r2.powi(2)
             }

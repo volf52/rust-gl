@@ -8,7 +8,6 @@ use crate::math::bounding_rect::Bounded;
 use crate::math::Matrix;
 use crate::textures::utils::TextureGen;
 
-#[derive(Clone)]
 pub struct Rectangle {
     pub width: f32,
     pub height: f32,
@@ -51,11 +50,11 @@ impl Rectangle {
     }
 
     pub fn contains(&self, x: f32, y: f32) -> bool {
-        let (c_x, c_y) = self.get_center();
+        let (x_p, y_p) = self.geom.borrow().u_mat.inverse_affine_point(x, y);
 
         match (self.width, self.height) {
             t if t.0 <= 0.0 || t.1 <= 0.0 => false,
-            t if ((x - c_x).abs() <= (t.0 / 2.0)) && ((y - c_y).abs() <= (t.1 / 2.0)) => true,
+            t if (x_p.abs() <= t.0) && (y_p.abs() <= t.1) => true,
             _ => false,
         }
     }

@@ -88,6 +88,6 @@ impl DisplayObject {
     pub fn activate_texture(&self, texture: &WebGlTexture) {
         // self.ctx.active_texture(WebGl2RenderingContext::TEXTURE0);
         self.ctx
-            .bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(&texture));
+            .bind_texture(WebGl2RenderingContext::TEXTURE_2D, Some(texture));
     }
 }
