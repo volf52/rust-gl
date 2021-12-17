@@ -33,6 +33,14 @@ impl Container {
         self.node
             .borrow_mut()
             .add_child(Rc::new(RefCell::new(node)));
+
+        shape.set_parent_id(self.node.borrow().get_id());
+    }
+
+    pub fn remove_child(&mut self, child: &impl Shape) {
+        let shape_id = child.get_id();
+
+        self.node.borrow_mut().remove_child(shape_id);
     }
 
     pub fn add_container(&mut self, container: &Container) {

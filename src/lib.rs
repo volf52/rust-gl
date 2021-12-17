@@ -73,8 +73,10 @@ pub fn main() -> Result<(), JsValue> {
     let c = IrregularPolygon::new_from_path(&pth, &red);
 
     let mut container = Container::default();
+    let mut container_2 = Container::default();
 
     app.add_container(&container);
+    app.add_container(&container_2);
 
     c.rotate_deg(5.0);
     c.move_by(10.0, 10.0);
@@ -116,10 +118,18 @@ pub fn main() -> Result<(), JsValue> {
     container.add_shape(&c_bounding_rect);
     container.add_shape(&c);
 
-    container.add_shape(&c_bound_normal);
-    container.add_shape(&c_normal);
+    container_2.add_shape(&c_bound_normal);
+    container_2.add_shape(&c_normal);
 
     console_log!("Shape ID: {:?}", c.get_id());
+    console_log!("Container ID: {:?}", container.get_id());
+    console_log!("Shape Parent ID: {:?}", c.get_parent_id());
+
+    container.remove_child(&c);
+
+    console_log!("Shape Parent ID after removal: {:?}", c.get_parent_id());
+
+    // app.stage.remove_child(&container_2);
 
     render_loop(move || {
         app.render();

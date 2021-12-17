@@ -3,12 +3,21 @@ use crate::math::Matrix;
 use crate::textures::utils::TextureGen;
 use std::cell::RefCell;
 use std::rc::Rc;
+use uuid::Uuid;
 
 pub trait Shape {
     fn get_geom(&self) -> Rc<RefCell<Geom>>;
 
     fn get_id(&self) -> uuid::Uuid {
         self.get_geom().borrow().id
+    }
+
+    fn get_parent_id(&self) -> Option<Uuid> {
+        self.get_geom().borrow().parent_id
+    }
+
+    fn set_parent_id(&self, id: Uuid) {
+        self.get_geom().borrow_mut().set_parent_id(id);
     }
 
     fn apply_transformations(&self, tranformation_mat: &Matrix) {

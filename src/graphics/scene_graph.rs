@@ -2,6 +2,7 @@ use super::Geom;
 use crate::math::Matrix;
 use crate::{core::application::Application, display::display_object::DisplayObject};
 use std::{cell::RefCell, rc::Rc};
+use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct GraphNode {
@@ -21,19 +22,32 @@ impl Default for GraphNode {
 }
 
 impl GraphNode {
-    // pub fn remove_child(&mut self, id: Uuid) -> bool {
-    //     for (idx, node) in self.children.borrow().iter().enumerate() {
-    //         if node.get_id() == id {
-    //             self.children.borrow_mut().remove(idx);
-    //             return true;
-    //         }
-    //     }
+    pub fn remove_child(&mut self, id: Uuid) -> bool {
+        for (idx, node) in self.children.iter().enumerate() {
+            if node.borrow().get_id() == id {
+                node.borrow().geom.borrow_mut().parent_id = None;
+                self.children.remove(idx);
+                return true;
+            }
+        }
 
-    //     false
+        false
+    }
+
+    // pub fn remove_child(&mut self, id: Uuid) {
+    //     self.children.retain(|node| node.borrow().get_id() != id);
     // }
 
-    pub fn get_id(&self) -> uuid::Uuid {
+    pub fn get_id(&self) -> Uuid {
         self.geom.borrow().id
+    }
+
+    pub fn get_parent_id(&self) -> Option<Uuid> {
+        self.geom.borrow().parent_id
+    }
+
+    pub fn set_parent_id(&self, id: Uuid) {
+        self.geom.borrow_mut().set_parent_id(id);
     }
 
     pub fn add_child(&mut self, node: Rc<RefCell<GraphNode>>) {

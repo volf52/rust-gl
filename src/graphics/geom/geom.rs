@@ -10,6 +10,8 @@ use uuid::Uuid;
 
 pub struct Geom {
     pub id: Uuid,
+    pub parent_id: Option<Uuid>,
+
     pub vertices: Vec<f32>,   // vertex data
     pub tex_coords: Vec<f32>, // texture vertices
     pub texture_data: TextureOrColor,
@@ -22,6 +24,7 @@ impl Default for Geom {
     fn default() -> Self {
         Geom {
             id: Uuid::new_v4(),
+            parent_id: None,
             vertices: Vec::new(),
             tex_coords: Vec::new(),
             u_mat: Matrix::new(),
@@ -45,6 +48,7 @@ impl Geom {
 
         Geom {
             id: Uuid::new_v4(),
+            parent_id: None,
             vertices: vertices.to_vec(),
             tex_coords,
             u_mat,
@@ -75,6 +79,10 @@ impl Geom {
 
     pub fn set_texture(&mut self, text_gen: &impl TextureGen) {
         self.texture_data = text_gen.to_enum();
+    }
+
+    pub fn set_parent_id(&mut self, id: Uuid) {
+        self.parent_id = Some(id);
     }
 
     pub fn rotate(&mut self, angle: f32) {
