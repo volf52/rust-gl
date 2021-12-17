@@ -11,7 +11,6 @@ use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::shapes::{
     Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
 };
-use crate::math::Matrix;
 
 mod core;
 mod display;
@@ -119,6 +118,8 @@ pub fn main() -> Result<(), JsValue> {
 
     container.add_shape(&c_bound_normal);
     container.add_shape(&c_normal);
+
+    console_log!("Shape ID: {:?}", c.get_id());
 
     render_loop(move || {
         app.render();

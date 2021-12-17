@@ -13,7 +13,6 @@ pub struct Circle {
 impl Circle {
     pub fn new_at(x: f32, y: f32, radius: f32, color_or_texture: &impl TextureGen) -> Self {
         let vertex_count = 200;
-
         let geom = Geom::build_geom(x, y, radius, radius, vertex_count, color_or_texture);
 
         Circle { radius, geom }

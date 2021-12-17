@@ -7,6 +7,10 @@ use std::rc::Rc;
 pub trait Shape {
     fn get_geom(&self) -> Rc<RefCell<Geom>>;
 
+    fn get_id(&self) -> uuid::Uuid {
+        self.get_geom().borrow().id
+    }
+
     fn apply_transformations(&self, tranformation_mat: &Matrix) {
         self.get_geom().borrow_mut().u_mat = tranformation_mat.clone();
     }
