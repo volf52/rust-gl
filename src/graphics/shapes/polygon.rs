@@ -1,7 +1,8 @@
 use crate::graphics::{Geom, Shape};
 use crate::math::BoundingRect;
-use crate::textures::utils::TextureGen;
+use crate::textures::utils::{TextureGen, TextureOrColor};
 use std::cell::RefCell;
+use std::ops::AddAssign;
 use std::rc::Rc;
 
 pub struct RegularPolygon {
@@ -125,6 +126,12 @@ impl IrregularPolygon {
         color_or_texture: &impl TextureGen,
     ) -> Self {
         Self::new(0, 0, width, height, n_sides, color_or_texture)
+    }
+
+    pub fn translate2(&mut self, tx: f32, ty: f32) {
+        self.geom.borrow_mut().translate(tx, ty);
+        self.x.add_assign(tx as i32);
+        self.y.add_assign(ty as i32);
     }
 }
 

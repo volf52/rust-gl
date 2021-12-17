@@ -1,8 +1,15 @@
-use crate::graphics::shapes::shape::Dims;
+use std::cell::RefCell;
+use std::io::Seek;
+use std::rc::Rc;
+
+use crate::graphics::shapes::IrregularPolygon;
 use crate::textures::texture_img::load_texture_image;
 use crate::textures::texture_text::create_text_texture;
 use crate::textures::utils::{TextureGen, TextureOrColor};
-use wasm_bindgen::prelude::*;
+use crate::ticker::ticker::Ticker;
+use keyframe::functions::EaseInOut;
+use keyframe::*;
+use wasm_bindgen::{prelude::*, JsCast};
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
 use crate::display::display_object::DisplayObject;
@@ -105,6 +112,38 @@ impl Application {
         create_text_texture(&self.ctx, text, font, text_size, color, tx, ty)
     }
 
+    pub fn run<F>(self, closure: F)
+    where
+        F: 'static + FnMut(),
+    {
+        render_loop(closure, self);
+    }
+
+    pub fn fade_in(
+        &self,
+        shape: IrregularPolygon,
+        from: i32,
+        to: i32,
+        step: u32,
+        duration: u32,
+        fps: u32,
+    ) {
+        shape.translate((shape.x - from) as f32, 0.0);
+        let translations: Vec<f32> = (0..duration * fps)
+            .map(|f| {
+                ease_with_scaled_time(EaseInOut, from as f32, to as f32, f as f32, duration as f32)
+            })
+            .collect();
+
+        translations.iter().for_each(|f| {
+            shape.translate(f.clone(), 0.0);
+        })
+    }
+
+    // pub fn run2(&self, ticker: &Ticker) {
+    //     render_loop2(Ticker::on_draw(self), || println!("hello"));
+    // }
+
     // pub fn gc(&mut self) {
     //     self.shapes = self
     //         .shapes
@@ -113,4 +152,43 @@ impl Application {
     //         .cloned(k
     //         .collect();
     // }
+}
+
+impl Ticker {
+    pub fn on_draw(app: &Application) {
+        app.render();
+    }
+}
+pub fn render_loop<F>(mut closure: F, app: Application)
+where
+    F: 'static + FnMut(),
+{
+    let f = Rc::new(RefCell::new(None));
+    let g = f.clone();
+    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
+        app.render();
+        closure();
+        request_animation_frame(f.borrow().as_ref().unwrap());
+    }) as Box<dyn FnMut()>));
+    request_animation_frame(g.borrow().as_ref().unwrap());
+}
+
+pub fn render_loop2<F>(mut closure: F)
+where
+    F: 'static + FnMut(),
+{
+    let f = Rc::new(RefCell::new(None));
+    let g = f.clone();
+    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
+        closure();
+        request_animation_frame(f.borrow().as_ref().unwrap());
+    }) as Box<dyn FnMut()>));
+    request_animation_frame(g.borrow().as_ref().unwrap());
+}
+
+fn request_animation_frame(f: &Closure<dyn FnMut()>) {
+    web_sys::window()
+        .unwrap()
+        .request_animation_frame(f.as_ref().unchecked_ref())
+        .expect("should register `requestAnimationFrame` OK");
 }

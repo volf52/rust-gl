@@ -1,8 +1,11 @@
+use crate::graphics::shapes::Triangle;
 use crate::graphics::Geom;
 use crate::math::BoundingRect;
 use crate::textures::utils::TextureOrColor;
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use super::{Ellipse, IrregularPolygon};
 
 pub struct Dims {
     pub width: f32,

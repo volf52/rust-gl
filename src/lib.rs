@@ -1,8 +1,9 @@
-use std::{cell::RefCell, rc::Rc};
-
+use crate::core::application::{Application, CanvasDimensions};
+use animation::slide::{self, slide_anim, Axis};
+use graphics::shapes::shape_enum::ConstructTextured;
 use graphics::Container;
-use textures::ab_text::test_tex2;
-use textures::texture_text::test_tex;
+use keyframe::functions::{EaseIn, EaseInOut, EaseInOutCubic};
+use keyframe::*;
 use textures::typer_text::text_typer;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
@@ -10,19 +11,19 @@ use wasm_bindgen::JsCast;
 use web_sys::WebGl2RenderingContext;
 use web_sys::WebGlTexture;
 
-use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::shapes::{
-    Circle, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
-};
-use webgl2_glyph_atlas::{Font, Renderer};
+use crate::graphics::shapes::shape_enum::ConstructAtOrigin;
+use crate::graphics::shapes::shape_enum::Shape::Polygon;
+use crate::graphics::shapes::{Circle, IrregularPolygon, RegularPolygon, Shape, Triangle};
+
+mod animation;
 mod core;
 mod display;
 mod graphics;
 mod math;
 mod shaders;
 mod textures;
+mod ticker;
 mod utils;
-
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 
@@ -47,7 +48,7 @@ pub fn hey(mat: Vec<f32>) {
 }
 
 #[wasm_bindgen]
-pub fn hey2(mat: Vec<u8>) {
+pub fn hey2(mat: Vec<f32>) {
     console_log!("{:#?}", mat);
 }
 
@@ -97,39 +98,28 @@ pub fn main() -> Result<(), JsValue> {
     let c = Circle::new(0, 0, 100.0, &text_texture);
     c.translate(-150.0, 75.0);
 
-    app.add_shape(&c);
+    let mut p = Polygon(75.0, 5).new_at_origin_textured(text_texture);
+
+    p.translate2(240.0, 0.0);
+    //app.add_shape(&c);
+    app.add_shape(&p);
     let tr = Triangle::new_at_origin(100.0, &red);
-    container.add_shape(&tr);
+    //container.add_shape(&tr);
     app.add_container(&container);
     //   app.render();
-    render_loop(move || {
-        app.render();
+
+    let mut sequence = keyframes![(5.0, 0.0, EaseInOut), (0.0, 1.0)];
+    app.run(move || {
+        slide_anim(&mut p, -300, 200, &mut sequence, Axis::Xneg);
         tr.rotate_deg(5.0);
-        c.rotate_deg(1.0);
-        let mut renderer = Renderer::new(&context).unwrap();
-        renderer.queue_text("Hello ", &Font::new("sans-serif", 40), 0., 0.);
-        renderer.draw().unwrap();
     });
 
     Ok(())
 }
 
-pub fn render_loop<F>(mut closure: F)
-where
-    F: 'static + FnMut(),
-{
-    let f = Rc::new(RefCell::new(None));
-    let g = f.clone();
-    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
-        closure();
-        request_animation_frame(f.borrow().as_ref().unwrap());
-    }) as Box<dyn FnMut()>));
-    request_animation_frame(g.borrow().as_ref().unwrap());
-}
+fn example(time: f32) -> f32 {
+    let a = 5.0;
+    let b = 0.0;
 
-fn request_animation_frame(f: &Closure<dyn FnMut()>) {
-    web_sys::window()
-        .unwrap()
-        .request_animation_frame(f.as_ref().unchecked_ref())
-        .expect("should register `requestAnimationFrame` OK");
+    ease_with_scaled_time(EaseInOutCubic, a, b, time, 3.0)
 }

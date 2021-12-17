@@ -3,6 +3,7 @@ pub mod ellipse;
 pub mod polygon;
 pub mod quad;
 pub mod shape;
+pub mod shape_enum;
 pub mod triangle;
 pub mod utils;
 

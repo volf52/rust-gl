@@ -2,7 +2,6 @@ use image::EncodableLayout;
 use typer::rusttype::Font;
 use typer::{TextRenderer, Typer};
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
-use xml::writer::XmlEvent;
 type Wgl2 = WebGl2RenderingContext;
 
 pub fn text_typer(gl: &WebGl2RenderingContext, xml_string: &str) -> WebGlTexture {
