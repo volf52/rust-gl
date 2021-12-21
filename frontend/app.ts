@@ -2,9 +2,9 @@ import init, { test_error, main as RGL } from "rust-gl";
 
 const CANVAS_ID = "canvas";
 
-init().then(() => {
-  RGL();
-});
+init(); //.then(() => {
+// RGL();
+//});
 
 function sendImage(url: string): HTMLImageElement {
   const image = new Image();
