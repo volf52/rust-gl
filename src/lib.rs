@@ -79,7 +79,7 @@ pub fn main() -> Result<(), JsValue> {
     app.add_container(&container);
     app.add_container(&container_2);
 
-    c.rotate_deg(5.0);
+    container.rotate_deg(5.0);
     c.move_by(10.0, 10.0);
     c.scale(1.1, 1.1);
 
@@ -116,51 +116,11 @@ pub fn main() -> Result<(), JsValue> {
     let c_bound_normal =
         Rectangle::new_at_origin(c_bounding_rect.width, c_bounding_rect.height, &green);
 
-    console_log!("Shape ID: {:?}", c_normal.get_id());
-    console_log!("Container ID: {:?}", container.get_id());
-    console_log!("Container 2 ID: {:?}", container_2.get_id());
-
     container.add_shape(&c_bounding_rect);
     container.add_shape(&c);
-    container.add_shape(&c_normal);
-
-    console_log!(
-        "Shape Parent ID (expect same as container): {:?}",
-        c_normal.get_parent_id()
-    );
-    console_log!("Total in Container (should be 3): {}", container.len());
 
     container_2.add_shape(&c_bound_normal);
     container_2.add_shape(&c_normal);
-
-    console_log!("Total in Container (should be 2 now): {}", container.len());
-
-    console_log!(
-        "Shape Parent ID (expect same as container 2): {:?}",
-        c_normal.get_parent_id()
-    );
-
-    container_2.remove_child(&c_normal);
-
-    console_log!(
-        "Shape Parent ID after removal: {:?}",
-        c_normal.get_parent_id()
-    );
-    console_log!(
-        "Container 2 contains shape: {:?}",
-        container_2.contains(c.get_id())
-    );
-
-    let final_mat_c = c.get_final_transformation_matrix();
-    let other_mat = Matrix::new();
-
-    let mut other_mat = other_mat.rotate((5.0_f32).to_radians());
-    other_mat.translate_inplace(10.0, 10.0);
-    other_mat.scale_inplace(1.1, 1.1);
-
-    console_log!("Expected mat: {:?}", other_mat);
-
-    console_log!("Actual mat: {:?}", final_mat_c);
 
     render_loop(move || {
         app.render();
