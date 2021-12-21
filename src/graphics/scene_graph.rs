@@ -59,6 +59,16 @@ impl GraphNode {
         self.idx_map.get(&id).is_some()
     }
 
+    pub fn get_final_transformation_matrix(&self) -> Matrix {
+        let mut mat = self.geom.borrow().u_mat.clone();
+        if let Some(p) = self.get_parent() {
+            let mat2 = p.borrow().get_final_transformation_matrix();
+            mat.mul_inplace(&mat2);
+        }
+
+        mat
+    }
+
     pub fn render(&self, app: &Application, parent_model_mat: &Matrix) {
         self.children.iter().for_each(|child| {
             let updated_transform_mat = &parent_model_mat.mul(&self.geom.borrow().u_mat);

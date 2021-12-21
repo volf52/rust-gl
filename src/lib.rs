@@ -2,6 +2,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use graphics::Container;
 use math::bounding_rect::Bounded;
+use math::Matrix;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -149,6 +150,17 @@ pub fn main() -> Result<(), JsValue> {
         "Container 2 contains shape: {:?}",
         container_2.contains(c.get_id())
     );
+
+    let final_mat_c = c.get_final_transformation_matrix();
+    let other_mat = Matrix::new();
+
+    let mut other_mat = other_mat.rotate((5.0_f32).to_radians());
+    other_mat.translate_inplace(10.0, 10.0);
+    other_mat.scale_inplace(1.1, 1.1);
+
+    console_log!("Expected mat: {:?}", other_mat);
+
+    console_log!("Actual mat: {:?}", final_mat_c);
 
     render_loop(move || {
         app.render();

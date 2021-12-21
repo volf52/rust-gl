@@ -27,6 +27,17 @@ pub trait Shape {
         self.get_geom().borrow_mut().update_parent(node)
     }
 
+    fn get_final_transformation_matrix(&self) -> Matrix {
+        let mut mat = self.get_geom().borrow().u_mat.clone();
+
+        if let Some(p) = &self.get_parent() {
+            let mat2 = p.borrow().get_final_transformation_matrix();
+            mat.mul_inplace(&mat2);
+        }
+
+        mat
+    }
+
     fn apply_transformations(&self, tranformation_mat: &Matrix) {
         self.get_geom().borrow_mut().u_mat = tranformation_mat.clone();
     }
