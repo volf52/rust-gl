@@ -115,21 +115,40 @@ pub fn main() -> Result<(), JsValue> {
     let c_bound_normal =
         Rectangle::new_at_origin(c_bounding_rect.width, c_bounding_rect.height, &green);
 
+    console_log!("Shape ID: {:?}", c_normal.get_id());
+    console_log!("Container ID: {:?}", container.get_id());
+    console_log!("Container 2 ID: {:?}", container_2.get_id());
+
     container.add_shape(&c_bounding_rect);
     container.add_shape(&c);
+    container.add_shape(&c_normal);
+
+    console_log!(
+        "Shape Parent ID (expect same as container): {:?}",
+        c_normal.get_parent_id()
+    );
+    console_log!("Total in Container (should be 3): {}", container.len());
 
     container_2.add_shape(&c_bound_normal);
     container_2.add_shape(&c_normal);
 
-    console_log!("Shape ID: {:?}", c.get_id());
-    console_log!("Container ID: {:?}", container.get_id());
-    console_log!("Shape Parent ID: {:?}", c.get_parent_id());
+    console_log!("Total in Container (should be 2 now): {}", container.len());
 
-    container.remove_child(&c);
+    console_log!(
+        "Shape Parent ID (expect same as container 2): {:?}",
+        c_normal.get_parent_id()
+    );
 
-    console_log!("Shape Parent ID after removal: {:?}", c.get_parent_id());
+    container_2.remove_child(&c_normal);
 
-    // app.stage.remove_child(&container_2);
+    console_log!(
+        "Shape Parent ID after removal: {:?}",
+        c_normal.get_parent_id()
+    );
+    console_log!(
+        "Container 2 contains shape: {:?}",
+        container_2.contains(c.get_id())
+    );
 
     render_loop(move || {
         app.render();

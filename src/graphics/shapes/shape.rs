@@ -1,3 +1,4 @@
+use crate::graphics::scene_graph::GraphNode;
 use crate::graphics::Geom;
 use crate::math::Matrix;
 use crate::textures::utils::TextureGen;
@@ -12,12 +13,18 @@ pub trait Shape {
         self.get_geom().borrow().id
     }
 
-    fn get_parent_id(&self) -> Option<Uuid> {
-        self.get_geom().borrow().parent_id
+    fn get_parent(&self) -> Option<Rc<RefCell<GraphNode>>> {
+        self.get_geom().borrow().parent.clone()
     }
 
-    fn set_parent_id(&self, id: Uuid) {
-        self.get_geom().borrow_mut().set_parent_id(id);
+    fn get_parent_id(&self) -> Option<Uuid> {
+        let parent = self.get_geom().borrow().parent.clone();
+
+        parent.map(|p| p.borrow().get_id())
+    }
+
+    fn update_parent(&self, node: Option<Rc<RefCell<GraphNode>>>) {
+        self.get_geom().borrow_mut().update_parent(node)
     }
 
     fn apply_transformations(&self, tranformation_mat: &Matrix) {

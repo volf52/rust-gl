@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 use crate::core::application::Application;
 use crate::graphics::scene_graph::GraphNode;
@@ -28,19 +28,19 @@ impl Container {
             is_leaf: true,
             geom: shape.get_geom(),
             children: Vec::new(),
+            idx_map: HashMap::new(),
         };
 
         self.node
             .borrow_mut()
             .add_child(Rc::new(RefCell::new(node)));
 
-        shape.set_parent_id(self.node.borrow().get_id());
+        shape.update_parent(Some(self.node.clone()));
     }
 
     pub fn remove_child(&mut self, child: &impl Shape) {
-        let shape_id = child.get_id();
-
-        self.node.borrow_mut().remove_child(shape_id);
+        self.node.borrow_mut().remove_child(child.get_id());
+        child.update_parent(None);
     }
 
     pub fn add_container(&mut self, container: &Container) {
@@ -49,6 +49,10 @@ impl Container {
 
     pub fn len(&self) -> usize {
         self.node.borrow().len()
+    }
+
+    pub fn contains(&self, id: uuid::Uuid) -> bool {
+        self.node.borrow().contains(id)
     }
 }
 
