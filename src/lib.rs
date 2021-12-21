@@ -2,6 +2,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use graphics::Container;
 use math::bounding_rect::Bounded;
+use math::Matrix;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -11,7 +12,6 @@ use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::shapes::{
     Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
 };
-use crate::math::Matrix;
 
 mod core;
 mod display;
@@ -74,10 +74,12 @@ pub fn main() -> Result<(), JsValue> {
     let c = IrregularPolygon::new_from_path(&pth, &red);
 
     let mut container = Container::default();
+    let mut container_2 = Container::default();
 
     app.add_container(&container);
+    app.add_container(&container_2);
 
-    c.rotate_deg(5.0);
+    container.rotate_deg(5.0);
     c.move_by(10.0, 10.0);
     c.scale(1.1, 1.1);
 
@@ -117,8 +119,8 @@ pub fn main() -> Result<(), JsValue> {
     container.add_shape(&c_bounding_rect);
     container.add_shape(&c);
 
-    container.add_shape(&c_bound_normal);
-    container.add_shape(&c_normal);
+    container_2.add_shape(&c_bound_normal);
+    container_2.add_shape(&c_normal);
 
     render_loop(move || {
         app.render();

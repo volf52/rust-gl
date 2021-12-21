@@ -1,13 +1,17 @@
 use web_sys::WebGl2RenderingContext;
 
 use crate::{
-    graphics::shapes::utils::calc_n_vertices,
+    graphics::{scene_graph::GraphNode, shapes::utils::calc_n_vertices},
     math::Matrix,
     textures::utils::{TextureGen, TextureOrColor},
 };
 use std::{cell::RefCell, rc::Rc};
+use uuid::Uuid;
 
 pub struct Geom {
+    pub id: Uuid,
+    pub parent: Option<Rc<RefCell<GraphNode>>>,
+
     pub vertices: Vec<f32>,   // vertex data
     pub tex_coords: Vec<f32>, // texture vertices
     pub texture_data: TextureOrColor,
@@ -19,6 +23,8 @@ pub struct Geom {
 impl Default for Geom {
     fn default() -> Self {
         Geom {
+            id: Uuid::new_v4(),
+            parent: None,
             vertices: Vec::new(),
             tex_coords: Vec::new(),
             u_mat: Matrix::new(),
@@ -41,6 +47,8 @@ impl Geom {
         let texture_data = mask.to_enum();
 
         Geom {
+            id: Uuid::new_v4(),
+            parent: None,
             vertices: vertices.to_vec(),
             tex_coords,
             u_mat,
@@ -71,6 +79,14 @@ impl Geom {
 
     pub fn set_texture(&mut self, text_gen: &impl TextureGen) {
         self.texture_data = text_gen.to_enum();
+    }
+
+    pub fn update_parent(&mut self, node: Option<Rc<RefCell<GraphNode>>>) {
+        if let Some(p) = &self.parent {
+            p.borrow_mut().remove_child(self.id);
+        }
+
+        self.parent = node;
     }
 
     pub fn rotate(&mut self, angle: f32) {

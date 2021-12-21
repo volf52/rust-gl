@@ -13,6 +13,7 @@ module.exports = (env, args) => {
         ? "[name].[contenthash].js"
         : "[name].[fullhash].js",
     },
+    target: "web",
     module: {
       rules: [
         {

@@ -2,7 +2,8 @@ use crate::graphics::{shapes::Rectangle, Shape};
 pub trait Bounded: Shape {
     // Expects vertices in counter clockwise direction
     fn contains(&self, x: f32, y: f32) -> bool {
-        let (x_p, y_p) = self.get_geom().borrow().u_mat.inverse_affine_point(x, y);
+        let transform_mat = self.get_final_transformation_matrix();
+        let (x_p, y_p) = transform_mat.inverse_affine_point(x, y);
 
         self.get_geom()
             .borrow()
