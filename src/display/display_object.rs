@@ -1,6 +1,3 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
 use crate::display::shader_program::ShaderProgram;
@@ -14,27 +11,26 @@ use super::attribs::Attribs;
 
 pub struct DisplayObject {
     ctx: WebGl2RenderingContext,
-    geom: Rc<RefCell<Geom>>,
+    geom: Geom,
     attribs: Attribs,
 }
 
 impl DisplayObject {
-    pub fn new(ctx: &WebGl2RenderingContext, geom: Rc<RefCell<Geom>>) -> DisplayObject {
+    pub fn new(ctx: &WebGl2RenderingContext, geom: Geom) -> DisplayObject {
         let ctx = ctx.clone();
-        let attribs = Attribs::new(&ctx, geom.borrow());
+        let attribs = Attribs::new(&ctx, &geom);
 
         DisplayObject { ctx, geom, attribs }
     }
 
     pub fn draw(&self, proj_mat: &Matrix, parent_transform_mat: &Matrix) {
         let gl_program = ShaderProgram::new(&self.ctx);
-        let geom = self.geom.borrow();
 
         self.attribs.set_attributes(&gl_program);
 
         self.set_projection_matrix(&gl_program, proj_mat);
 
-        let texture = match &geom.texture_data {
+        let texture = match &self.geom.texture_data {
             TextureOrColor::Color(color) => create_solid_texture(&self.ctx, color),
             TextureOrColor::Texture(t) => t.clone(),
         };
@@ -42,24 +38,25 @@ impl DisplayObject {
         self.activate_texture(&texture);
         self.set_usampler(&gl_program);
 
-        let model_matrix = Matrix::multiply(parent_transform_mat, &geom.u_mat);
+        let model_matrix = Matrix::multiply(parent_transform_mat, &self.geom.u_mat);
         self.set_model_matrix(&gl_program, &model_matrix);
 
-        self.ctx.draw_arrays(geom.mode, 0, geom.vertex_count);
+        self.ctx
+            .draw_arrays(self.geom.mode, 0, self.geom.vertex_count);
     }
 
     pub fn draw_textured(&self, proj_mat: &Matrix, texture: &WebGlTexture) {
         let gl_program = ShaderProgram::new(&self.ctx);
-        let geom = self.geom.borrow();
 
         self.attribs.set_attributes(&gl_program);
 
         self.set_projection_matrix(&gl_program, proj_mat);
-        self.set_model_matrix(&gl_program, &geom.u_mat);
+        self.set_model_matrix(&gl_program, &self.geom.u_mat);
         self.activate_texture(texture);
         self.set_usampler(&gl_program);
 
-        self.ctx.draw_arrays(geom.mode, 0, geom.vertex_count);
+        self.ctx
+            .draw_arrays(self.geom.mode, 0, self.geom.vertex_count);
     }
 
     pub fn set_model_matrix(&self, program: &ShaderProgram, mat: &Matrix) {

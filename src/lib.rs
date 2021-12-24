@@ -79,7 +79,7 @@ pub fn main() -> Result<(), JsValue> {
     app.add_container(&container);
     app.add_container(&container_2);
 
-    container.rotate_deg(5.0);
+    c.rotate_deg(5.0);
     c.move_by(10.0, 10.0);
     c.scale(1.1, 1.1);
 
@@ -88,7 +88,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let p = (180.0, 150.0);
     console_log!("Point: {:?}", p);
-    let p_inv = c.get_geom().borrow().u_mat.inverse_affine_point(p.0, p.1);
+    let p_inv = c.get_model_matrix().inverse_affine_point(p.0, p.1);
     console_log!("Inv Point: {:?}", p_inv);
     console_log!(
         "Contains in bounds (false): {:?}",
@@ -97,7 +97,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let p = (120.0, 150.0);
     console_log!("Point: {:?}", p);
-    let p_inv = c.get_geom().borrow().u_mat.inverse_affine_point(p.0, p.1);
+    let p_inv = c.get_model_matrix().inverse_affine_point(p.0, p.1);
     console_log!("Inv Point: {:?}", p_inv);
     console_log!("Contains(false): {:?}", c.contains(p.0, p.1)); // should be false
     console_log!(
@@ -107,7 +107,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let p = (90.0, 30.0);
     console_log!("Point: {:?}", p);
-    let p_inv = c.get_geom().borrow().u_mat.inverse_affine_point(p.0, p.1);
+    let p_inv = c.get_model_matrix().inverse_affine_point(p.0, p.1);
     console_log!("Inv Point: {:?}", p_inv);
     console_log!("Contains(true): {:?}", c.contains(p.0, p.1)); // should be true
 
@@ -121,6 +121,17 @@ pub fn main() -> Result<(), JsValue> {
 
     container_2.add_shape(&c_bound_normal);
     container_2.add_shape(&c_normal);
+
+    let final_mat_c = c.get_final_transformation_matrix();
+    let mut other_mat = Matrix::new();
+
+    let mut other_mat = other_mat.rotate((5.0_f32).to_radians());
+    other_mat.translate_inplace(10.0, 10.0);
+    other_mat.scale_inplace(1.1, 1.1);
+
+    console_log!("Expected mat: {:?}", other_mat);
+
+    console_log!("Actual mat: {:?}", final_mat_c);
 
     render_loop(move || {
         app.render();

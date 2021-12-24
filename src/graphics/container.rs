@@ -1,10 +1,10 @@
-use std::{cell::RefCell, collections::HashMap, rc::Rc};
+use std::{cell::RefCell, rc::Rc};
 
 use crate::core::application::Application;
 use crate::graphics::scene_graph::GraphNode;
 use crate::math::Matrix;
 
-use super::{Geom, Shape};
+use super::{scene_graph::GraphEntity, Shape};
 
 pub struct Container {
     pub node: Rc<RefCell<GraphNode>>,
@@ -24,17 +24,7 @@ impl Container {
     }
 
     pub fn add_shape(&mut self, shape: &impl Shape) {
-        let node = GraphNode {
-            is_leaf: true,
-            geom: shape.get_geom(),
-            children: Vec::new(),
-            idx_map: HashMap::new(),
-        };
-
-        self.node
-            .borrow_mut()
-            .add_child(Rc::new(RefCell::new(node)));
-
+        self.node.borrow_mut().add_child(shape.get_node());
         shape.update_parent(Some(self.node.clone()));
     }
 
@@ -56,9 +46,11 @@ impl Container {
     }
 }
 
-// `Shape` would be a misnomer here. Vector Space/Coord System would be better
-impl Shape for Container {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.node.borrow().geom.clone()
+impl GraphEntity for Container {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
 }
+
+// `Shape` would be a misnomer here. Vector Space/Coord System would be better
+impl Shape for Container {}

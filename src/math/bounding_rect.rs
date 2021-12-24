@@ -1,12 +1,14 @@
 use crate::graphics::{shapes::Rectangle, Shape};
+
 pub trait Bounded: Shape {
     // Expects vertices in counter clockwise direction
     fn contains(&self, x: f32, y: f32) -> bool {
         let transform_mat = self.get_final_transformation_matrix();
         let (x_p, y_p) = transform_mat.inverse_affine_point(x, y);
 
-        self.get_geom()
+        self.get_node()
             .borrow()
+            .geom
             .vertices
             .chunks_exact(2)
             .map(|c| (c[0], c[1]))
@@ -34,8 +36,9 @@ pub trait Bounded: Shape {
         let mut max_x = f32::MIN;
         let mut max_y = f32::MIN;
 
-        self.get_geom()
+        self.get_node()
             .borrow()
+            .geom
             .vertices
             .chunks_exact(2)
             .for_each(|chunk| {
@@ -57,7 +60,7 @@ pub trait Bounded: Shape {
     // Get the bounding rectangle with the transformations applied
     fn get_bounds(&self) -> Rectangle {
         let rect = self.get_bounding_rect_inner();
-        rect.copy_transformations_from_geom(self.get_geom());
+        rect.apply_transformations(&self.get_node().borrow().geom.u_mat);
 
         rect
     }

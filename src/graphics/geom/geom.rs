@@ -1,17 +1,13 @@
 use web_sys::WebGl2RenderingContext;
 
 use crate::{
-    graphics::{scene_graph::GraphNode, shapes::utils::calc_n_vertices},
+    graphics::shapes::utils::calc_n_vertices,
     math::Matrix,
     textures::utils::{TextureGen, TextureOrColor},
 };
-use std::{cell::RefCell, rc::Rc};
-use uuid::Uuid;
 
+#[derive(Debug, Clone)]
 pub struct Geom {
-    pub id: Uuid,
-    pub parent: Option<Rc<RefCell<GraphNode>>>,
-
     pub vertices: Vec<f32>,   // vertex data
     pub tex_coords: Vec<f32>, // texture vertices
     pub texture_data: TextureOrColor,
@@ -23,8 +19,6 @@ pub struct Geom {
 impl Default for Geom {
     fn default() -> Self {
         Geom {
-            id: Uuid::new_v4(),
-            parent: None,
             vertices: Vec::new(),
             tex_coords: Vec::new(),
             u_mat: Matrix::new(),
@@ -47,8 +41,6 @@ impl Geom {
         let texture_data = mask.to_enum();
 
         Geom {
-            id: Uuid::new_v4(),
-            parent: None,
             vertices: vertices.to_vec(),
             tex_coords,
             u_mat,
@@ -65,28 +57,20 @@ impl Geom {
         height: f32,
         no_sides: usize,
         color_or_texture: &impl TextureGen,
-    ) -> Rc<RefCell<Geom>> {
+    ) -> Geom {
         let vertices = calc_n_vertices(width, height, no_sides);
 
-        Rc::new(RefCell::new(Geom::new(
+        Geom::new(
             &vertices,
             Matrix::translation(x, y),
             WebGl2RenderingContext::TRIANGLE_FAN,
             no_sides as i32,
             color_or_texture,
-        )))
+        )
     }
 
     pub fn set_texture(&mut self, text_gen: &impl TextureGen) {
         self.texture_data = text_gen.to_enum();
-    }
-
-    pub fn update_parent(&mut self, node: Option<Rc<RefCell<GraphNode>>>) {
-        if let Some(p) = &self.parent {
-            p.borrow_mut().remove_child(self.id);
-        }
-
-        self.parent = node;
     }
 
     pub fn rotate(&mut self, angle: f32) {

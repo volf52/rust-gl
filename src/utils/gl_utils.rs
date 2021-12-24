@@ -15,9 +15,9 @@ pub fn create_array_buffer(ctx: &WebGl2RenderingContext) -> WebGlBuffer {
     create_buffer_with_type(ctx, WebGl2RenderingContext::ARRAY_BUFFER)
 }
 
-pub fn bind_f32_buffer_data(ctx: &WebGl2RenderingContext, data: &Vec<f32>) {
+pub fn bind_f32_buffer_data(ctx: &WebGl2RenderingContext, data: &[f32]) {
     unsafe {
-        let view = js_sys::Float32Array::view(data.as_slice());
+        let view = js_sys::Float32Array::view(data);
         ctx.buffer_data_with_array_buffer_view(
             WebGl2RenderingContext::ARRAY_BUFFER,
             &view,
@@ -26,9 +26,9 @@ pub fn bind_f32_buffer_data(ctx: &WebGl2RenderingContext, data: &Vec<f32>) {
     };
 }
 
-pub fn bind_u8_buffer_data(ctx: &WebGl2RenderingContext, data: &Vec<u8>) {
+pub fn bind_u8_buffer_data(ctx: &WebGl2RenderingContext, data: &[u8]) {
     unsafe {
-        let view = js_sys::Uint8Array::view(data.as_slice());
+        let view = js_sys::Uint8Array::view(data);
         ctx.buffer_data_with_array_buffer_view(
             WebGl2RenderingContext::ARRAY_BUFFER,
             &view,

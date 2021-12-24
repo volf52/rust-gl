@@ -1,14 +1,14 @@
+use crate::graphics::scene_graph::{GraphEntity, GraphNode};
 use crate::graphics::{shapes::Rectangle, Geom, Shape};
 use crate::math::bounding_rect::Bounded;
 use crate::textures::utils::TextureGen;
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 
 pub struct Ellipse {
     pub width: f32,  // center to horizontal edge
     pub height: f32, // center to horizontal edge
 
-    geom: Rc<RefCell<Geom>>,
+    node: Rc<RefCell<GraphNode>>,
 }
 
 impl Ellipse {
@@ -21,11 +21,12 @@ impl Ellipse {
     ) -> Self {
         let vertex_count = 200;
         let geom = Geom::build_geom(x, y, width, height, vertex_count, color_or_texture);
+        let node = GraphNode::for_shape(geom);
 
         Ellipse {
             width,
             height,
-            geom,
+            node,
         }
     }
 
@@ -34,16 +35,18 @@ impl Ellipse {
     }
 }
 
-impl Shape for Ellipse {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
+impl GraphEntity for Ellipse {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
 }
+
+impl Shape for Ellipse {}
 
 impl Bounded for Ellipse {
     // https://math.stackexchange.com/a/76463/525170
     fn contains(&self, x: f32, y: f32) -> bool {
-        let (x_p, y_p) = self.geom.borrow().u_mat.inverse_affine_point(x, y);
+        let (x_p, y_p) = self.node.borrow().geom.u_mat.inverse_affine_point(x, y);
 
         match (self.width, self.height) {
             t if t.0 <= 0.0 || t.1 <= 0.0 => false,
