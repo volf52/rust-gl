@@ -1,6 +1,8 @@
 use std::{cell::RefCell, rc::Rc};
 
 use graphics::Container;
+use math::bounding_rect::Bounded;
+use math::Matrix;
 use textures::ab_text::test_tex2;
 use textures::texture_text::test_tex;
 use textures::typer_text::text_typer;
@@ -12,9 +14,9 @@ use web_sys::WebGlTexture;
 
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::shapes::{
-    Circle, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
+    Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
 };
-use webgl2_glyph_atlas::{Font, Renderer};
+// use webgl2_glyph_atlas::Renderer;
 mod core;
 mod display;
 mod graphics;
@@ -42,21 +44,6 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn hey(mat: Vec<f32>) {
-    console_log!("{:#?}", mat);
-}
-
-#[wasm_bindgen]
-pub fn hey2(mat: Vec<u8>) {
-    console_log!("{:#?}", mat);
-}
-
-#[wasm_bindgen]
-pub fn puts(str: &str) {
-    console_log!("{}", str);
-}
-
-#[wasm_bindgen]
 pub fn test_error() {
     console_error!("testing console.error");
 }
@@ -78,14 +65,16 @@ pub fn main() -> Result<(), JsValue> {
         height: canvas.client_height() as f32,
     };
 
-    let red: Vec<u8> = vec![255, 0, 0];
-    let _green: Vec<u8> = vec![0, 255, 0];
-    let _blue: Vec<u8> = vec![0, 0, 255];
-
-    let mut container = Container::default();
     let mut app = Application::new(&context, dims);
+    let mut container = Container::default();
+    app.add_container(&container);
+
+    let red: Vec<u8> = vec![255, 0, 0];
+    let green: Vec<u8> = vec![180, 180, 180];
+    let blue: Vec<u8> = vec![0, 0, 255];
 
     let _tex = app.tex_from_img("../assets/test.jpg");
+
     let _text: WebGlTexture = app.text_texture("test", "sans-serif", 40, "white", 20.0, 0.0);
 
     let text = r##"
@@ -94,21 +83,13 @@ pub fn main() -> Result<(), JsValue> {
             </block>"##;
 
     let text_texture = text_typer(&context, text);
-    let c = Circle::new(0, 0, 100.0, &text_texture);
-    c.translate(-150.0, 75.0);
+    let c = Circle::new_at_origin(100.0, &text_texture);
 
-    app.add_shape(&c);
-    let tr = Triangle::new_at_origin(100.0, &red);
-    container.add_shape(&tr);
-    app.add_container(&container);
-    //   app.render();
+    container.add_shape(&c);
+
     render_loop(move || {
         app.render();
-        tr.rotate_deg(5.0);
-        c.rotate_deg(1.0);
-        let mut renderer = Renderer::new(&context).unwrap();
-        renderer.queue_text("Hello ", &Font::new("sans-serif", 40), 0., 0.);
-        renderer.draw().unwrap();
+        // c.rotate_deg(1.0);
     });
 
     Ok(())

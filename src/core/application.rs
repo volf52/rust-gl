@@ -1,14 +1,9 @@
-use crate::graphics::shapes::shape::Dims;
-use crate::textures::texture_img::load_texture_image;
-use crate::textures::texture_text::create_text_texture;
-use crate::textures::utils::{TextureGen, TextureOrColor};
+use crate::textures::{texture_img::load_texture_image, texture_text::create_text_texture};
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
-use crate::display::display_object::DisplayObject;
 use crate::graphics::{Container, Shape};
 use crate::math::Matrix;
-use crate::textures::solid_texture::create_solid_texture;
 
 #[wasm_bindgen]
 extern "C" {
@@ -71,22 +66,6 @@ impl Application {
 
     pub fn add_shape(&mut self, shape: &impl Shape) {
         self.stage.add_shape(shape);
-    }
-
-    pub fn draw_textured_shape<T: Shape>(&self, shape: &T, texture: &WebGlTexture) {
-        DisplayObject::new(&self.ctx, shape.get_geom()).draw_textured(&self.proj_mat, &texture);
-    }
-
-    pub fn draw_colored_shape<T: Shape>(&self, shape: &T, color: &Vec<u8>) {
-        self.draw_textured_shape(shape, &create_solid_texture(&self.ctx, color));
-    }
-
-    pub fn draw_shape<T: Shape, U: TextureGen>(&self, shape: &T, mask: &U) {
-        let temp = mask.to_enum();
-        match temp {
-            TextureOrColor::Color(color) => self.draw_colored_shape(shape, &color),
-            TextureOrColor::Texture(texture) => self.draw_textured_shape(shape, &texture),
-        }
     }
 
     pub fn tex_from_img(&self, src: &str) -> WebGlTexture {

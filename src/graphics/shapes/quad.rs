@@ -1,27 +1,24 @@
-use std::cell::RefCell;
-use std::rc::Rc;
+use crate::graphics::scene_graph::{GraphEntity, GraphNode};
+use std::{cell::RefCell, rc::Rc};
 
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
-use crate::math::{BoundingRect, Matrix};
+use crate::math::bounding_rect::Bounded;
+use crate::math::Matrix;
 use crate::textures::utils::TextureGen;
 
-#[derive(Clone)]
 pub struct Rectangle {
-    pub x: i32,
-    pub y: i32,
-
     pub width: f32,
     pub height: f32,
 
-    geom: Rc<RefCell<Geom>>,
+    node: Rc<RefCell<GraphNode>>,
 }
 
 impl Rectangle {
-    pub fn new(
-        x: i32,
-        y: i32,
+    pub fn new_at(
+        x: f32,
+        y: f32,
         width: f32,
         height: f32,
         color_or_texture: &impl TextureGen,
@@ -31,40 +28,50 @@ impl Rectangle {
         let top = height / 2.0;
         let bottom = -top;
 
-        let vertices = [left, top, right, top, left, bottom, right, bottom].to_vec();
+        let vertices = vec![left, top, right, top, left, bottom, right, bottom];
 
         let geom = Geom::new(
             &vertices,
-            Matrix::translation(x as f32, y as f32),
+            Matrix::translation(x, y),
             WebGl2RenderingContext::TRIANGLE_STRIP,
             4,
             color_or_texture,
         );
 
+        let node = GraphNode::for_shape(geom);
+
         Rectangle {
-            x,
-            y,
             width,
             height,
-            geom: Rc::new(RefCell::new(geom)),
+            node,
         }
     }
 
     pub fn new_at_origin(width: f32, height: f32, color_or_texture: &impl TextureGen) -> Self {
-        Self::new(0, 0, width, height, color_or_texture)
+        Self::new_at(0.0, 0.0, width, height, color_or_texture)
+    }
+
+    pub fn contains(&self, x: f32, y: f32) -> bool {
+        let (x_p, y_p) = self.node.borrow().geom.u_mat.inverse_affine_point(x, y);
+
+        match (self.width, self.height) {
+            t if t.0 <= 0.0 || t.1 <= 0.0 => false,
+            t if (x_p.abs() <= t.0 / 2.0) && (y_p.abs() <= t.1 / 2.0) => true,
+            _ => false,
+        }
     }
 }
 
-impl Shape for Rectangle {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
+impl GraphEntity for Rectangle {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
+}
 
-    fn get_bounds(&self) -> BoundingRect {
-        BoundingRect::new(self.x as f32, self.y as f32, self.width, self.height)
-    }
+impl Shape for Rectangle {}
 
-    fn contains(&self, x: f32, y: f32) -> bool {
-        self.get_bounds().contains(x, y)
+impl Bounded for Rectangle {
+    fn get_bounding_rect_inner(&self) -> Rectangle {
+        Rectangle::new_at_origin(self.width, self.height, &vec![])
     }
 }

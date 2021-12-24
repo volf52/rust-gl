@@ -5,7 +5,7 @@ use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, WebGl2RenderingContext, WebGlTexture};
 
 type Wgl2 = WebGl2RenderingContext;
-use crate::{hey2, puts};
+
 pub fn create_text_texture(
     gl: &WebGl2RenderingContext,
     text: &str,
@@ -139,7 +139,7 @@ pub fn test_tex(gl: &WebGl2RenderingContext) -> WebGlTexture {
         0,
         Wgl2::RGBA,
         Wgl2::UNSIGNED_BYTE,
-        Some(&image.as_bytes()),
+        Some(image.as_bytes()),
     );
 
     gl.tex_parameteri(

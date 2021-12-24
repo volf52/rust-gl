@@ -1,84 +1,56 @@
 use std::{cell::RefCell, rc::Rc};
 
+use crate::core::application::Application;
 use crate::graphics::scene_graph::GraphNode;
 use crate::math::Matrix;
-use crate::{core::application::Application, display::display_object::DisplayObject};
 
-use super::{Geom, Shape};
+use super::{scene_graph::GraphEntity, Shape};
 
 pub struct Container {
-    pub is_leaf: bool,
-
-    pub geom: Rc<RefCell<Geom>>,
-
-    pub children: Vec<Rc<RefCell<GraphNode>>>,
+    pub node: Rc<RefCell<GraphNode>>,
 }
 
 impl Default for Container {
     fn default() -> Self {
-        let geom = Geom::default();
-
         Container {
-            is_leaf: false,
-            children: Vec::new(),
-            geom: Rc::new(RefCell::new(geom)),
+            node: Rc::new(RefCell::new(GraphNode::default())),
         }
-    }
-}
-
-impl Shape for Container {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
-    }
-
-    fn get_bounds(&self) -> crate::math::BoundingRect {
-        todo!()
-    }
-
-    fn contains(&self, x: f32, y: f32) -> bool {
-        todo!()
     }
 }
 
 impl Container {
     pub fn render(&self, app: &Application, parent_model_mat: &Matrix) {
-        self.children.iter().for_each(|child| {
-            let borrowed = child.borrow();
-            let updated_transform_mat =
-                &Matrix::multiply(parent_model_mat, &self.geom.borrow().u_mat);
-
-            if borrowed.is_leaf {
-                // shape render
-                let display_obj = DisplayObject::new(&app.ctx, borrowed.geom.clone());
-                display_obj.draw(&app.proj_mat, updated_transform_mat);
-            } else {
-                // render children for the container
-                borrowed.render(app, updated_transform_mat);
-            }
-        });
+        self.node.borrow().render(app, parent_model_mat);
     }
 
     pub fn add_shape(&mut self, shape: &impl Shape) {
-        let node = GraphNode {
-            is_leaf: true,
-            geom: shape.get_geom(),
-            children: Vec::new(),
-        };
-
-        self.children.push(Rc::new(RefCell::new(node)));
+        self.node.borrow_mut().add_child(shape.get_node());
+        shape.update_parent(Some(self.node.clone()));
     }
 
-    pub fn len(&self) -> usize {
-        self.children.len()
+    pub fn remove_child(&mut self, child: &impl Shape) {
+        self.node.borrow_mut().remove_child(child.get_id());
+        child.update_parent(None);
     }
 
     pub fn add_container(&mut self, container: &Container) {
-        let node = GraphNode {
-            is_leaf: false,
-            geom: container.geom.clone(),
-            children: container.children.clone(),
-        };
+        self.node.borrow_mut().add_child(container.node.clone());
+    }
 
-        self.children.push(Rc::new(RefCell::new(node)));
+    pub fn len(&self) -> usize {
+        self.node.borrow().len()
+    }
+
+    pub fn contains(&self, id: uuid::Uuid) -> bool {
+        self.node.borrow().contains(id)
     }
 }
+
+impl GraphEntity for Container {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
+    }
+}
+
+// `Shape` would be a misnomer here. Vector Space/Coord System would be better
+impl Shape for Container {}
