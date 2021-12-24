@@ -1,3 +1,4 @@
+use crate::graphics::scene_graph::{GraphEntity, GraphNode};
 use crate::graphics::{shapes::Rectangle, Geom, Shape};
 use crate::math::bounding_rect::Bounded;
 use crate::textures::utils::TextureGen;
@@ -7,7 +8,7 @@ use std::rc::Rc;
 pub struct Circle {
     pub radius: f32,
 
-    geom: Rc<RefCell<Geom>>,
+    node: Rc<RefCell<GraphNode>>,
 }
 
 impl Circle {
@@ -15,7 +16,9 @@ impl Circle {
         let vertex_count = 200;
         let geom = Geom::build_geom(x, y, radius, radius, vertex_count, color_or_texture);
 
-        Circle { radius, geom }
+        let node = GraphNode::for_shape(geom);
+
+        Circle { radius, node }
     }
 
     pub fn new_at_origin(radius: f32, color_or_texture: &impl TextureGen) -> Self {
@@ -23,15 +26,17 @@ impl Circle {
     }
 }
 
-impl Shape for Circle {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
+impl GraphEntity for Circle {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
 }
 
+impl Shape for Circle {}
+
 impl Bounded for Circle {
     fn contains(&self, x: f32, y: f32) -> bool {
-        let (x_p, y_p) = self.geom.borrow().u_mat.inverse_affine_point(x, y);
+        let (x_p, y_p) = self.node.borrow().geom.u_mat.inverse_affine_point(x, y);
 
         match self.radius {
             r2 if r2 <= 0.0 => false,

@@ -1,20 +1,23 @@
+use crate::graphics::scene_graph::{GraphEntity, GraphNode};
 use crate::graphics::{Geom, Shape};
 use crate::math::bounding_rect::Bounded;
 use crate::textures::utils::TextureGen;
-use std::cell::RefCell;
-use std::rc::Rc;
+
+use std::{cell::RefCell, rc::Rc};
 
 pub struct RegularPolygon {
     pub radius: f32,
     pub sides: usize,
-    geom: Rc<RefCell<Geom>>,
+
+    node: Rc<RefCell<GraphNode>>,
 }
 
 pub struct IrregularPolygon {
     pub width: f32,
     pub height: f32,
     pub sides: usize,
-    geom: Rc<RefCell<Geom>>,
+
+    node: Rc<RefCell<GraphNode>>,
 }
 
 impl RegularPolygon {
@@ -27,11 +30,12 @@ impl RegularPolygon {
     ) -> Self {
         let sides = n_sides.max(3);
         let geom = Geom::build_geom(x, y, radius, radius, sides, color_or_texture);
+        let node = GraphNode::for_shape(geom);
 
         RegularPolygon {
             radius,
             sides,
-            geom,
+            node,
         }
     }
 
@@ -40,11 +44,13 @@ impl RegularPolygon {
     }
 }
 
-impl Shape for RegularPolygon {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
+impl GraphEntity for RegularPolygon {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
 }
+
+impl Shape for RegularPolygon {}
 
 impl Bounded for RegularPolygon {}
 
@@ -59,12 +65,13 @@ impl IrregularPolygon {
     ) -> Self {
         let sides = n_sides.max(3);
         let geom = Geom::build_geom(x, y, width, height, sides, color_or_texture);
+        let node = GraphNode::for_shape(geom);
 
         IrregularPolygon {
             width,
             height,
             sides,
-            geom,
+            node,
         }
     }
 
@@ -92,12 +99,13 @@ impl IrregularPolygon {
             - ys.iter().cloned().fold(f32::NAN, f32::min);
 
         let geom = Geom::build_geom(0.0, 0.0, width, height, sides, color_or_texture);
+        let node = GraphNode::for_shape(geom);
 
         IrregularPolygon {
             width,
             height,
             sides,
-            geom,
+            node,
         }
     }
 
@@ -111,10 +119,12 @@ impl IrregularPolygon {
     }
 }
 
-impl Shape for IrregularPolygon {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
+impl GraphEntity for IrregularPolygon {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
 }
+
+impl Shape for IrregularPolygon {}
 
 impl Bounded for IrregularPolygon {}

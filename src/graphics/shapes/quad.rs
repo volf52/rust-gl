@@ -1,5 +1,5 @@
-use std::cell::RefCell;
-use std::rc::Rc;
+use crate::graphics::scene_graph::{GraphEntity, GraphNode};
+use std::{cell::RefCell, rc::Rc};
 
 use web_sys::WebGl2RenderingContext;
 
@@ -12,7 +12,7 @@ pub struct Rectangle {
     pub width: f32,
     pub height: f32,
 
-    geom: Rc<RefCell<Geom>>,
+    node: Rc<RefCell<GraphNode>>,
 }
 
 impl Rectangle {
@@ -38,10 +38,12 @@ impl Rectangle {
             color_or_texture,
         );
 
+        let node = GraphNode::for_shape(geom);
+
         Rectangle {
             width,
             height,
-            geom: Rc::new(RefCell::new(geom)),
+            node,
         }
     }
 
@@ -50,7 +52,7 @@ impl Rectangle {
     }
 
     pub fn contains(&self, x: f32, y: f32) -> bool {
-        let (x_p, y_p) = self.geom.borrow().u_mat.inverse_affine_point(x, y);
+        let (x_p, y_p) = self.node.borrow().geom.u_mat.inverse_affine_point(x, y);
 
         match (self.width, self.height) {
             t if t.0 <= 0.0 || t.1 <= 0.0 => false,
@@ -60,11 +62,13 @@ impl Rectangle {
     }
 }
 
-impl Shape for Rectangle {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
+impl GraphEntity for Rectangle {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
 }
+
+impl Shape for Rectangle {}
 
 impl Bounded for Rectangle {
     fn get_bounding_rect_inner(&self) -> Rectangle {

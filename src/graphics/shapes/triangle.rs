@@ -1,3 +1,4 @@
+use crate::graphics::scene_graph::{GraphEntity, GraphNode};
 use crate::math::bounding_rect::Bounded;
 use std::{cell::RefCell, rc::Rc};
 use web_sys::WebGl2RenderingContext;
@@ -8,7 +9,8 @@ use crate::textures::utils::TextureGen;
 
 pub struct Triangle {
     pub size: f32,
-    geom: Rc<RefCell<Geom>>,
+
+    node: Rc<RefCell<GraphNode>>,
 }
 
 impl Triangle {
@@ -20,15 +22,17 @@ impl Triangle {
 
         let vertices = [left, top, right, top, left, bottom].to_vec();
 
-        let geom = Rc::new(RefCell::new(Geom::new(
+        let geom = Geom::new(
             &vertices,
             Matrix::translation(x, y),
             WebGl2RenderingContext::TRIANGLES,
             3,
             color_or_texture,
-        )));
+        );
 
-        Triangle { size, geom }
+        let node = GraphNode::for_shape(geom);
+
+        Triangle { size, node }
     }
 
     pub fn new_at_origin(size: f32, color_or_texture: &impl TextureGen) -> Self {
@@ -36,10 +40,12 @@ impl Triangle {
     }
 }
 
-impl Shape for Triangle {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
+impl GraphEntity for Triangle {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
 }
+
+impl Shape for Triangle {}
 
 impl Bounded for Triangle {}

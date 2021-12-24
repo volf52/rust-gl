@@ -7,8 +7,11 @@ use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct GraphNode {
+    pub id: Uuid,
+    pub parent: Option<Rc<RefCell<GraphNode>>>,
+
     pub is_leaf: bool,
-    pub geom: Rc<RefCell<Geom>>,
+    pub geom: Geom,
 
     pub idx_map: HashMap<Uuid, usize>,
     pub children: Vec<Rc<RefCell<GraphNode>>>,
@@ -17,8 +20,12 @@ pub struct GraphNode {
 impl Default for GraphNode {
     fn default() -> Self {
         GraphNode {
+            id: Uuid::new_v4(),
+            parent: None,
+
             is_leaf: false,
-            geom: Rc::new(RefCell::new(Geom::default())),
+            geom: Geom::default(),
+
             children: Vec::new(),
             idx_map: HashMap::new(),
         }
@@ -26,6 +33,17 @@ impl Default for GraphNode {
 }
 
 impl GraphNode {
+    pub fn for_shape(geom: Geom) -> Rc<RefCell<Self>> {
+        Rc::new(RefCell::new(GraphNode {
+            id: Uuid::new_v4(),
+            parent: None,
+            is_leaf: true,
+            geom,
+            idx_map: HashMap::new(),
+            children: Vec::new(),
+        }))
+    }
+
     pub fn remove_child(&mut self, id: Uuid) -> bool {
         if let Some(idx) = self.idx_map.remove(&id) {
             self.children.remove(idx);
@@ -36,17 +54,10 @@ impl GraphNode {
         false
     }
 
-    pub fn get_id(&self) -> Uuid {
-        self.geom.borrow_mut().id
-    }
-
-    pub fn get_parent(&self) -> Option<Rc<RefCell<GraphNode>>> {
-        self.geom.borrow().parent.clone()
-    }
-
     pub fn add_child(&mut self, node: Rc<RefCell<GraphNode>>) {
         let idx = self.children.len();
-        let node_id = node.borrow().get_id();
+        let node_id = node.borrow().id;
+
         self.children.push(node);
         self.idx_map.insert(node_id, idx);
     }
@@ -60,8 +71,9 @@ impl GraphNode {
     }
 
     pub fn get_final_transformation_matrix(&self) -> Matrix {
-        let mut mat = self.geom.borrow().u_mat.clone();
-        if let Some(p) = self.get_parent() {
+        let mut mat = self.geom.u_mat.clone();
+
+        if let Some(p) = &self.parent {
             let mat2 = p.borrow().get_final_transformation_matrix();
             mat.mul_inplace(&mat2);
         }
@@ -71,7 +83,7 @@ impl GraphNode {
 
     pub fn render(&self, app: &Application, parent_model_mat: &Matrix) {
         self.children.iter().for_each(|child| {
-            let updated_transform_mat = &parent_model_mat.mul(&self.geom.borrow().u_mat);
+            let updated_transform_mat = &parent_model_mat.mul(&self.geom.u_mat);
 
             let child_ref = child.borrow();
 
@@ -83,5 +95,34 @@ impl GraphNode {
                 child_ref.render(app, updated_transform_mat);
             }
         });
+    }
+}
+
+pub trait GraphEntity {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>>;
+
+    fn get_id(&self) -> Uuid {
+        self.get_node().borrow().id
+    }
+
+    fn get_parent(&self) -> Option<Rc<RefCell<GraphNode>>> {
+        self.get_node().borrow().parent.clone()
+    }
+
+    fn get_parent_id(&self) -> Option<Uuid> {
+        let parent = self.get_node().borrow().parent.clone();
+
+        parent.map(|p| p.borrow().id)
+    }
+
+    fn update_parent(&self, new_parent: Option<Rc<RefCell<GraphNode>>>) {
+        let node = self.get_node();
+        let node_id = node.borrow().id;
+
+        if let Some(p) = &node.borrow().parent {
+            p.borrow_mut().remove_child(node_id);
+        }
+
+        node.borrow_mut().parent = new_parent;
     }
 }
