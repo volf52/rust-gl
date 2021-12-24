@@ -79,7 +79,7 @@ pub fn main() -> Result<(), JsValue> {
     app.add_container(&container);
     app.add_container(&container_2);
 
-    c.rotate_deg(5.0);
+    container.rotate_deg(5.0);
     c.move_by(10.0, 10.0);
     c.scale(1.1, 1.1);
 
@@ -123,7 +123,7 @@ pub fn main() -> Result<(), JsValue> {
     container_2.add_shape(&c_normal);
 
     let final_mat_c = c.get_final_transformation_matrix();
-    let mut other_mat = Matrix::new();
+    let other_mat = Matrix::new();
 
     let mut other_mat = other_mat.rotate((5.0_f32).to_radians());
     other_mat.translate_inplace(10.0, 10.0);

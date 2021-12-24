@@ -75,7 +75,7 @@ impl GraphNode {
 
         if let Some(p) = &self.parent {
             let mat2 = p.borrow().get_final_transformation_matrix();
-            mat.mul_inplace(&mat2);
+            mat = mat2.mul(&mat);
         }
 
         mat
