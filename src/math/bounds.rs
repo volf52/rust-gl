@@ -1,9 +1,39 @@
 use crate::graphics::{shapes::Rectangle, Shape};
 
 #[derive(Debug, Clone)]
-pub struct Dims {
+pub struct BoundingDims {
     pub width: f32,
     pub height: f32,
+}
+
+impl BoundingDims {
+    pub fn from_vertices(vertices: &[f32]) -> Self {
+        let ((min_x, max_x), (min_y, max_y)) = BoundingDims::get_width_height_range(vertices);
+
+        let width = max_x - min_x;
+        let height = max_y - min_y;
+
+        BoundingDims { width, height }
+    }
+
+    pub fn get_width_height_range(vertices: &[f32]) -> ((f32, f32), (f32, f32)) {
+        let mut min_x = f32::MAX;
+        let mut min_y = f32::MAX;
+        let mut max_x = f32::MIN;
+        let mut max_y = f32::MIN;
+
+        vertices.chunks_exact(2).for_each(|chunk| {
+            let x = chunk[0];
+            let y = chunk[1];
+
+            min_x = min_x.min(x);
+            min_y = min_y.min(y);
+            max_x = max_x.max(x);
+            max_y = max_y.max(y);
+        });
+
+        ((min_x, max_x), (min_y, max_y))
+    }
 }
 
 pub trait Bounded: Shape {

@@ -1,6 +1,9 @@
-use crate::graphics::scene_graph::{GraphEntity, GraphNode};
-use crate::graphics::{shapes::Rectangle, Geom, Shape};
-use crate::math::bounding_rect::Bounded;
+use crate::graphics::{
+    scene_graph::{GraphEntity, GraphNode},
+    shapes::Rectangle,
+    Geom, Shape,
+};
+use crate::math::bounds::Bounded;
 use crate::textures::utils::TextureGen;
 use std::{cell::RefCell, rc::Rc};
 

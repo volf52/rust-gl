@@ -1,11 +1,11 @@
-use crate::graphics::scene_graph::{GraphEntity, GraphNode};
 use std::{cell::RefCell, rc::Rc};
-
 use web_sys::WebGl2RenderingContext;
 
-use crate::graphics::{Geom, Shape};
-use crate::math::bounding_rect::Bounded;
-use crate::math::Matrix;
+use crate::graphics::{
+    scene_graph::{GraphEntity, GraphNode},
+    Geom, Shape,
+};
+use crate::math::{bounds::Bounded, Matrix};
 use crate::textures::utils::TextureGen;
 
 pub struct Rectangle {
@@ -69,7 +69,6 @@ impl GraphEntity for Rectangle {
 }
 
 impl Shape for Rectangle {}
-
 impl Bounded for Rectangle {
     fn get_bounding_rect_inner(&self) -> Rectangle {
         Rectangle::new_at_origin(self.width, self.height, &vec![])

@@ -1,8 +1,7 @@
 use super::Geom;
 use crate::math::Matrix;
 use crate::{core::application::Application, display::display_object::DisplayObject};
-use std::collections::HashMap;
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use uuid::Uuid;
 
 #[derive(Clone)]

@@ -1,7 +1,9 @@
+#![allow(dead_code, unused_variables, unused_imports, unused_macros)]
 use std::{cell::RefCell, rc::Rc};
 
+use graphics::scene_graph::GraphEntity;
 use graphics::Container;
-use math::bounding_rect::Bounded;
+use math::bounds::Bounded;
 use math::Matrix;
 use textures::ab_text::test_tex2;
 use textures::texture_text::test_tex;
@@ -74,16 +76,15 @@ pub fn main() -> Result<(), JsValue> {
     let blue: Vec<u8> = vec![0, 0, 255];
 
     let _tex = app.tex_from_img("../assets/test.jpg");
+    let _tex: WebGlTexture = app.text_texture("test", "sans-serif", 40, "white", 20.0, 0.0);
 
-    let _text: WebGlTexture = app.text_texture("test", "sans-serif", 40, "white", 20.0, 0.0);
-
-    let text = r##"
-            <block width="100" x="0" y="30" text-align="center">
+    let text = r##"<block width="100" x="0" y="30" text-align="center">
                 <s font-size="12" color="#FFFFFF" line-height="1.2"><s color="#FF0000" font-size="24">Paprika</s> is an incredibly good movie.</s>
             </block>"##;
 
-    let text_texture = text_typer(&context, text);
-    let c = Circle::new_at_origin(100.0, &text_texture);
+    let tex = text_typer(&context, text);
+
+    let c = Circle::new_at_origin(100.0, &tex);
 
     container.add_shape(&c);
 

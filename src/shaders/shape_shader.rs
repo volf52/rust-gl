@@ -7,8 +7,8 @@ use web_sys::{WebGl2RenderingContext, WebGlShader};
 pub struct ShapeShader {}
 
 impl ShapeShader {
-    pub fn new(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShader) {
-        return ShapeShader::compile(ctx);
+    pub fn init(ctx: &WebGl2RenderingContext) -> (WebGlShader, WebGlShader) {
+        ShapeShader::compile(ctx)
     }
 }
 

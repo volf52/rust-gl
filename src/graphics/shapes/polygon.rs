@@ -1,6 +1,8 @@
-use crate::graphics::scene_graph::{GraphEntity, GraphNode};
-use crate::graphics::{Geom, Shape};
-use crate::math::bounding_rect::Bounded;
+use crate::graphics::{
+    scene_graph::{GraphEntity, GraphNode},
+    Geom, Shape,
+};
+use crate::math::bounds::{Bounded, BoundingDims};
 use crate::textures::utils::TextureGen;
 
 use std::{cell::RefCell, rc::Rc};
@@ -51,7 +53,6 @@ impl GraphEntity for RegularPolygon {
 }
 
 impl Shape for RegularPolygon {}
-
 impl Bounded for RegularPolygon {}
 
 impl IrregularPolygon {
@@ -79,24 +80,8 @@ impl IrregularPolygon {
     pub fn new_from_path(vertices: &[f32], color_or_texture: &impl TextureGen) -> Self {
         let sides = vertices.len() / 2;
 
-        let xs: Vec<f32> = vertices
-            .iter()
-            .enumerate()
-            .filter(|&(i, _)| i % 2 != 0)
-            .map(|(_, e)| *e)
-            .collect();
-
-        let ys: Vec<f32> = vertices
-            .iter()
-            .enumerate()
-            .filter(|&(i, _)| i % 2 == 0)
-            .map(|(_, e)| *e)
-            .collect();
-
-        let width = xs.iter().cloned().fold(f32::NAN, f32::max)
-            - xs.iter().cloned().fold(f32::NAN, f32::min);
-        let height = ys.iter().cloned().fold(f32::NAN, f32::max)
-            - ys.iter().cloned().fold(f32::NAN, f32::min);
+        let bounding_dims = BoundingDims::from_vertices(vertices);
+        let (width, height) = (bounding_dims.width, bounding_dims.height);
 
         let geom = Geom::build_geom(0.0, 0.0, width, height, sides, color_or_texture);
         let node = GraphNode::for_shape(geom);
@@ -126,5 +111,4 @@ impl GraphEntity for IrregularPolygon {
 }
 
 impl Shape for IrregularPolygon {}
-
 impl Bounded for IrregularPolygon {}

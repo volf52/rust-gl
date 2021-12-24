@@ -1,10 +1,11 @@
-use crate::graphics::scene_graph::{GraphEntity, GraphNode};
-use crate::math::bounding_rect::Bounded;
 use std::{cell::RefCell, rc::Rc};
 use web_sys::WebGl2RenderingContext;
 
-use crate::graphics::{Geom, Shape};
-use crate::math::Matrix;
+use crate::graphics::{
+    scene_graph::{GraphEntity, GraphNode},
+    Geom, Shape,
+};
+use crate::math::{bounds::Bounded, Matrix};
 use crate::textures::utils::TextureGen;
 
 pub struct Triangle {
