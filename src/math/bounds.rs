@@ -1,5 +1,41 @@
 use crate::graphics::{shapes::Rectangle, Shape};
 
+#[derive(Debug, Clone)]
+pub struct BoundingDims {
+    pub width: f32,
+    pub height: f32,
+}
+
+impl BoundingDims {
+    pub fn from_vertices(vertices: &[f32]) -> Self {
+        let ((min_x, max_x), (min_y, max_y)) = BoundingDims::get_width_height_range(vertices);
+
+        let width = max_x - min_x;
+        let height = max_y - min_y;
+
+        BoundingDims { width, height }
+    }
+
+    pub fn get_width_height_range(vertices: &[f32]) -> ((f32, f32), (f32, f32)) {
+        let mut min_x = f32::MAX;
+        let mut min_y = f32::MAX;
+        let mut max_x = f32::MIN;
+        let mut max_y = f32::MIN;
+
+        vertices.chunks_exact(2).for_each(|chunk| {
+            let x = chunk[0];
+            let y = chunk[1];
+
+            min_x = min_x.min(x);
+            min_y = min_y.min(y);
+            max_x = max_x.max(x);
+            max_y = max_y.max(y);
+        });
+
+        ((min_x, max_x), (min_y, max_y))
+    }
+}
+
 pub trait Bounded: Shape {
     // Expects vertices in counter clockwise direction
     fn contains(&self, x: f32, y: f32) -> bool {
@@ -31,30 +67,9 @@ pub trait Bounded: Shape {
     // Get the bounding box without the transformations. Meant to be implemented by the shapes specifically in cases where
     // it would be more efficient to do so
     fn get_bounding_rect_inner(&self) -> Rectangle {
-        let mut min_x = f32::MAX;
-        let mut min_y = f32::MAX;
-        let mut max_x = f32::MIN;
-        let mut max_y = f32::MIN;
+        let dims = self.get_node().borrow().geom.get_dims();
 
-        self.get_node()
-            .borrow()
-            .geom
-            .vertices
-            .chunks_exact(2)
-            .for_each(|chunk| {
-                let x = chunk[0];
-                let y = chunk[1];
-
-                min_x = min_x.min(x);
-                min_y = min_y.min(y);
-                max_x = max_x.max(x);
-                max_y = max_y.max(y);
-            });
-
-        let width = max_x - min_x;
-        let height = max_y - min_y;
-
-        Rectangle::new_at_origin(width, height, &vec![])
+        Rectangle::new_at_origin(dims.width, dims.height, &vec![])
     }
 
     // Get the bounding rectangle with the transformations applied

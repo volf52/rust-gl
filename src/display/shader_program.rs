@@ -13,7 +13,7 @@ pub struct ShaderProgram {
 impl ShaderProgram {
     pub fn new(ctx: &WebGl2RenderingContext) -> Self {
         let ctx = ctx.clone();
-        let (vert_shader, frag_shader) = ShapeShader::new(&ctx);
+        let (vert_shader, frag_shader) = ShapeShader::init(&ctx);
         let prog = link_program(&ctx, &vert_shader, &frag_shader).unwrap();
         let a_locations = HashMap::new();
         let u_locations = HashMap::new();
@@ -38,10 +38,7 @@ impl ShaderProgram {
     }
 
     pub fn get_attrib_loc(&self, s: String) -> Option<i32> {
-        match self.a_locations.get(&s) {
-            Some(x) => Some(*x),
-            None => None,
-        }
+        self.a_locations.get(&s).copied()
     }
 
     pub fn get_uniform_loc(&self, s: String) -> Option<&WebGlUniformLocation> {

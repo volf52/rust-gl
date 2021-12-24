@@ -1,8 +1,7 @@
 use crate::graphics::scene_graph::{GraphEntity, GraphNode};
 use crate::math::Matrix;
 use crate::textures::utils::TextureGen;
-use std::cell::RefCell;
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 
 pub trait Shape: GraphEntity {
     fn get_model_matrix(&self) -> Matrix {

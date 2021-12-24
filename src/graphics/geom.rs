@@ -2,7 +2,7 @@ use web_sys::WebGl2RenderingContext;
 
 use crate::{
     graphics::shapes::utils::calc_n_vertices,
-    math::Matrix,
+    math::{bounds::BoundingDims, Matrix},
     textures::utils::{TextureGen, TextureOrColor},
 };
 
@@ -85,40 +85,24 @@ impl Geom {
         self.u_mat.scale_inplace(x, y);
     }
 
+    pub fn get_dims(&self) -> BoundingDims {
+        BoundingDims::from_vertices(&self.vertices)
+    }
+
     pub fn calc_tex_coords(vertices: &[f32]) -> Vec<f32> {
-        let xs: Vec<f32> = vertices
-            .iter()
-            .enumerate()
-            .filter(|&(i, _)| i % 2 != 0)
-            .map(|(_, e)| *e)
-            .collect();
+        let ((min_x, max_x), (min_y, max_y)) = BoundingDims::get_width_height_range(vertices);
 
-        let ys: Vec<f32> = vertices
-            .iter()
-            .enumerate()
-            .filter(|&(i, _)| i % 2 == 0)
-            .map(|(_, e)| *e)
-            .collect();
-
-        let max = (
-            xs.iter().cloned().fold(f32::NAN, f32::max),
-            ys.iter().cloned().fold(f32::NAN, f32::max),
-        );
-        let min = (
-            xs.iter().cloned().fold(f32::NAN, f32::min),
-            ys.iter().cloned().fold(f32::NAN, f32::min),
-        );
-
-        let diff = (max.0 - min.0, max.1 - min.1);
+        let width = max_x - min_x;
+        let height = max_y - min_y;
 
         vertices
             .iter()
             .enumerate()
-            .map(|f| {
-                if f.0 % 2 != 0 {
-                    (f.1 - min.0) / diff.0
+            .map(|(idx, p)| {
+                if idx % 2 == 0 {
+                    (p - min_y) / height // normalize y
                 } else {
-                    (f.1 - min.1) / diff.1
+                    (p - min_x) / width // normalize x
                 }
             })
             .collect()

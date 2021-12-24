@@ -1,4 +1,4 @@
-use crate::textures::texture_img::load_texture_image;
+use crate::textures::{texture_img::load_texture_image, texture_text::create_text_texture};
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
@@ -44,6 +44,9 @@ impl Application {
             WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
         );
 
+        // load textures in the correct direction: https://jameshfisher.com/2020/10/22/why-is-my-webgl-texture-upside-down/
+        ctx.pixel_storei(WebGl2RenderingContext::UNPACK_FLIP_Y_WEBGL, 1);
+
         let proj_mat = Matrix::projection(dims.width, dims.height);
 
         Application {
@@ -72,12 +75,24 @@ impl Application {
         load_texture_image(&self.ctx, src)
     }
 
+    pub fn text_texture(
+        &self,
+        text: &str,
+        font: &str,
+        text_size: u32,
+        color: &str,
+        tx: f32,
+        ty: f32,
+    ) -> WebGlTexture {
+        create_text_texture(&self.ctx, text, font, text_size, color, tx, ty)
+    }
+
     // pub fn gc(&mut self) {
     //     self.shapes = self
     //         .shapes
     //         .iter()
     //         .filter(|rc_shape| Rc::strong_count(rc_shape) > 1)
-    //         .cloned()
+    //         .cloned(k
     //         .collect();
     // }
 }

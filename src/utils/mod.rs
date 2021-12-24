@@ -1,3 +1,3 @@
 pub mod gl_utils;
-pub mod utils;
-pub use utils::*;
+pub mod wasm_utils;
+pub use wasm_utils::*;
