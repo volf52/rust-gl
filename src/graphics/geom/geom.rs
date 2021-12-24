@@ -5,8 +5,8 @@ use crate::{
     math::Matrix,
     textures::utils::{TextureGen, TextureOrColor},
 };
-use std::{cell::RefCell, rc::Rc};
 
+#[derive(Debug, Clone)]
 pub struct Geom {
     pub vertices: Vec<f32>,   // vertex data
     pub tex_coords: Vec<f32>, // texture vertices
@@ -57,16 +57,20 @@ impl Geom {
         height: f32,
         no_sides: usize,
         color_or_texture: &impl TextureGen,
-    ) -> Rc<RefCell<Geom>> {
+    ) -> Geom {
         let vertices = calc_n_vertices(width, height, no_sides);
 
-        Rc::new(RefCell::new(Geom::new(
+        Geom::new(
             &vertices,
             Matrix::translation(x, y),
             WebGl2RenderingContext::TRIANGLE_FAN,
             no_sides as i32,
             color_or_texture,
-        )))
+        )
+    }
+
+    pub fn set_texture(&mut self, text_gen: &impl TextureGen) {
+        self.texture_data = text_gen.to_enum();
     }
 
     pub fn rotate(&mut self, angle: f32) {
@@ -74,11 +78,11 @@ impl Geom {
     }
 
     pub fn translate(&mut self, tx: f32, ty: f32) {
-        self.u_mat = self.u_mat.translate(tx, ty);
+        self.u_mat.translate_inplace(tx, ty);
     }
 
     pub fn scale(&mut self, x: f32, y: f32) {
-        self.u_mat = self.u_mat.scale(x, y);
+        self.u_mat.scale_inplace(x, y);
     }
 
     pub fn calc_tex_coords(vertices: &[f32]) -> Vec<f32> {

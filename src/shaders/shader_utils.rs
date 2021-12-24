@@ -10,7 +10,7 @@ macro_rules! DEFAULT_VS {
 
          uniform mat3 {u_projection};
          uniform mat3 {u_model};
-         
+
          varying vec2 {v_texture_coord};
 
          void main(void) {{
@@ -22,7 +22,7 @@ macro_rules! DEFAULT_VS {
 
 macro_rules! DEFAULT_FS {
     () => {
-        "   
+        "
         varying highp vec2 {v_texture_coord};
         uniform sampler2D {u_sampler};
 

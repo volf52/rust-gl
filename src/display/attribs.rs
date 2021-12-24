@@ -2,7 +2,6 @@ use crate::display::shader_program::ShaderProgram;
 use crate::graphics::geom::Geom;
 use crate::shaders::ShaderConstant;
 use crate::utils::gl_utils::{bind_f32_buffer_data, bind_u8_buffer_data, create_array_buffer};
-use std::cell::Ref;
 use web_sys::{WebGl2RenderingContext, WebGlBuffer, WebGlTexture};
 
 #[derive(Debug, Clone)]
@@ -12,7 +11,7 @@ pub struct Attrib {
 }
 
 impl Attrib {
-    pub fn from_f32(ctx: &WebGl2RenderingContext, data: &Vec<f32>, num_components: i32) -> Self {
+    pub fn from_f32(ctx: &WebGl2RenderingContext, data: &[f32], num_components: i32) -> Self {
         let buffer = create_array_buffer(ctx);
 
         bind_f32_buffer_data(ctx, data);
@@ -23,7 +22,7 @@ impl Attrib {
         }
     }
 
-    pub fn from_u8(ctx: &WebGl2RenderingContext, data: &Vec<u8>, num_components: i32) -> Self {
+    pub fn from_u8(ctx: &WebGl2RenderingContext, data: &[u8], num_components: i32) -> Self {
         let buffer = create_array_buffer(ctx);
 
         bind_u8_buffer_data(ctx, data);
@@ -79,7 +78,7 @@ pub struct Attribs {
 }
 
 impl Attribs {
-    pub fn new(ctx: &WebGl2RenderingContext, g: Ref<Geom>) -> Self {
+    pub fn new(ctx: &WebGl2RenderingContext, g: &Geom) -> Self {
         let position = Attrib::from_f32(ctx, &g.vertices, 2);
         let texture_coords = Attrib::from_f32(ctx, &g.tex_coords, 2);
         // let color = Attrib::from_texture(ctx, &g.texture, 2);
@@ -96,15 +95,13 @@ impl Attribs {
         let ctx = program.context();
 
         let pos_loc = program.get_attrib_loc(ShaderConstant::APosition.to_string());
-        match pos_loc {
-            Some(x) => self.position.set_attribute(&ctx, x as u32),
-            None => (),
+        if let Some(x) = pos_loc {
+            self.position.set_attribute(&ctx, x as u32)
         }
 
         let color_loc = program.get_attrib_loc(ShaderConstant::ATextureCoord.to_string());
-        match color_loc {
-            Some(x) => self.texture_coords.set_attribute(&ctx, x as u32),
-            None => (),
+        if let Some(x) = color_loc {
+            self.texture_coords.set_attribute(&ctx, x as u32)
         }
     }
 }

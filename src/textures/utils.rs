@@ -1,5 +1,6 @@
 use web_sys::WebGlTexture;
 
+#[derive(Debug, Clone)]
 pub enum TextureOrColor {
     Texture(WebGlTexture),
     Color(Vec<u8>),

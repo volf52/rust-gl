@@ -1,21 +1,20 @@
+use crate::graphics::scene_graph::{GraphEntity, GraphNode};
 use crate::math::bounding_rect::Bounded;
 use std::{cell::RefCell, rc::Rc};
 use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{Geom, Shape};
-use crate::math::{BoundingRect, Matrix};
+use crate::math::Matrix;
 use crate::textures::utils::TextureGen;
 
 pub struct Triangle {
-    pub x: i32,
-    pub y: i32,
-
     pub size: f32,
-    geom: Rc<RefCell<Geom>>,
+
+    node: Rc<RefCell<GraphNode>>,
 }
 
 impl Triangle {
-    pub fn new(x: i32, y: i32, size: f32, color_or_texture: &impl TextureGen) -> Self {
+    pub fn new(x: f32, y: f32, size: f32, color_or_texture: &impl TextureGen) -> Self {
         let right = size / 2.0;
         let left = -right;
         let top = right;
@@ -23,34 +22,30 @@ impl Triangle {
 
         let vertices = [left, top, right, top, left, bottom].to_vec();
 
-        let geom = Rc::new(RefCell::new(Geom::new(
+        let geom = Geom::new(
             &vertices,
-            Matrix::translation(x as f32, y as f32),
+            Matrix::translation(x, y),
             WebGl2RenderingContext::TRIANGLES,
             3,
             color_or_texture,
-        )));
+        );
 
-        Triangle { size, geom, x, y }
+        let node = GraphNode::for_shape(geom);
+
+        Triangle { size, node }
     }
 
     pub fn new_at_origin(size: f32, color_or_texture: &impl TextureGen) -> Self {
-        Self::new(0, 0, size, color_or_texture)
+        Self::new(0.0, 0.0, size, color_or_texture)
     }
 }
 
-impl Shape for Triangle {
-    fn get_geom(&self) -> Rc<RefCell<Geom>> {
-        self.geom.clone()
+impl GraphEntity for Triangle {
+    fn get_node(&self) -> Rc<RefCell<GraphNode>> {
+        self.node.clone()
     }
 }
 
-impl Bounded for Triangle {
-    fn get_bounds(&self) -> BoundingRect {
-        todo!()
-    }
+impl Shape for Triangle {}
 
-    fn contains(&self, _x: f32, _y: f32) -> bool {
-        todo!()
-    }
-}
+impl Bounded for Triangle {}

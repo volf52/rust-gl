@@ -2,6 +2,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use graphics::Container;
 use math::bounding_rect::Bounded;
+use math::Matrix;
 use utils::{console_error, console_log};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -9,7 +10,7 @@ use web_sys::WebGl2RenderingContext;
 
 use crate::core::application::{Application, CanvasDimensions};
 use crate::graphics::shapes::{
-    Circle, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
+    Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
 };
 
 mod core;
@@ -63,67 +64,74 @@ pub fn main() -> Result<(), JsValue> {
     let mut app = Application::new(&context, dims);
 
     let red: Vec<u8> = vec![255, 0, 0];
-    let _green: Vec<u8> = vec![0, 255, 0];
+    let green: Vec<u8> = vec![180, 180, 180];
     let blue: Vec<u8> = vec![0, 0, 255];
 
     let tex = app.tex_from_img("../assets/test.jpg");
 
-    let c = Circle::new_at_origin(100.0, &red);
+    // let c = Ellipse::new_at_origin(150.0, 75.0, &red);
+    let pth = vec![0.0, 0.0, 50.0, 50.0, 150.0, 100.0, -100.0, 100.0];
+    let c = IrregularPolygon::new_from_path(&pth, &red);
 
     let mut container = Container::default();
-
-    // console_log!("Center for c: {:?}", c.get_center()); // should be 0.0, 0.0
-
-    // let p = (-50.0, 50.0);
-    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // true
-    // console_log!(
-    //     "Contains in bounds {:?} for c: {}",
-    //     p,
-    //     c.contains_in_bounds(p.0, p.1)
-    // ); // true
-
-    // let p = (-90.0, -90.0);
-    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
-    // console_log!(
-    //     "Contains in bounds {:?} for c: {}",
-    //     p,
-    //     c.contains_in_bounds(p.0, p.1)
-    // ); // true
-
-    // let p = (100.1, 100.0);
-    // console_log!("Contains {:?} for c: {}", p, c.contains(p.0, p.1)); // false
-    // console_log!(
-    //     "Contains in bounds {:?} for c: {}",
-    //     p,
-    //     c.contains_in_bounds(p.0, p.1)
-    // ); // false
-
-    let c_bounds = c.get_bounds();
-    let c_bounding_rect = Rectangle::new_at(
-        c_bounds.x as i32,
-        c_bounds.y as i32,
-        c_bounds.width,
-        c_bounds.height,
-        &blue,
-    );
+    let mut container_2 = Container::default();
 
     app.add_container(&container);
+    app.add_container(&container_2);
 
-    c.rotate(0.3);
-    c.scale(1.1, 2.1);
+    container.rotate_deg(5.0);
     c.move_by(10.0, 10.0);
-    let c_current_center = c.get_center();
-    console_log!("-----------");
-    console_log!("C orig center: {:?}", c_current_center);
-    c.scale(2.1, 1.1);
-    c.move_to(110.1, 121.2);
-    container.scale(0.4, 0.5);
+    c.scale(1.1, 1.1);
 
-    container.add_shape(&c);
+    let c_bounding_rect = c.get_bounds();
+    c_bounding_rect.set_texture(&blue);
+
+    let p = (180.0, 150.0);
+    console_log!("Point: {:?}", p);
+    let p_inv = c.get_model_matrix().inverse_affine_point(p.0, p.1);
+    console_log!("Inv Point: {:?}", p_inv);
+    console_log!(
+        "Contains in bounds (false): {:?}",
+        c.contains_in_bounds(p.0, p.1)
+    ); // should be false
+
+    let p = (120.0, 150.0);
+    console_log!("Point: {:?}", p);
+    let p_inv = c.get_model_matrix().inverse_affine_point(p.0, p.1);
+    console_log!("Inv Point: {:?}", p_inv);
+    console_log!("Contains(false): {:?}", c.contains(p.0, p.1)); // should be false
+    console_log!(
+        "Contains in bounds (true): {:?}",
+        c.contains_in_bounds(p.0, p.1)
+    ); // should be true
+
+    let p = (90.0, 30.0);
+    console_log!("Point: {:?}", p);
+    let p_inv = c.get_model_matrix().inverse_affine_point(p.0, p.1);
+    console_log!("Inv Point: {:?}", p_inv);
+    console_log!("Contains(true): {:?}", c.contains(p.0, p.1)); // should be true
+
+    let c_normal = IrregularPolygon::new_from_path(&pth, &blue);
+
+    let c_bound_normal =
+        Rectangle::new_at_origin(c_bounding_rect.width, c_bounding_rect.height, &green);
+
     container.add_shape(&c_bounding_rect);
+    container.add_shape(&c);
 
-    let c_new_center = c.get_center();
-    console_log!("C new center: {:?}", c_new_center); // should be 110.1, 121.2
+    container_2.add_shape(&c_bound_normal);
+    container_2.add_shape(&c_normal);
+
+    let final_mat_c = c.get_final_transformation_matrix();
+    let other_mat = Matrix::new();
+
+    let mut other_mat = other_mat.rotate((5.0_f32).to_radians());
+    other_mat.translate_inplace(10.0, 10.0);
+    other_mat.scale_inplace(1.1, 1.1);
+
+    console_log!("Expected mat: {:?}", other_mat);
+
+    console_log!("Actual mat: {:?}", final_mat_c);
 
     render_loop(move || {
         app.render();

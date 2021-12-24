@@ -1,7 +1,7 @@
 use crate::graphics::shapes::utils::color_n_times;
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
-pub fn create_solid_texture(gl: &WebGl2RenderingContext, color: &Vec<u8>) -> WebGlTexture {
+pub fn create_solid_texture(gl: &WebGl2RenderingContext, color: &[u8]) -> WebGlTexture {
     let level = 0;
     let internal_format = WebGl2RenderingContext::RGBA as i32;
     let width = 1;
@@ -9,7 +9,7 @@ pub fn create_solid_texture(gl: &WebGl2RenderingContext, color: &Vec<u8>) -> Web
     let border = 0;
     let src_format = WebGl2RenderingContext::RGBA;
     let src_type = WebGl2RenderingContext::UNSIGNED_BYTE;
-    let color_twice = color_n_times(&color, 2);
+    let color_twice = color_n_times(color, 2);
     let pixel = color_twice.as_slice();
 
     let texture = gl.create_texture();
@@ -27,7 +27,7 @@ pub fn create_solid_texture(gl: &WebGl2RenderingContext, color: &Vec<u8>) -> Web
         border,
         src_format,
         src_type,
-        Some(&pixel),
+        Some(pixel),
     );
 
     gl.tex_parameteri(
