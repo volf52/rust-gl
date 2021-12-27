@@ -1,8 +1,13 @@
 #![allow(dead_code, unused_variables, unused_imports, unused_macros)]
 use std::{cell::RefCell, rc::Rc};
 
+use animation::slide::slide;
+use animation::slide::Axis;
 use graphics::scene_graph::GraphEntity;
 use graphics::Container;
+use keyframe::functions::EaseInOut;
+use keyframe::keyframes;
+use keyframe::AnimationSequence;
 use math::bounds::Bounded;
 use math::Matrix;
 use textures::ab_text::test_tex2;
@@ -19,6 +24,7 @@ use crate::graphics::shapes::{
     Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
 };
 // use webgl2_glyph_atlas::Renderer;
+mod animation;
 mod core;
 mod display;
 mod graphics;
@@ -26,7 +32,6 @@ mod math;
 mod shaders;
 mod textures;
 mod utils;
-
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 
@@ -88,10 +93,19 @@ pub fn main() -> Result<(), JsValue> {
 
     container.add_shape(&c);
 
-    render_loop(move || {
-        app.render();
-        // c.rotate_deg(1.0);
-    });
+    slide(
+        Rc::new(RefCell::new(c)),
+        -180,
+        180,
+        60,
+        EaseInOut,
+        Axis::Y,
+        Rc::new(app),
+    );
+    // render_loop(move || {
+    //     app.render();
+    //     // c.rotate_deg(1.0);
+    // });
 
     Ok(())
 }
