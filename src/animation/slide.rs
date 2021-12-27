@@ -32,12 +32,12 @@ impl Axis {
 }
 pub fn slide_axis(
     shape: Rc<RefCell<impl Shape>>,
-    animation_time: u32,
+    animation_duration: u32,
     mut sequence: RefMut<AnimationSequence<f32>>,
 
     axis: Axis,
 ) {
-    sequence.advance_by(1.0 / (animation_time as f64 * 60.0));
+    sequence.advance_by(1.0 / (animation_duration as f64 * 60.0));
 
     axis.move_to(shape.borrow_mut(), sequence.now());
 }
@@ -46,7 +46,7 @@ pub fn slide(
     shape: Rc<RefCell<impl Shape + 'static>>,
     from: i32,
     to: i32,
-    animation_time: u32,
+    animation_duration: u32,
     function: impl EasingFunction + 'static + Send + Sync,
     axis: Axis,
     app: Rc<Application>,
@@ -57,7 +57,7 @@ pub fn slide(
     let temp2 = temp.clone();
     let closure = move || {
         app.render();
-        slide_axis(shape.clone(), animation_time, temp2.borrow_mut(), axis);
+        slide_axis(shape.clone(), animation_duration, temp2.borrow_mut(), axis);
     };
 
     render_loop_anim(closure, temp.clone());
