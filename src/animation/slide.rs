@@ -1,7 +1,7 @@
 use crate::{
+    core::application::request_animation_frame,
     core::application::Application,
     graphics::shapes::{IrregularPolygon, Shape},
-    request_animation_frame,
 };
 use keyframe::{
     ease,
@@ -32,12 +32,12 @@ impl Axis {
 }
 pub fn slide_axis(
     shape: Rc<RefCell<impl Shape>>,
-    time_step: u32,
+    animation_time: u32,
     mut sequence: RefMut<AnimationSequence<f32>>,
 
     axis: Axis,
 ) {
-    sequence.advance_by(1.0 / time_step as f64);
+    sequence.advance_by(1.0 / (animation_time as f64 * 60.0));
 
     axis.move_to(shape.borrow_mut(), sequence.now());
 }
@@ -46,7 +46,7 @@ pub fn slide(
     shape: Rc<RefCell<impl Shape + 'static>>,
     from: i32,
     to: i32,
-    steps: u32,
+    animation_time: u32,
     function: impl EasingFunction + 'static + Send + Sync,
     axis: Axis,
     app: Rc<Application>,
@@ -57,13 +57,13 @@ pub fn slide(
     let temp2 = temp.clone();
     let closure = move || {
         app.render();
-        slide_axis(shape.clone(), steps, temp2.borrow_mut(), axis);
+        slide_axis(shape.clone(), animation_time, temp2.borrow_mut(), axis);
     };
 
     render_loop_anim(closure, temp.clone());
 }
 
-pub fn render_loop_anim<F>(mut closure: F, mut sequence: Rc<RefCell<AnimationSequence<f32>>>)
+pub fn render_loop_anim<F>(mut closure: F, sequence: Rc<RefCell<AnimationSequence<f32>>>)
 where
     F: 'static + FnMut(),
 {

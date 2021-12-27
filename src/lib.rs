@@ -89,43 +89,22 @@ pub fn main() -> Result<(), JsValue> {
 
     let tex = text_typer(&context, text);
 
-    let c = Circle::new_at_origin(100.0, &tex);
+    let c = Circle::new_at(0.0, -80.0, 100.0, &tex);
 
     container.add_shape(&c);
 
+    let app_ref = Rc::new(app);
+    let shape_ref = Rc::new(RefCell::new(c));
+
     slide(
-        Rc::new(RefCell::new(c)),
+        shape_ref.clone(),
         -180,
         180,
-        60,
+        2,
         EaseInOut,
         Axis::Y,
-        Rc::new(app),
+        app_ref.clone(),
     );
-    // render_loop(move || {
-    //     app.render();
-    //     // c.rotate_deg(1.0);
-    // });
 
     Ok(())
-}
-
-pub fn render_loop<F>(mut closure: F)
-where
-    F: 'static + FnMut(),
-{
-    let f = Rc::new(RefCell::new(None));
-    let g = f.clone();
-    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
-        closure();
-        request_animation_frame(f.borrow().as_ref().unwrap());
-    }) as Box<dyn FnMut()>));
-    request_animation_frame(g.borrow().as_ref().unwrap());
-}
-
-fn request_animation_frame(f: &Closure<dyn FnMut()>) {
-    web_sys::window()
-        .unwrap()
-        .request_animation_frame(f.as_ref().unchecked_ref())
-        .expect("should register `requestAnimationFrame` OK");
 }
