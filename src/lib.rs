@@ -1,8 +1,14 @@
 #![allow(dead_code, unused_variables, unused_imports, unused_macros)]
 use std::{cell::RefCell, rc::Rc};
 
+use animation::slide::animate_all;
+use animation::slide::slide;
+use animation::slide::Axis;
 use graphics::scene_graph::GraphEntity;
 use graphics::Container;
+use keyframe::functions::EaseInOut;
+use keyframe::keyframes;
+use keyframe::AnimationSequence;
 use math::bounds::Bounded;
 use math::Matrix;
 use textures::ab_text::test_tex2;
@@ -19,6 +25,7 @@ use crate::graphics::shapes::{
     Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
 };
 // use webgl2_glyph_atlas::Renderer;
+mod animation;
 mod core;
 mod display;
 mod graphics;
@@ -26,7 +33,6 @@ mod math;
 mod shaders;
 mod textures;
 mod utils;
-
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 
@@ -48,6 +54,11 @@ extern "C" {
 #[wasm_bindgen]
 pub fn test_error() {
     console_error!("testing console.error");
+}
+
+#[wasm_bindgen]
+pub fn puts(str: &str) {
+    console_log!("{}", str);
 }
 
 #[wasm_bindgen(start)]
@@ -84,34 +95,38 @@ pub fn main() -> Result<(), JsValue> {
 
     let tex = text_typer(&context, text);
 
-    let c = Circle::new_at_origin(100.0, &tex);
+    let c = Circle::new_at(0.0, -180.0, 100.0, &tex);
+
+    let tr = Triangle::new_at_origin(100.0, &red);
 
     container.add_shape(&c);
+    container.add_shape(&tr);
 
-    render_loop(move || {
-        app.render();
-        // c.rotate_deg(1.0);
-    });
+    let app_ref = Rc::new(app);
+    let shape_ref = Rc::new(RefCell::new(c));
+    let tr_ref = Rc::new(RefCell::new(tr));
+
+    let an1 = slide(
+        shape_ref.clone(),
+        -180,
+        180,
+        2,
+        EaseInOut,
+        Axis::Y,
+        app_ref.clone(),
+    );
+
+    let an2 = slide(
+        tr_ref.clone(),
+        180,
+        -180,
+        2,
+        EaseInOut,
+        Axis::Y,
+        app_ref.clone(),
+    );
+
+    animate_all(vec![an2, an1]);
 
     Ok(())
-}
-
-pub fn render_loop<F>(mut closure: F)
-where
-    F: 'static + FnMut(),
-{
-    let f = Rc::new(RefCell::new(None));
-    let g = f.clone();
-    *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
-        closure();
-        request_animation_frame(f.borrow().as_ref().unwrap());
-    }) as Box<dyn FnMut()>));
-    request_animation_frame(g.borrow().as_ref().unwrap());
-}
-
-fn request_animation_frame(f: &Closure<dyn FnMut()>) {
-    web_sys::window()
-        .unwrap()
-        .request_animation_frame(f.as_ref().unchecked_ref())
-        .expect("should register `requestAnimationFrame` OK");
 }

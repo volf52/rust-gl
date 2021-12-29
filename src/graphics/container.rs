@@ -5,7 +5,7 @@ use crate::graphics::scene_graph::GraphNode;
 use crate::math::Matrix;
 
 use super::{scene_graph::GraphEntity, Shape};
-
+#[derive(Clone)]
 pub struct Container {
     pub node: Rc<RefCell<GraphNode>>,
 }
