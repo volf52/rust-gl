@@ -1,6 +1,7 @@
 #![allow(dead_code, unused_variables, unused_imports, unused_macros)]
 use std::{cell::RefCell, rc::Rc};
 
+use animation::slide::animate_all;
 use animation::slide::slide;
 use animation::slide::Axis;
 use graphics::scene_graph::GraphEntity;
@@ -55,6 +56,11 @@ pub fn test_error() {
     console_error!("testing console.error");
 }
 
+#[wasm_bindgen]
+pub fn puts(str: &str) {
+    console_log!("{}", str);
+}
+
 #[wasm_bindgen(start)]
 pub fn main() -> Result<(), JsValue> {
     let document = web_sys::window().unwrap().document().unwrap();
@@ -89,14 +95,18 @@ pub fn main() -> Result<(), JsValue> {
 
     let tex = text_typer(&context, text);
 
-    let c = Circle::new_at(0.0, -80.0, 100.0, &tex);
+    let c = Circle::new_at(0.0, -180.0, 100.0, &tex);
+
+    let tr = Triangle::new_at_origin(100.0, &red);
 
     container.add_shape(&c);
+    container.add_shape(&tr);
 
     let app_ref = Rc::new(app);
     let shape_ref = Rc::new(RefCell::new(c));
+    let tr_ref = Rc::new(RefCell::new(tr));
 
-    slide(
+    let an1 = slide(
         shape_ref.clone(),
         -180,
         180,
@@ -105,6 +115,18 @@ pub fn main() -> Result<(), JsValue> {
         Axis::Y,
         app_ref.clone(),
     );
+
+    let an2 = slide(
+        tr_ref.clone(),
+        180,
+        -180,
+        2,
+        EaseInOut,
+        Axis::Y,
+        app_ref.clone(),
+    );
+
+    animate_all(vec![an2, an1]);
 
     Ok(())
 }

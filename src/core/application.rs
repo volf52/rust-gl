@@ -16,6 +16,7 @@ extern "C" {
     fn error(s: &str);
 }
 
+#[derive(Clone)]
 pub struct Application {
     pub ctx: WebGl2RenderingContext,
     pub proj_mat: Matrix,

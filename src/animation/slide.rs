@@ -1,7 +1,7 @@
 use crate::{
-    core::application::request_animation_frame,
-    core::application::Application,
+    core::application::{request_animation_frame, Application},
     graphics::shapes::{IrregularPolygon, Shape},
+    puts,
 };
 use keyframe::{
     ease,
@@ -15,7 +15,8 @@ use std::{
     ops::AddAssign,
     rc::Rc,
 };
-use wasm_bindgen::prelude::Closure;
+use wasm_bindgen::{prelude::*, JsCast};
+
 #[derive(Clone, Copy)]
 pub enum Axis {
     X,
@@ -50,30 +51,41 @@ pub fn slide(
     function: impl EasingFunction + 'static + Send + Sync,
     axis: Axis,
     app: Rc<Application>,
-) {
-    let sequence = keyframes![(from as f32, 0.0, function), (to as f32, 1.0, EaseInOut)];
+) -> Rc<RefCell<Option<Closure<dyn FnMut()>>>> {
+    let sequence = keyframes![(from as f32, 0.0, function), (to as f32, 1.0)];
 
     let temp = Rc::new(RefCell::new(sequence));
     let temp2 = temp.clone();
+
     let closure = move || {
         app.render();
         slide_axis(shape.clone(), animation_duration, temp2.borrow_mut(), axis);
     };
 
-    render_loop_anim(closure, temp.clone());
+    animate(closure, temp.clone())
 }
 
-pub fn render_loop_anim<F>(mut closure: F, sequence: Rc<RefCell<AnimationSequence<f32>>>)
+pub fn animate<F>(
+    mut closure: F,
+    sequence: Rc<RefCell<AnimationSequence<f32>>>,
+) -> Rc<RefCell<Option<Closure<dyn FnMut()>>>>
 where
     F: 'static + FnMut(),
 {
     let f = Rc::new(RefCell::new(None));
     let g = f.clone();
+
     *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
         closure();
         if !sequence.borrow().finished() {
             request_animation_frame(f.borrow().as_ref().unwrap());
         }
     }) as Box<dyn FnMut()>));
-    request_animation_frame(g.borrow().as_ref().unwrap());
+    g
+}
+
+pub fn animate_all(animations: Vec<Rc<RefCell<Option<Closure<dyn FnMut()>>>>>) {
+    animations
+        .iter()
+        .for_each(|f| request_animation_frame(f.borrow().as_ref().unwrap()));
 }
