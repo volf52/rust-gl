@@ -99,7 +99,8 @@ pub fn main() -> Result<(), JsValue> {
     container.add_shape(&c);
 
     let slide_anim = c.slide(-180.0, 180.0, 10.0, EaseInOut, Axis::Y);
-    let slide_anim_2 = c.slide(-90.0, 90.0, 10.0, EaseInOut, Axis::X);
+    let slide_anim_2 = c.slide(-90.0, 90.0, 5.0, EaseInOut, Axis::X);
+
     app.enqueue_anim(slide_anim);
     app.enqueue_anim(slide_anim_2);
 
