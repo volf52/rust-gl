@@ -10,11 +10,11 @@ pub fn set_panic_hook() {
 }
 
 macro_rules! console_log {
-    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
+    ($($t:tt)*) => (crate::log(&format_args!($($t)*).to_string()))
 }
 
 macro_rules! console_error {
-    ($($t:tt)*) => (error(&format_args!($($t)*).to_string()))
+    ($($t:tt)*) => (crate::error(&format_args!($($t)*).to_string()))
 }
 
 pub(crate) use console_error;
