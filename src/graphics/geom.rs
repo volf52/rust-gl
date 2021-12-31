@@ -77,8 +77,25 @@ impl Geom {
         self.u_mat = self.u_mat.rotate(angle);
     }
 
+    pub fn center(&self) -> (f32, f32) {
+        (self.u_mat.tx, self.u_mat.ty)
+    }
+
     pub fn translate(&mut self, tx: f32, ty: f32) {
         self.u_mat.translate_inplace(tx, ty);
+    }
+
+    pub fn move_to_x(&mut self, x: f32) {
+        self.u_mat.tx = x;
+    }
+
+    pub fn move_to_y(&mut self, y: f32) {
+        self.u_mat.ty = y;
+    }
+
+    pub fn move_to(&mut self, x: f32, y: f32) {
+        self.u_mat.tx = x;
+        self.u_mat.ty = y;
     }
 
     pub fn scale(&mut self, x: f32, y: f32) {

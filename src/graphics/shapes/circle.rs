@@ -1,10 +1,13 @@
-use crate::graphics::{
-    scene_graph::{GraphEntity, GraphNode},
-    shapes::Rectangle,
-    Geom, Shape,
-};
 use crate::math::bounds::Bounded;
 use crate::textures::utils::TextureGen;
+use crate::{
+    animation::another_anim::Animate,
+    graphics::{
+        scene_graph::{GraphEntity, GraphNode},
+        shapes::Rectangle,
+        Geom, Shape,
+    },
+};
 use std::{cell::RefCell, rc::Rc};
 
 pub struct Circle {
@@ -57,3 +60,5 @@ impl Bounded for Circle {
         Rectangle::new_at_origin(width_height, width_height, &vec![])
     }
 }
+
+impl Animate for Circle {}

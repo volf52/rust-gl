@@ -33,9 +33,7 @@ pub trait Shape: GraphEntity {
 
     // This center is not the absolute, rather relative to its parent's center
     fn get_center(&self) -> (f32, f32) {
-        let mat = self.get_node().borrow().geom.u_mat.clone();
-
-        (mat.tx, mat.ty)
+        self.get_node().borrow().geom.center()
     }
 
     // Transformation funcs
@@ -65,11 +63,6 @@ pub trait Shape: GraphEntity {
 
     // Move to tx,ty position relative to the parent container's center
     fn move_to(&self, new_x: f32, new_y: f32) {
-        let (center_x, center_y) = self.get_center();
-
-        self.get_node()
-            .borrow_mut()
-            .geom
-            .translate(new_x - center_x, new_y - center_y);
+        self.get_node().borrow_mut().geom.move_to(new_x, new_y);
     }
 }
