@@ -85,8 +85,15 @@ pub fn main() -> Result<(), JsValue> {
     let tex = text_typer(&context, text);
 
     let c = Circle::new_at_origin(100.0, &tex);
+    let d = Rectangle::new_at_origin(75.0, 50.0, &red);
+    let e = Rectangle::new_at_origin(35.0, 20.0, &blue);
 
     container.add_shape(&c);
+    container.add_shape(&d);
+    container.add_shape(&e);
+
+    container.remove_child(&c);
+    container.remove_child(&d);
 
     render_loop(move || {
         app.render();

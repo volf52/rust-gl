@@ -1,6 +1,7 @@
 use super::Geom;
 use crate::math::Matrix;
 use crate::{core::application::Application, display::display_object::DisplayObject};
+use indexmap::IndexMap;
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 use uuid::Uuid;
 
@@ -12,8 +13,7 @@ pub struct GraphNode {
     pub is_leaf: bool,
     pub geom: Geom,
 
-    pub idx_map: HashMap<Uuid, usize>,
-    pub children: Vec<Rc<RefCell<GraphNode>>>,
+    pub children: IndexMap<Uuid, Rc<RefCell<GraphNode>>>,
 }
 
 impl Default for GraphNode {
@@ -25,8 +25,7 @@ impl Default for GraphNode {
             is_leaf: false,
             geom: Geom::default(),
 
-            children: Vec::new(),
-            idx_map: HashMap::new(),
+            children: IndexMap::new(),
         }
     }
 }
@@ -38,27 +37,18 @@ impl GraphNode {
             parent: None,
             is_leaf: true,
             geom,
-            idx_map: HashMap::new(),
-            children: Vec::new(),
+            children: IndexMap::new(),
         }))
     }
 
     pub fn remove_child(&mut self, id: Uuid) -> bool {
-        if let Some(idx) = self.idx_map.remove(&id) {
-            self.children.remove(idx);
-
-            return true;
-        }
-
-        false
+        self.children.shift_remove(&id).is_some()
     }
 
     pub fn add_child(&mut self, node: Rc<RefCell<GraphNode>>) {
-        let idx = self.children.len();
         let node_id = node.borrow().id;
 
-        self.children.push(node);
-        self.idx_map.insert(node_id, idx);
+        self.children.insert(node_id, node);
     }
 
     pub fn len(&self) -> usize {
@@ -66,7 +56,7 @@ impl GraphNode {
     }
 
     pub fn contains(&self, id: uuid::Uuid) -> bool {
-        self.idx_map.get(&id).is_some()
+        self.children.get(&id).is_some()
     }
 
     pub fn get_final_transformation_matrix(&self) -> Matrix {
@@ -81,7 +71,7 @@ impl GraphNode {
     }
 
     pub fn render(&self, app: &Application, parent_model_mat: &Matrix) {
-        self.children.iter().for_each(|child| {
+        self.children.iter().for_each(|(_, child)| {
             let updated_transform_mat = &parent_model_mat.mul(&self.geom.u_mat);
 
             let child_ref = child.borrow();
