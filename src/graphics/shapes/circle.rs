@@ -1,7 +1,7 @@
 use crate::graphics::{
     scene_graph::{GraphEntity, GraphNode},
     shapes::Rectangle,
-    Geom, Shape,
+    Geom, Renderable, Transformable,
 };
 use crate::math::bounds::Bounded;
 use crate::textures::utils::TextureGen;
@@ -34,7 +34,8 @@ impl GraphEntity for Circle {
     }
 }
 
-impl Shape for Circle {}
+impl Transformable for Circle {}
+impl Renderable for Circle {}
 
 impl Bounded for Circle {
     fn contains(&self, x: f32, y: f32) -> bool {

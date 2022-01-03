@@ -15,8 +15,9 @@ use web_sys::WebGl2RenderingContext;
 use web_sys::WebGlTexture;
 
 use crate::core::application::{Application, CanvasDimensions};
-use crate::graphics::shapes::{
-    Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Shape, Triangle,
+use crate::graphics::{
+    shapes::{Circle, Ellipse, IrregularPolygon, Rectangle, RegularPolygon, Triangle},
+    Renderable, Transformable,
 };
 // use webgl2_glyph_atlas::Renderer;
 mod core;
@@ -69,7 +70,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let mut app = Application::new(&context, dims);
     let mut container = Container::default();
-    app.add_container(&container);
+    app.add_child(&container);
 
     let red: Vec<u8> = vec![255, 0, 0];
     let green: Vec<u8> = vec![180, 180, 180];
@@ -88,15 +89,16 @@ pub fn main() -> Result<(), JsValue> {
     let d = Rectangle::new_at_origin(75.0, 50.0, &red);
     let e = Rectangle::new_at_origin(35.0, 20.0, &blue);
 
-    container.add_shape(&c);
-    container.add_shape(&d);
-    container.add_shape(&e);
-
-    container.remove_child(&c);
-    container.remove_child(&d);
+    // container.add_child(&c);
+    app.add_child(&d);
+    // container.add_child(&e);
 
     render_loop(move || {
-        app.render();
+        // app.render();
+        app.ctx.clear(
+            WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
+        );
+        c.render(&app, &Matrix::new());
         // c.rotate_deg(1.0);
     });
 

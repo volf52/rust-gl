@@ -71,19 +71,17 @@ impl GraphNode {
     }
 
     pub fn render(&self, app: &Application, parent_model_mat: &Matrix) {
-        self.children.iter().for_each(|(_, child)| {
-            let updated_transform_mat = &parent_model_mat.mul(&self.geom.u_mat);
+        let updated_transform_mat = &parent_model_mat.mul(&self.geom.u_mat);
 
-            let child_ref = child.borrow();
+        if self.is_leaf {
+            let display_obj = DisplayObject::new(&app.ctx, self.geom.clone());
 
-            if child_ref.is_leaf {
-                let display_obj = DisplayObject::new(&app.ctx, child_ref.geom.clone());
-
-                display_obj.draw(&app.proj_mat, updated_transform_mat);
-            } else {
-                child_ref.render(app, updated_transform_mat);
-            }
-        });
+            display_obj.draw(&app.proj_mat, updated_transform_mat);
+        } else {
+            self.children.iter().for_each(|(_, child)| {
+                child.borrow().render(app, updated_transform_mat);
+            });
+        }
     }
 }
 

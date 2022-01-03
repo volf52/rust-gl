@@ -1,8 +1,9 @@
+use crate::graphics::Transformable;
 use crate::textures::{texture_img::load_texture_image, texture_text::create_text_texture};
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGl2RenderingContext, WebGlTexture};
 
-use crate::graphics::{Container, Shape};
+use crate::graphics::{scene_graph::GraphEntity, Container, Renderable};
 use crate::math::Matrix;
 
 #[wasm_bindgen]
@@ -40,9 +41,6 @@ impl Application {
         ctx.clear_depth(1.0);
         ctx.enable(WebGl2RenderingContext::DEPTH_TEST);
         ctx.depth_func(WebGl2RenderingContext::LEQUAL);
-        ctx.clear(
-            WebGl2RenderingContext::COLOR_BUFFER_BIT | WebGl2RenderingContext::DEPTH_BUFFER_BIT,
-        );
 
         // load textures in the correct direction: https://jameshfisher.com/2020/10/22/why-is-my-webgl-texture-upside-down/
         ctx.pixel_storei(WebGl2RenderingContext::UNPACK_FLIP_Y_WEBGL, 1);
@@ -63,12 +61,8 @@ impl Application {
         self.stage.render(self, &Matrix::new());
     }
 
-    pub fn add_container(&mut self, container: &Container) {
-        self.stage.add_container(container);
-    }
-
-    pub fn add_shape(&mut self, shape: &impl Shape) {
-        self.stage.add_shape(shape);
+    pub fn add_child(&mut self, child: &impl Renderable) {
+        self.stage.add_child(child);
     }
 
     pub fn tex_from_img(&self, src: &str) -> WebGlTexture {

@@ -4,7 +4,8 @@ use crate::core::application::Application;
 use crate::graphics::scene_graph::GraphNode;
 use crate::math::Matrix;
 
-use super::{scene_graph::GraphEntity, Shape};
+use super::scene_graph::GraphEntity;
+use super::{Renderable, Transformable};
 
 pub struct Container {
     pub node: Rc<RefCell<GraphNode>>,
@@ -19,22 +20,14 @@ impl Default for Container {
 }
 
 impl Container {
-    pub fn render(&self, app: &Application, parent_model_mat: &Matrix) {
-        self.node.borrow().render(app, parent_model_mat);
+    pub fn add_child(&mut self, child: &impl Renderable) {
+        self.node.borrow_mut().add_child(child.get_node());
+        child.update_parent(Some(self.node.clone()))
     }
 
-    pub fn add_shape(&mut self, shape: &impl Shape) {
-        self.node.borrow_mut().add_child(shape.get_node());
-        shape.update_parent(Some(self.node.clone()));
-    }
-
-    pub fn remove_child(&mut self, child: &impl Shape) {
+    pub fn remove_child(&mut self, child: &impl GraphEntity) {
         self.node.borrow_mut().remove_child(child.get_id());
         child.update_parent(None);
-    }
-
-    pub fn add_container(&mut self, container: &Container) {
-        self.node.borrow_mut().add_child(container.node.clone());
     }
 
     pub fn len(&self) -> usize {
@@ -52,5 +45,6 @@ impl GraphEntity for Container {
     }
 }
 
-// `Shape` would be a misnomer here. Vector Space/Coord System would be better
-impl Shape for Container {}
+impl Transformable for Container {}
+
+impl Renderable for Container {}

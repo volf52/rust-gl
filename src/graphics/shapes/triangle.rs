@@ -3,7 +3,7 @@ use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{
     scene_graph::{GraphEntity, GraphNode},
-    Geom, Shape,
+    Geom, Renderable, Transformable,
 };
 use crate::math::{bounds::Bounded, Matrix};
 use crate::textures::utils::TextureGen;
@@ -47,6 +47,6 @@ impl GraphEntity for Triangle {
     }
 }
 
-impl Shape for Triangle {}
-
+impl Transformable for Triangle {}
+impl Renderable for Triangle {}
 impl Bounded for Triangle {}

@@ -1,6 +1,6 @@
 use crate::graphics::{
     scene_graph::{GraphEntity, GraphNode},
-    Geom, Shape,
+    Geom, Renderable, Transformable,
 };
 use crate::math::bounds::{Bounded, BoundingDims};
 use crate::textures::utils::TextureGen;
@@ -52,7 +52,8 @@ impl GraphEntity for RegularPolygon {
     }
 }
 
-impl Shape for RegularPolygon {}
+impl Transformable for RegularPolygon {}
+impl Renderable for RegularPolygon {}
 impl Bounded for RegularPolygon {}
 
 impl IrregularPolygon {
@@ -110,5 +111,6 @@ impl GraphEntity for IrregularPolygon {
     }
 }
 
-impl Shape for IrregularPolygon {}
+impl Transformable for IrregularPolygon {}
+impl Renderable for IrregularPolygon {}
 impl Bounded for IrregularPolygon {}

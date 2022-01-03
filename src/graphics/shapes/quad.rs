@@ -3,7 +3,7 @@ use web_sys::WebGl2RenderingContext;
 
 use crate::graphics::{
     scene_graph::{GraphEntity, GraphNode},
-    Geom, Shape,
+    Geom, Renderable, Transformable,
 };
 use crate::math::{bounds::Bounded, Matrix};
 use crate::textures::utils::TextureGen;
@@ -68,7 +68,8 @@ impl GraphEntity for Rectangle {
     }
 }
 
-impl Shape for Rectangle {}
+impl Transformable for Rectangle {}
+impl Renderable for Rectangle {}
 impl Bounded for Rectangle {
     fn get_bounding_rect_inner(&self) -> Rectangle {
         Rectangle::new_at_origin(self.width, self.height, &vec![])

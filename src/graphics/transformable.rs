@@ -3,7 +3,9 @@ use crate::math::Matrix;
 use crate::textures::utils::TextureGen;
 use std::{cell::RefCell, rc::Rc};
 
-pub trait Shape: GraphEntity {
+use super::Renderable;
+
+pub trait Transformable: Renderable {
     fn get_model_matrix(&self) -> Matrix {
         self.get_node().borrow().geom.u_mat.clone()
     }
@@ -22,7 +24,7 @@ pub trait Shape: GraphEntity {
         self.get_node().borrow_mut().geom.u_mat = node.borrow().geom.u_mat.clone();
     }
 
-    fn copy_transformations(&self, other_shape: &impl Shape) {
+    fn copy_transformations(&self, other_shape: &impl GraphEntity) {
         self.get_node().borrow_mut().geom.u_mat =
             other_shape.get_node().borrow().geom.u_mat.clone();
     }
