@@ -1,4 +1,4 @@
-use crate::graphics::{shapes::Rectangle, Shape};
+use crate::graphics::{shapes::Rectangle, transformable::Transformable};
 
 #[derive(Debug, Clone)]
 pub struct BoundingDims {
@@ -36,7 +36,7 @@ impl BoundingDims {
     }
 }
 
-pub trait Bounded: Shape {
+pub trait Bounded: Transformable {
     // Expects vertices in counter clockwise direction
     fn contains(&self, x: f32, y: f32) -> bool {
         let transform_mat = self.get_final_transformation_matrix();

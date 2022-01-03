@@ -1,7 +1,8 @@
 use crate::graphics::{
     scene_graph::{GraphEntity, GraphNode},
     shapes::Rectangle,
-    Geom, Shape,
+    transformable::Transformable,
+    Geom, Renderable,
 };
 use crate::math::bounds::Bounded;
 use crate::textures::utils::TextureGen;
@@ -44,7 +45,8 @@ impl GraphEntity for Ellipse {
     }
 }
 
-impl Shape for Ellipse {}
+impl Transformable for Ellipse {}
+impl Renderable for Ellipse {}
 
 impl Bounded for Ellipse {
     // https://math.stackexchange.com/a/76463/525170
