@@ -1,4 +1,4 @@
-# Testing Rust with WebGLs
+# Testing Rust with WebGL
 
 ---
 
